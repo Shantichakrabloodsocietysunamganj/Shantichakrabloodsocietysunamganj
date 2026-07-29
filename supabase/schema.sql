@@ -289,7 +289,11 @@ alter table public.contacts        enable row level security;
 drop policy if exists "Public profiles read" on public.profiles;
 create policy "Public profiles read" on public.profiles for select using (true);
 drop policy if exists "Own profile update" on public.profiles;
-create policy "Own profile update" on public.profiles for update using (auth.uid() = id);
+-- নিজের প্রোফাইল অথবা অ্যাডমিন যে কোনো প্রোফাইল আপডেট করতে পারবে (role/verify বদলানোসহ)
+create policy "Own profile update" on public.profiles
+  for update
+  using (auth.uid() = id or public.is_admin())
+  with check (auth.uid() = id or public.is_admin());
 drop policy if exists "Own profile insert" on public.profiles;
 create policy "Own profile insert" on public.profiles for insert with check (auth.uid() = id);
 
@@ -321,6 +325,12 @@ create policy "Donor/admin donations read" on public.donations for select using 
 );
 drop policy if exists "Admin donations write" on public.donations;
 create policy "Admin donations write" on public.donations for insert with check (public.is_admin());
+-- অ্যাডমিন রক্তদান রেকর্ড মুছতে পারবে
+drop policy if exists "Admin donations delete" on public.donations;
+create policy "Admin donations delete" on public.donations for delete using (public.is_admin());
+-- অ্যাডমিন রক্তদান রেকর্ড আপডেট করতে পারবে
+drop policy if exists "Admin donations update" on public.donations;
+create policy "Admin donations update" on public.donations for update using (public.is_admin());
 
 -- volunteers policies
 drop policy if exists "Public volunteers read" on public.volunteers;
@@ -362,17 +372,30 @@ create policy "Admin events update" on public.events for update using (public.is
 drop policy if exists "Admin events delete" on public.events;
 create policy "Admin events delete" on public.events for delete using (public.is_admin());
 
--- notifications policies (own only)
+-- notifications policies (own only; admin can read all + broadcast)
 drop policy if exists "Own notifications read" on public.notifications;
-create policy "Own notifications read" on public.notifications for select using (user_id = auth.uid());
+create policy "Own notifications read" on public.notifications
+  for select using (user_id = auth.uid() or public.is_admin());
 drop policy if exists "Own notifications update" on public.notifications;
 create policy "Own notifications update" on public.notifications for update using (user_id = auth.uid());
+-- অ্যাডমিন সব ইউজারকে notification পাঠাতে পারবে (broadcast)
+drop policy if exists "Admin notifications insert" on public.notifications;
+create policy "Admin notifications insert" on public.notifications
+  for insert with check (public.is_admin());
+-- অ্যাডমিন notification মুছতে পারবে
+drop policy if exists "Admin notifications delete" on public.notifications;
+create policy "Admin notifications delete" on public.notifications for delete using (public.is_admin());
 
 -- reports policies
 drop policy if exists "Public reports read" on public.reports;
 create policy "Public reports read" on public.reports for select using (true);
 drop policy if exists "Admin reports write" on public.reports;
 create policy "Admin reports write" on public.reports for insert with check (public.is_admin());
+-- অ্যাডমিন report পরিচালনা করতে পারবে
+drop policy if exists "Admin reports update" on public.reports;
+create policy "Admin reports update" on public.reports for update using (public.is_admin());
+drop policy if exists "Admin reports delete" on public.reports;
+create policy "Admin reports delete" on public.reports for delete using (public.is_admin());
 
 -- contacts policies
 drop policy if exists "Anyone submit contact" on public.contacts;
@@ -438,6 +461,8 @@ drop policy if exists "Admin partners write" on public.partners;
 create policy "Admin partners write" on public.partners for insert with check (public.is_admin());
 drop policy if exists "Admin partners delete" on public.partners;
 create policy "Admin partners delete" on public.partners for delete using (public.is_admin());
+drop policy if exists "Admin partners update" on public.partners;
+create policy "Admin partners update" on public.partners for update using (public.is_admin());
 
 -- indexes for fast search
 create index if not exists donors_blood_group_idx on public.donors(blood_group);

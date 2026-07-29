@@ -6,9 +6,10 @@ export const metadata: Metadata = { title: "শর্তাবলী" };
 export default function TermsPage() {
   return (
     <div className="container-page max-w-3xl py-12">
-      <h1 className="text-3xl font-bold text-ink">শর্তাবলী</h1>
-      <p className="mt-1 text-sm text-ink/50">সর্বশেষ আপডেট: ২০২৬</p>
-      <div className="mt-6 space-y-4 text-sm leading-relaxed text-ink/70">
+      <span className="eyebrow">Terms</span>
+      <h1 className="section-title mt-3">শর্তাবলী</h1>
+      <p className="mt-2 text-sm text-ink/50">সর্বশেষ আপডেট: ২০২৬</p>
+      <div className="card mt-6 space-y-4 p-6 text-sm leading-relaxed text-ink/70 sm:p-8">
         <p>{site.name}-এর পরিষেবা ব্যবহার করে আপনি নিচের শর্তাবলীতে সম্মত হচ্ছেন।</p>
         <h2 className="text-lg font-bold text-ink">স্বেচ্ছাসেবী পরিষেবা</h2>
         <p>এই প্ল্যাটফর্ম সম্পূর্ণ স্বেচ্ছাসেবী ও অলাভজনক। রক্তদান বা সমন্বয়ের জন্য কোনো আর্থিক লেনদেশন হয় না।</p>

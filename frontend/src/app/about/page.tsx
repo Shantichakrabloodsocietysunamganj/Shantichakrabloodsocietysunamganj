@@ -33,13 +33,13 @@ export default async function AboutPage() {
 
   return (
     <div>
-      <section className="bg-gradient-to-b from-brand-50/70 to-white py-16">
-        <div className="container-page max-w-3xl text-center">
-          <span className="inline-block rounded-full bg-brand-50 px-3 py-1 text-xs font-semibold text-brand-600">
-            {t("about.eyebrow", lang)}
-          </span>
-          <h1 className="mt-4 text-4xl font-extrabold tracking-tight text-zinc-900">{site.name}</h1>
-          <p className="mt-4 text-lg leading-relaxed text-zinc-600">{site.mission}</p>
+      <section className="relative overflow-hidden bg-gradient-to-b from-brand-50/70 to-white py-16">
+        <div className="pointer-events-none absolute -top-24 right-0 h-64 w-64 rounded-full bg-blood-200/40 blur-3xl" />
+        <div className="container-page relative max-w-3xl text-center">
+          <span className="eyebrow">{t("about.eyebrow", lang)}</span>
+          <h1 className="section-title mt-4 text-4xl sm:text-5xl">{site.name}</h1>
+          <span className="mx-auto mt-4 block h-1 w-16 rounded-full bg-gradient-to-r from-brand-600 to-blood-500" />
+          <p className="mx-auto mt-5 max-w-2xl text-lg leading-relaxed text-ink/60">{site.mission}</p>
           <div className="mt-7 flex flex-wrap justify-center gap-3">
             <Link href="/become-donor" className="btn-primary">{t("about.join", lang)}</Link>
             <Link href="/donors" className="btn-outline">{t("hero.findDonors", lang)}</Link>

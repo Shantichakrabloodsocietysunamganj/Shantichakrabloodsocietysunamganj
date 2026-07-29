@@ -1,15 +1,12 @@
 "use client";
 
-// ভাসমান/পড়ন্ত রক্তের ফোঁটা — hero background-এ animation
+// ভাসমান/পড়ন্ত রক্তের ফোঁটা — hero background-এ animation (পরিমিত)
 const DROPS = [
-  { left: "8%", size: 14, delay: 0, dur: 9, op: 0.5 },
-  { left: "20%", size: 9, delay: 2, dur: 11, op: 0.35 },
-  { left: "33%", size: 18, delay: 1, dur: 13, op: 0.45 },
-  { left: "48%", size: 10, delay: 3.5, dur: 10, op: 0.3 },
-  { left: "62%", size: 16, delay: 0.5, dur: 12, op: 0.4 },
-  { left: "74%", size: 8, delay: 2.5, dur: 9.5, op: 0.3 },
-  { left: "86%", size: 13, delay: 1.5, dur: 11.5, op: 0.4 },
-  { left: "94%", size: 11, delay: 3, dur: 10.5, op: 0.35 },
+  { left: "10%", size: 14, delay: 0, dur: 10, op: 0.4 },
+  { left: "28%", size: 10, delay: 1.5, dur: 12, op: 0.3 },
+  { left: "46%", size: 16, delay: 0.8, dur: 13, op: 0.38 },
+  { left: "66%", size: 11, delay: 2.4, dur: 11, op: 0.32 },
+  { left: "86%", size: 13, delay: 1.2, dur: 12, op: 0.36 },
 ];
 
 export default function BloodDrops() {
@@ -33,8 +30,8 @@ export default function BloodDrops() {
       <style>{`
         @keyframes dropFall {
           0% { transform: translateY(-10px) scale(0.9); opacity: 0; }
-          15% { opacity: 0.6; }
-          90% { opacity: 0.5; }
+          15% { opacity: 0.5; }
+          90% { opacity: 0.4; }
           100% { transform: translateY(560px) scale(1.1); opacity: 0; }
         }
       `}</style>

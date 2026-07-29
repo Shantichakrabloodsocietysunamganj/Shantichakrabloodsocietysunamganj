@@ -57,7 +57,7 @@ export default function AdminSeoPage() {
     <div className="container-page py-10">
       <header className="mb-8 flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-ink">🔍 SEO Settings</h1>
+          <h1 className="font-display text-2xl font-extrabold tracking-tight text-ink">🔍 SEO Settings</h1>
           <p className="text-sm text-ink/60">Search engine optimization — meta tags, keywords, analytics।</p>
         </div>
         <Link href="/admin" className="btn-outline">← ড্যাশবোর্ড</Link>

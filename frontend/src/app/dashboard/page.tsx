@@ -52,7 +52,7 @@ export default function DashboardPage() {
     <div className="container-page py-10">
       <header className="mb-8 flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-ink">স্বাগতম, {profile?.full_name ?? "রক্তদাতা"} 👋</h1>
+          <h1 className="font-display text-2xl font-extrabold tracking-tight text-ink">স্বাগতম, {profile?.full_name ?? "রক্তদাতা"} 👋</h1>
           <p className="text-sm text-ink/60">আপনার ড্যাশবোর্ড থেকে প্রোফাইল, অনুরোধ ও রক্তদানের ইতিহাস দেখুন।</p>
         </div>
         <div className="flex gap-2">

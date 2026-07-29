@@ -65,12 +65,14 @@ export default function RequestBloodPage() {
   return (
     <div className="container-page py-10"><div className="mx-auto max-w-3xl">
       <header className="text-center">
-        <span className="inline-block rounded-full bg-brand-50 px-3 py-1 text-xs font-semibold text-brand-600">{en ? "Emergency Help" : "জরুরি সাহায্য"}</span>
-        <h1 className="mt-3 text-3xl font-bold tracking-tight text-zinc-900">{en ? "Request Blood" : "রক্তের অনুরোধ করুন"}</h1>
-        <p className="mt-2 text-zinc-600">{en ? "Enter patient details — your request will appear instantly." : "রোগীর তথ্য দিন — আপনার অনুরোধ তাৎক্ষণিকভাবে প্রকাশ্য তালিকায় চলে যাবে।"}</p>
+        <span className="eyebrow">{en ? "Emergency Help" : "জরুরি সাহায্য"}</span>
+        <h1 className="section-title mt-3">{en ? "Request Blood" : "রক্তের অনুরোধ করুন"}</h1>
+        <span className="mx-auto mt-4 block h-1 w-16 rounded-full bg-gradient-to-r from-blood-500 to-brand-600" />
+        <p className="mx-auto mt-4 max-w-xl text-ink/60">{en ? "Enter patient details — your request will appear instantly." : "রোগীর তথ্য দিন — আপনার অনুরোধ তাৎক্ষণিকভাবে প্রকাশ্য তালিকায় চলে যাবে।"}</p>
       </header>
       <form onSubmit={submit} className="mt-8 card p-6 sm:p-8">
         {serverError && <div className="mb-5 rounded-xl bg-brand-50 p-3 text-sm font-medium text-brand-700">⚠️ {serverError}</div>}
+        {Object.keys(errors).length > 0 && <div className="mb-5 rounded-xl bg-blood-50 p-3 text-sm font-medium text-blood-700">⚠️ {en ? "Please fill all required fields correctly." : "অনুগ্রহ করে সব প্রয়োজনীয় তথ্য সঠিকভাবে দিন।"}</div>}
         <div className="grid gap-5 sm:grid-cols-2">
           <Field label={en ? "Patient Name *" : "রোগীর নাম *"}><input className="input" value={form.patient_name} onChange={(e) => set("patient_name", e.target.value)} /></Field>
           <Field label={en ? "Blood Group *" : "গ্রুপ *"}><select className="input" value={form.blood_group} onChange={(e) => set("blood_group", e.target.value)}><option value="">{en ? "Select" : "নির্বাচন"}</option>{BLOOD_GROUPS.map((g) => <option key={g} value={g}>{g}</option>)}</select></Field>
@@ -90,5 +92,5 @@ export default function RequestBloodPage() {
 }
 
 function Field({ label, error, children }: { label: string; error?: string; children: React.ReactNode }) {
-  return <div><label className="label">{label}</label>{children}</div>;
+  return <div><label className="label">{label}</label>{children}{error && <p className="mt-1 text-xs font-medium text-blood-600">{error}</p>}</div>;
 }

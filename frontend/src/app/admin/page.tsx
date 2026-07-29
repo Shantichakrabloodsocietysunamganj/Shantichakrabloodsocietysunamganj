@@ -50,7 +50,7 @@ export default function AdminPage() {
     setStats({
       donors: d.data?.length ?? 0,
       requests: reqs.length,
-      pending: reqs.filter((r) => ["pending", "approved", "open"].includes((r as any).status)).length,
+      pending: reqs.filter((r) => ["pending", "approved"].includes((r as any).status)).length,
       contacts: c.data?.length ?? 0,
       completed: reqs.filter((r) => (r as any).status === "completed").length,
       volunteers: v.count ?? 0,
@@ -68,10 +68,10 @@ export default function AdminPage() {
 
   // Bulk operations
   const toggleDonor = (id: string) => {
-    setSelectedDonors((prev) => { const n = new Set(prev); n.has(id) ? n.delete(id) : n.add(id); return n; });
+    setSelectedDonors((prev) => { const n = new Set(prev); if (n.has(id)) n.delete(id); else n.add(id); return n; });
   };
   const toggleReq = (id: string) => {
-    setSelectedReqs((prev) => { const n = new Set(prev); n.has(id) ? n.delete(id) : n.add(id); return n; });
+    setSelectedReqs((prev) => { const n = new Set(prev); if (n.has(id)) n.delete(id); else n.add(id); return n; });
   };
   const toggleAllDonors = () => {
     setSelectedDonors((prev) => prev.size === donors.length ? new Set() : new Set(donors.map((d) => d.id)));
@@ -127,7 +127,7 @@ export default function AdminPage() {
     <div className="container-page py-10">
       <header className="mb-8 flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-ink">🛡️ অ্যাডমিন ড্যাশবোর্ড</h1>
+          <h1 className="font-display text-2xl font-extrabold tracking-tight text-ink">🛡️ অ্যাডমিন ড্যাশবোর্ড</h1>
           <p className="text-sm text-ink/60">সমিতির সম্পূর্ণ ব্যবস্থাপনা এক জায়গায়।</p>
         </div>
         <div className="flex gap-2">

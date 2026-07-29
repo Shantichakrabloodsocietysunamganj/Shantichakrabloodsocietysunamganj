@@ -9,8 +9,9 @@ export default function FaqPage() {
     <div className="container-page py-12">
       <div className="mx-auto max-w-2xl text-center">
         <span className="eyebrow">FAQ</span>
-        <h1 className="mt-3 text-3xl font-bold tracking-tight text-ink">সাধারণ জিজ্ঞাসিত প্রশ্ন</h1>
-        <p className="mt-2 text-ink/60">রক্তদান সম্পর্কে আপনার সব প্রশ্নের উত্তর এক জায়গায়।</p>
+        <h1 className="section-title mt-3">সাধারণ জিজ্ঞাসিত প্রশ্ন</h1>
+        <span className="mx-auto mt-4 block h-1 w-16 rounded-full bg-gradient-to-r from-brand-600 to-blood-500" />
+        <p className="mx-auto mt-4 max-w-xl text-ink/60">রক্তদান সম্পর্কে আপনার সব প্রশ্নের উত্তর এক জায়গায়।</p>
       </div>
       <div className="mt-10">
         <Faq />

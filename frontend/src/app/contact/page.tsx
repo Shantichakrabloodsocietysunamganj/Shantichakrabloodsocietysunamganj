@@ -56,8 +56,10 @@ export default function ContactPage() {
   return (
     <div className="container-page py-12">
       <div className="mx-auto max-w-2xl text-center">
-        <h1 className="text-3xl font-bold tracking-tight text-ink">{en ? "Contact Us" : t("nav.contact", lang)}</h1>
-        <p className="mt-2 text-ink/60">{en ? "Questions, suggestions or partnership? Reach out." : "প্রশ্ন, পরামর্শ বা সহযোগিতার জন্য যোগাযোগ করুন।"}</p>
+        <span className="eyebrow">{en ? "Get in touch" : "যোগাযোগ"}</span>
+        <h1 className="section-title mt-3">{en ? "Contact Us" : t("nav.contact", lang)}</h1>
+        <span className="mx-auto mt-4 block h-1 w-16 rounded-full bg-gradient-to-r from-brand-600 to-blood-500" />
+        <p className="mx-auto mt-4 max-w-xl text-ink/60">{en ? "Questions, suggestions or partnership? Reach out." : "প্রশ্ন, পরামর্শ বা সহযোগিতার জন্য যোগাযোগ করুন।"}</p>
       </div>
 
       <div className="mx-auto mt-10 grid max-w-4xl gap-8 lg:grid-cols-5">

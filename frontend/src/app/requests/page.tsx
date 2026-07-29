@@ -24,7 +24,7 @@ export default function RequestsPage() {
         let query = supabase
           .from("blood_requests")
           .select("*")
-          .in("status", ["pending", "approved", "open"])
+          .in("status", ["pending", "approved"])
           .order("needed_date", { ascending: true })
           .order("created_at", { ascending: false });
         if (group) query = query.eq("blood_group", group);
@@ -43,8 +43,10 @@ export default function RequestsPage() {
     <div className="container-page py-10">
       <header className="flex flex-wrap items-end justify-between gap-4">
         <div className="max-w-xl">
-          <h1 className="text-3xl font-bold tracking-tight text-zinc-900">{t("requests.title", lang)}</h1>
-          <p className="mt-2 text-zinc-600">{t("requests.desc", lang)}</p>
+          <span className="eyebrow">{t("donors.group", lang)}</span>
+          <h1 className="section-title mt-3">{t("requests.title", lang)}</h1>
+          <span className="mt-4 block h-1 w-16 rounded-full bg-gradient-to-r from-blood-500 to-brand-600" />
+          <p className="mt-4 text-ink/60">{t("requests.desc", lang)}</p>
         </div>
         <Link href="/request-blood" className="btn-primary shrink-0">{t("requests.new", lang)}</Link>
       </header>
