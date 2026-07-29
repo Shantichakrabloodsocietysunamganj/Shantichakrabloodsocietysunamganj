@@ -8,7 +8,6 @@ import { t, type Lang } from "@/lib/i18n";
 import BloodDrops from "./BloodDrops";
 import Particles from "./Particles";
 import BloodDrop3D from "./BloodDrop3D";
-import BangladeshMap3D from "./BangladeshMap3D";
 
 export default function Hero({
   donorCount,
@@ -104,14 +103,37 @@ export default function Hero({
           </div>
         </div>
 
-        {/* Right: 3D Bangladesh Map */}
+        {/* Right: Stats Card */}
         <div className="relative">
           <div className="animate-fade-up [animation-delay:200ms]">
-            <BangladeshMap3D lang={lang} />
+            <div className="rounded-3xl border border-white/15 bg-white/8 p-6 backdrop-blur-md">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="rounded-2xl bg-white/10 p-4 text-center">
+                  <p className="text-3xl font-extrabold text-white">{donorCount.toLocaleString(en ? "en-US" : "bn-BD")}</p>
+                  <p className="text-xs text-brand-100/70">{en ? "Donors" : "দাতা"}</p>
+                </div>
+                <div className="rounded-2xl bg-white/10 p-4 text-center">
+                  <p className="text-3xl font-extrabold text-blood-200">{openRequestCount.toLocaleString(en ? "en-US" : "bn-BD")}</p>
+                  <p className="text-xs text-brand-100/70">{en ? "Requests" : "অনুরোধ"}</p>
+                </div>
+              </div>
+              <div className="mt-4 rounded-2xl bg-blood-500/90 p-4 text-center">
+                <p className="text-xs font-medium text-blood-50">{en ? "LIVE" : "লাইভ"}</p>
+                <p className="mt-1 text-2xl font-extrabold text-white">{openRequestCount.toLocaleString(en ? "en-US" : "bn-BD")} {en ? "active" : "টি চলমান"}</p>
+                <p className="text-xs text-blood-50/80">{en ? "Your decision can save a life" : "আপনার একটি সিদ্ধান্ত একটি পরিবারকে বাঁচাতে পারে"}</p>
+              </div>
+              <div className="mt-4 flex items-center justify-center gap-2 rounded-xl bg-white/5 px-4 py-2">
+                <span className="relative flex h-2 w-2">
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-success-400 opacity-75" />
+                  <span className="relative inline-flex h-2 w-2 rounded-full bg-success-500" />
+                </span>
+                <span className="text-xs font-bold text-success-400">{en ? "100% Sylhet Coverage" : "১০০% সিলেট কভারেজ"}</span>
+              </div>
+            </div>
           </div>
           {/* Floating 3D drop accent */}
           <div className="absolute -bottom-2 -right-1 rotate-[12deg]">
-            <BloodDrop3D size={48} />
+            <BloodDrop3D size={56} />
           </div>
         </div>
       </div>
