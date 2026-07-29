@@ -65,8 +65,13 @@ create table if not exists public.donors (
   is_available boolean not null default true,
   is_verified boolean not null default false,
   notes text,
+  approved boolean not null default false,
   created_at timestamptz not null default now()
 );
+
+-- approval gate: নতুন রেজিস্ট্রেশন pending থাকে, admin approve করলে live হয়
+alter table public.donors add column if not exists approved boolean not null default false;
+update public.donors set approved = true where approved is not true;
 
 -- 3) blood_requests (+ new columns if the old table already exists)
 create table if not exists public.blood_requests (
@@ -291,7 +296,7 @@ create policy "Own profile insert" on public.profiles for insert with check (aut
 
 -- donors policies
 drop policy if exists "Public donor read" on public.donors;
-create policy "Public donor read" on public.donors for select using (true);
+create policy "Public donor read" on public.donors for select using (approved or public.is_admin());
 drop policy if exists "Anyone register donor" on public.donors;
 create policy "Anyone register donor" on public.donors for insert with check (true);
 drop policy if exists "Donor or admin update" on public.donors;

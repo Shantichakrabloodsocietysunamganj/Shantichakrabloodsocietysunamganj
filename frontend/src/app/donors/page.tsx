@@ -44,6 +44,7 @@ function DonorsContent() {
       if (upazila) query = query.eq("upazila", upazila);
       if (onlyAvailable) query = query.eq("is_available", true);
       if (onlyVerified) query = query.eq("is_verified", true);
+      query = query.eq("approved", true);
       const { data, error } = await query.limit(100);
       if (error) throw error;
       let list = (data as Donor[]) ?? [];

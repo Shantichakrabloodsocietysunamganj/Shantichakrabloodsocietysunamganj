@@ -38,7 +38,7 @@ export default function AdminPage() {
     setAuthed(true);
 
     const [d, br, c, v] = await Promise.all([
-      supabase.from("donors").select("*").is("deleted_at", null),
+      supabase.from("donors").select("*").is("deleted_at", null).order("approved", { ascending: true }),
       supabase.from("blood_requests").select("*").is("deleted_at", null).order("created_at", { ascending: false }),
       supabase.from("contacts").select("*").order("created_at", { ascending: false }),
       supabase.from("volunteers").select("*", { count: "exact", head: true }),
@@ -255,7 +255,7 @@ export default function AdminPage() {
                 {donors.map((d) => (
                   <tr key={d.id} className={selectedDonors.has(d.id) ? "bg-brand-50/50" : ""}>
                     <td className="p-3"><input type="checkbox" checked={selectedDonors.has(d.id)} onChange={() => toggleDonor(d.id)} className="h-4 w-4 rounded border-zinc-300 text-brand-600" /></td>
-                    <td className="p-3 font-medium text-ink">{d.full_name}{d.is_verified && <span title="verified"> ✓</span>}</td>
+                    <td className="p-3 font-medium text-ink">{d.full_name}{d.is_verified && <span title="verified"> ✓</span>}{!d.approved && <span className="ml-1 rounded bg-amber-100 px-1.5 py-0.5 text-[10px] font-semibold text-amber-700">⏳ অপেক্ষমাণ</span>}</td>
                     <td className="p-3"><span className="font-semibold">{d.blood_group}</span></td>
                     <td className="p-3 text-ink/60">{d.upazila}</td>
                     <td className="p-3 text-ink/60">{d.phone}</td>
@@ -308,6 +308,18 @@ function RequestActions({ req, onChanged }: { req: BloodRequest; onChanged: () =
 
 function DonorActions({ donor, onChanged }: { donor: Donor; onChanged: () => void }) {
   const supabase = createClient();
+  async function toggleApproved() {
+    await supabase.from("donors").update({ approved: !donor.approved }).eq("id", donor.id);
+    logActivity(donor.approved ? "দাতা অনুমোদন বাতিল করেছেন" : "দাতা অনুমোদন করেছেন", donor.full_name);
+    onChanged();
+  }
   async function remove() { await supabase.from("donors").update({ deleted_at: new Date().toISOString() }).eq("id", donor.id); logActivity("রক্তদাতা মুছেছেন", donor.full_name); onChanged(); }
-  return <button onClick={remove} className="btn-ghost !px-2 !py-1 text-xs text-blood-600">✕ মুছুন</button>;
+  return (
+    <div className="flex items-center justify-end gap-1">
+      <button onClick={toggleApproved} className={donor.approved ? "btn-ghost !px-2 !py-1 text-xs text-success-700" : "btn-primary !px-2 !py-1 text-xs"}>
+        {donor.approved ? "✓ অনুমোদিত" : "অনুমোদন করুন"}
+      </button>
+      <button onClick={remove} className="btn-ghost !px-2 !py-1 text-xs text-blood-600">✕</button>
+    </div>
+  );
 }

@@ -24,7 +24,7 @@ async function getData() {
     const [donors, openReqs, featured, events, testimonials, faqItems, partnersData] = await Promise.all([
       supabase.from("donors").select("*", { count: "exact", head: true }),
       supabase.from("blood_requests").select("*", { count: "exact", head: true }).in("status", ["pending", "approved"]),
-      supabase.from("donors").select("*").order("is_available", { ascending: false }).order("created_at", { ascending: false }).limit(3),
+      supabase.from("donors").select("*").eq("approved", true).order("is_available", { ascending: false }).order("created_at", { ascending: false }).limit(3),
       supabase.from("events").select("*").eq("status", "upcoming").order("event_date", { ascending: true }).limit(3),
       supabase.from("testimonials").select("*").eq("approved", true).order("created_at", { ascending: false }).limit(3),
       supabase.from("faqs").select("question, answer").order("order", { ascending: true }),
@@ -83,6 +83,9 @@ export default async function Home() {
         <div className="container-page">
           <Reveal><SectionHeading eyebrow={lang === "en" ? "Top Donors" : "শীর্ষ দাতা"} title={lang === "en" ? "Donor Leaderboard" : "দাতা তালিকা"} subtitle={lang === "en" ? "Our heroes who stepped up first." : "যারা প্রথম এগিয়ে এলেন — আমাদের নায়ক।"} /></Reveal>
           <div className="mt-8"><Leaderboard lang={lang} /></div>
+          <div className="mt-8 flex justify-center">
+            <Link href="/become-donor" className="btn-primary">{lang === "en" ? "Apply to be a donor →" : "রক্তদাতা হিসেবে আবেদন করুন →"}</Link>
+          </div>
         </div>
       </section>
 
