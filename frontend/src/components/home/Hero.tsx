@@ -105,7 +105,7 @@ export default function Hero({
         </div>
 
         {/* Right: 3D Bangladesh Map */}
-        <div className="relative hidden lg:block">
+        <div className="relative">
           <div className="animate-fade-up [animation-delay:200ms]">
             <BangladeshMap3D lang={lang} />
           </div>
