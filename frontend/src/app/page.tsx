@@ -128,7 +128,7 @@ export default async function Home() {
               ))}
             </div>
           </Reveal>
-          <Reveal delay={120}><CompatibilityChart /></Reveal>
+          <Reveal delay={120}><CompatibilityChart lang={lang} /></Reveal>
         </div>
       </section>
 

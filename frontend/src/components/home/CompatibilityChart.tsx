@@ -2,16 +2,18 @@
 
 import { useState } from "react";
 import { BLOOD_GROUPS, BLOOD_COMPATIBILITY } from "@/data/constants";
+import type { Lang } from "@/lib/i18n";
 
-export default function CompatibilityChart() {
+export default function CompatibilityChart({ lang = "bn" }: { lang?: Lang }) {
+  const en = lang === "en";
   const [group, setGroup] = useState<string>("O-");
   const info = BLOOD_COMPATIBILITY[group];
 
   return (
     <div className="card overflow-hidden">
       <div className="border-b border-zinc-100 p-6">
-        <h3 className="text-lg font-bold text-ink">রক্ত সামঞ্জস্যতা যাচাই করুন</h3>
-        <p className="mt-1 text-sm text-ink/60">আপনার গ্রুপ বেছে নিন, দেখুন কাকে দিতে পারেন বা কার কাছ থেকে নিতে পারেন।</p>
+        <h3 className="font-display text-lg font-bold text-ink">{en ? "Check blood compatibility" : "রক্ত সামঞ্জস্যতা যাচাই করুন"}</h3>
+        <p className="mt-1 text-sm text-ink/60">{en ? "Pick your group to see who you can donate to or receive from." : "আপনার গ্রুপ বেছে নিন, দেখুন কাকে দিতে পারেন বা কার কাছ থেকে নিতে পারেন।"}</p>
       </div>
 
       <div className="flex flex-wrap gap-2 p-5">
@@ -34,7 +36,7 @@ export default function CompatibilityChart() {
         <div className="rounded-2xl bg-success-50 p-5">
           <div className="flex items-center gap-2 text-success-700">
             <span>➡️</span>
-            <h4 className="font-semibold">এই গ্রুপ যাদেরকে দিতে পারে</h4>
+            <h4 className="font-semibold">{en ? "Can donate to" : "এই গ্রুপ যাদেরকে দিতে পারে"}</h4>
           </div>
           <div className="mt-3 flex flex-wrap gap-2">
             {info.canDonateTo.map((g) => (
@@ -48,7 +50,7 @@ export default function CompatibilityChart() {
         <div className="rounded-2xl bg-brand-50 p-5">
           <div className="flex items-center gap-2 text-brand-700">
             <span>⬅️</span>
-            <h4 className="font-semibold">এই গ্রুপ যাদের কাছ থেকে নিতে পারে</h4>
+            <h4 className="font-semibold">{en ? "Can receive from" : "এই গ্রুপ যাদের কাছ থেকে নিতে পারে"}</h4>
           </div>
           <div className="mt-3 flex flex-wrap gap-2">
             {info.canReceiveFrom.map((g) => (
