@@ -1,6 +1,5 @@
 import Link from "next/link";
 import Hero from "@/components/home/Hero";
-import BloodFlowMap from "@/components/home/BloodFlowMap";
 import HeartbeatLine from "@/components/home/HeartbeatLine";
 import BloodGroupFinder from "@/components/home/BloodGroupFinder";
 import BloodAvailability from "@/components/home/BloodAvailability";

@@ -7,7 +7,6 @@ import { t, type Lang } from "@/lib/i18n";
 import BloodDrops from "./BloodDrops";
 import Particles from "./Particles";
 import BloodDrop3D from "./BloodDrop3D";
-import BangladeshMap3D from "./BangladeshMap3D";
 
 export default function Hero({
   donorCount,
@@ -24,6 +23,7 @@ export default function Hero({
 }) {
   const router = useRouter();
   const en = lang === "en";
+  const num = (n: number) => n.toLocaleString(en ? "en-US" : "bn-BD");
 
   return (
     <section className="relative overflow-hidden">
@@ -51,7 +51,7 @@ export default function Hero({
           {/* Headline */}
           <h1 className="mt-5 font-display text-4xl font-extrabold leading-[1.08] tracking-tight text-white sm:text-5xl lg:text-[3.4rem]">
             {en ? (
-              <>Every Drop <span className="text-gradient bg-gradient-to-r from-rose-300 via-white to-rose-200">Saves a Life.</span></>
+              <>Every Drop <span className="bg-gradient-to-r from-rose-300 via-white to-rose-200 bg-clip-text text-transparent">Saves a Life.</span></>
             ) : (
               <>প্রতিটি ফোঁটায় <span className="bg-gradient-to-r from-rose-300 via-white to-rose-200 bg-clip-text text-transparent">লুকিয়ে আছে একটি জীবন</span></>
             )}
@@ -89,23 +89,42 @@ export default function Hero({
               ))}
             </div>
           </div>
-
-          {/* Live Stats */}
-          <div className="mt-7 grid grid-cols-3 gap-3">
-            <Stat value={donorCount.toLocaleString(en ? "en-US" : "bn-BD")} label={en ? "Registered Donors" : "নিবন্ধিত দাতা"} />
-            <Stat value={openRequestCount.toLocaleString(en ? "en-US" : "bn-BD")} label={en ? "Blood Requests" : "অনুরোধ"} accent="text-rose-300" />
-            <Stat value="100%" label={en ? "Sylhet Coverage" : "সিলেট কভারেজ"} accent="text-emerald-300" />
-          </div>
         </div>
 
-        {/* Right: 3D Bangladesh Map */}
+        {/* Right: Live Stats Card (replaces old 3D map) */}
         <div className="relative">
           <div className="animate-fade-up [animation-delay:200ms]">
-            <BangladeshMap3D lang={lang} />
+            <div className="rounded-3xl border border-white/15 bg-white/[0.07] p-6 backdrop-blur-md shadow-glow">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="rounded-2xl bg-white/10 p-4 text-center">
+                  <p className="font-display text-3xl font-extrabold text-white">{num(donorCount)}</p>
+                  <p className="mt-0.5 text-xs text-brand-100/70">{en ? "Donors" : "দাতা"}</p>
+                </div>
+                <div className="rounded-2xl bg-white/10 p-4 text-center">
+                  <p className="font-display text-3xl font-extrabold text-rose-200">{num(openRequestCount)}</p>
+                  <p className="mt-0.5 text-xs text-brand-100/70">{en ? "Requests" : "অনুরোধ"}</p>
+                </div>
+              </div>
+
+              <div className="mt-4 overflow-hidden rounded-2xl bg-gradient-to-br from-blood-500 to-blood-700 p-4 text-center shadow-glow-red">
+                <p className="text-[11px] font-bold uppercase tracking-wide text-blood-50/90">{en ? "LIVE" : "লাইভ"}</p>
+                <p className="mt-1 font-display text-2xl font-extrabold text-white">{num(openRequestCount)} {en ? "active" : "টি চলমান"}</p>
+                <p className="mt-0.5 text-xs text-blood-50/80">{en ? "Your decision can save a life" : "আপনার একটি সিদ্ধান্ত একটি পরিবারকে বাঁচাতে পারে"}</p>
+              </div>
+
+              <div className="mt-4 flex items-center justify-center gap-2 rounded-xl bg-white/5 px-4 py-2">
+                <span className="relative flex h-2 w-2">
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-success-400 opacity-75" />
+                  <span className="relative inline-flex h-2 w-2 rounded-full bg-success-500" />
+                </span>
+                <span className="text-xs font-bold text-success-300">{en ? "100% Sylhet Coverage" : "১০০% সিলেট কভারেজ"}</span>
+              </div>
+            </div>
           </div>
+
           {/* Floating 3D drop accent */}
           <div className="absolute -bottom-3 -right-1 rotate-[12deg]">
-            <BloodDrop3D size={48} />
+            <BloodDrop3D size={56} />
           </div>
         </div>
       </div>
@@ -115,14 +134,5 @@ export default function Hero({
         <path d="M0,32 C240,60 480,60 720,40 C960,20 1200,20 1440,40 L1440,60 L0,60 Z" />
       </svg>
     </section>
-  );
-}
-
-function Stat({ value, label, accent = "text-white" }: { value: string; label: string; accent?: string }) {
-  return (
-    <div className="rounded-xl border border-white/10 bg-white/5 p-3 backdrop-blur-sm">
-      <p className={`font-display text-2xl font-extrabold ${accent}`}>{value}</p>
-      <p className="mt-0.5 text-[11px] font-medium text-brand-200/70">{label}</p>
-    </div>
   );
 }
