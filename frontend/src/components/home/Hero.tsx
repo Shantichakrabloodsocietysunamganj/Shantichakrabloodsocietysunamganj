@@ -8,7 +8,7 @@ import { t, type Lang } from "@/lib/i18n";
 import BloodDrops from "./BloodDrops";
 import Particles from "./Particles";
 import BloodDrop3D from "./BloodDrop3D";
-import HeroMap from "./HeroMap";
+import BangladeshMap3D from "./BangladeshMap3D";
 
 export default function Hero({
   donorCount,
@@ -25,96 +25,93 @@ export default function Hero({
 }) {
   const router = useRouter();
   const [group, setGroup] = useState("");
-
-  const search = () =>
-    router.push(group ? `/donors?group=${encodeURIComponent(group)}` : "/donors");
+  const en = lang === "en";
 
   return (
     <section className="relative overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-br from-brand-800 via-brand-700 to-brand-600" />
-      <div className="absolute inset-0 opacity-30 [background-image:radial-gradient(circle_at_20%_20%,white_1px,transparent_1px)] [background-size:28px_28px]" />
-      <div className="pointer-events-none absolute -right-32 -top-32 h-96 w-96 rounded-full bg-blood-500/30 blur-3xl" />
-      <div className="pointer-events-none absolute -bottom-32 -left-20 h-80 w-80 rounded-full bg-brand-400/30 blur-3xl" />
+      {/* Background */}
+      <div className="absolute inset-0 bg-gradient-to-br from-brand-900 via-brand-800 to-brand-700" />
+      <div className="absolute inset-0 opacity-20 [background-image:radial-gradient(circle_at_30%_20%,white_1px,transparent_1px)] [background-size:32px_32px]" />
+      <div className="pointer-events-none absolute -right-32 -top-32 h-[500px] w-[500px] rounded-full bg-blood-500/15 blur-[100px]" />
+      <div className="pointer-events-none absolute -bottom-40 -left-20 h-96 w-96 rounded-full bg-brand-400/20 blur-[80px]" />
       <BloodDrops />
       <Particles />
 
-      <div className="container-page relative grid items-center gap-8 py-12 lg:grid-cols-2 lg:py-20">
+      <div className="container-page relative grid items-center gap-8 py-10 lg:grid-cols-2 lg:py-16">
         {/* Left: Content */}
         <div className="animate-fade-up">
-          <span className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1 text-xs font-semibold text-white backdrop-blur">
+          {/* Badge */}
+          <span className="inline-flex items-center gap-2 rounded-full border border-blood-400/30 bg-blood-500/10 px-3 py-1 text-xs font-bold text-blood-300 backdrop-blur-sm">
             <span className="relative flex h-2 w-2">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-blood-300 opacity-75" />
-              <span className="relative inline-flex h-2 w-2 rounded-full bg-blood-400" />
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-blood-500 opacity-75" />
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-blood-500" />
             </span>
-            {heroBadge || t("hero.badge", lang)}
+            🩸 {en ? "Sylhet Division Fully Covered" : "সিলেট বিভাগ সম্পূর্ণ সক্রিয়"}
           </span>
 
-          <h1 className="mt-4 text-balance text-3xl font-extrabold leading-[1.2] tracking-tight text-white sm:text-4xl lg:text-5xl">
-            {t("hero.title1", lang)}<br />
-            <span className="bg-gradient-to-r from-blood-300 to-amber-200 bg-clip-text text-transparent">
-              {t("hero.title2", lang)}
-            </span>
+          {/* Headline */}
+          <h1 className="mt-4 text-balance text-3xl font-extrabold leading-[1.15] tracking-tight text-white sm:text-4xl lg:text-5xl">
+            {en ? "Every Drop Saves a Life." : "প্রতিটি ফোঁটায় লুকিয়ে আছে একটি জীবন"}
           </h1>
 
-          <p className="mt-4 max-w-lg text-base leading-relaxed text-brand-100 sm:text-lg">{heroDesc || t("hero.desc", lang)}</p>
+          {/* Subheadline */}
+          <p className="mt-4 max-w-lg text-base leading-relaxed text-brand-100/80 sm:text-lg">
+            {heroDesc || (en
+              ? "We've built a voluntary blood donation network across every district and upazila of Sylhet. Our next mission: expand across all of Bangladesh."
+              : "সিলেট বিভাগের প্রতিটি জেলা ও উপজেলায় স্বেচ্ছাসেবী রক্তদান নেটওয়ার্ক গড়ে তুলেছি। পরবর্তী লক্ষ্য — সারা বাংলাদেশে এই জীবনরক্ষার সেবা পৌঁছে দেওয়া।")}
+          </p>
+
+          {/* CTA Buttons */}
+          <div className="mt-5 flex flex-wrap gap-3">
+            <Link href="/donors" className="btn-blood shadow-glow-red">
+              🔴 {en ? "Find Blood Donors" : "রক্তদাতা খুঁজুন"}
+            </Link>
+            <Link href="/become-donor" className="btn border border-white/25 text-white transition hover:bg-white/10">
+              ⚪ {en ? "Become a Donor" : "রক্তদাতা হোন"}
+            </Link>
+          </div>
 
           {/* Quick group search */}
-          <div className="mt-5 rounded-2xl border border-white/15 bg-white/10 p-3 backdrop-blur-md">
-            <p className="mb-2 text-xs font-medium text-brand-200">{t("hero.selectGroup", lang)}</p>
-            <div className="flex flex-wrap gap-2">
+          <div className="mt-5 rounded-2xl border border-white/10 bg-white/5 p-3 backdrop-blur-md">
+            <p className="mb-2 text-xs font-medium text-brand-200">{en ? "Quick search by blood group:" : "গ্রুপ অনুযায়ী দ্রুত খুঁজুন:"}</p>
+            <div className="flex flex-wrap gap-1.5">
               {BLOOD_GROUPS.map((g) => (
                 <button
                   key={g}
                   onClick={() => router.push(`/donors?group=${g}`)}
-                  className={`h-10 w-10 rounded-xl text-sm font-bold transition-all duration-200 hover:scale-110 ${
-                    group === g ? "bg-blood-500 text-white" : "bg-white/15 text-white hover:bg-white/25"
-                  }`}
+                  className="h-9 w-9 rounded-lg bg-white/10 text-xs font-bold text-white transition-all hover:scale-110 hover:bg-blood-500"
                 >
                   {g}
                 </button>
               ))}
-              <button onClick={search} className="btn-white ml-1 !px-4 !py-2 text-xs">
-                {t("hero.findDonors", lang)} →
-              </button>
             </div>
           </div>
 
-          <div className="mt-4 flex flex-wrap gap-3">
-            <Link href="/request-blood" className="btn-blood shadow-glow-red">{t("hero.emergency", lang)}</Link>
-            <Link href="/become-donor" className="btn border border-white/30 text-white hover:bg-white/10">{t("hero.join", lang)}</Link>
-          </div>
-
-          {/* Inline stats */}
-          <div className="mt-6 flex gap-6">
-            <div>
-              <p className="text-2xl font-extrabold text-white">{donorCount.toLocaleString(lang === "en" ? "en-US" : "bn-BD")}</p>
-              <p className="text-xs text-brand-100/70">{t("hero.donors", lang)}</p>
+          {/* Live Stats */}
+          <div className="mt-6 grid grid-cols-3 gap-4">
+            <div className="rounded-xl border border-white/8 bg-white/5 p-3 backdrop-blur-sm">
+              <p className="text-2xl font-extrabold text-white">{donorCount.toLocaleString(en ? "en-US" : "bn-BD")}</p>
+              <p className="text-[10px] font-medium text-brand-200/60">{en ? "Registered Donors" : "নিবন্ধিত দাতা"}</p>
             </div>
-            <div className="border-l border-white/20 pl-6">
-              <p className="text-2xl font-extrabold text-blood-200">{openRequestCount.toLocaleString(lang === "en" ? "en-US" : "bn-BD")}</p>
-              <p className="text-xs text-brand-100/70">{t("hero.requests", lang)}</p>
+            <div className="rounded-xl border border-white/8 bg-white/5 p-3 backdrop-blur-sm">
+              <p className="text-2xl font-extrabold text-blood-300">{openRequestCount.toLocaleString(en ? "en-US" : "bn-BD")}</p>
+              <p className="text-[10px] font-medium text-brand-200/60">{en ? "Blood Requests" : "অনুরোধ"}</p>
             </div>
-            <div className="border-l border-white/20 pl-6">
-              <div className="flex items-center gap-1">
-                <span className="relative flex h-2.5 w-2.5">
-                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-blood-400 opacity-75" />
-                  <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-blood-500" />
-                </span>
-                <span className="text-sm font-bold text-blood-200">{lang === "en" ? "LIVE" : "লাইভ"}</span>
-              </div>
-              <p className="text-xs text-brand-100/70">{lang === "en" ? "Network" : "নেটওয়ার্ক"}</p>
+            <div className="rounded-xl border border-white/8 bg-white/5 p-3 backdrop-blur-sm">
+              <p className="text-2xl font-extrabold text-success-400">100%</p>
+              <p className="text-[10px] font-medium text-brand-200/60">{en ? "Sylhet Coverage" : "সিলেট কভারেজ"}</p>
             </div>
           </div>
         </div>
 
         {/* Right: 3D Bangladesh Map */}
         <div className="relative hidden lg:block">
-          <div className="rounded-3xl border border-white/15 bg-gradient-to-br from-white/8 to-white/3 p-6 backdrop-blur-md">
-            <HeroMap lang={lang} />
+          <div className="animate-fade-up [animation-delay:200ms]">
+            <BangladeshMap3D lang={lang} />
           </div>
           {/* Floating 3D drop accent */}
-          <div className="absolute -bottom-4 -right-2 rotate-[8deg]">
-            <BloodDrop3D size={56} />
+          <div className="absolute -bottom-2 -right-1 rotate-[12deg]">
+            <BloodDrop3D size={48} />
           </div>
         </div>
       </div>
