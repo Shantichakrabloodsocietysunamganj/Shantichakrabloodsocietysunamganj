@@ -7,6 +7,7 @@ import { t, type Lang } from "@/lib/i18n";
 import BloodDrops from "./BloodDrops";
 import Particles from "./Particles";
 import BloodDrop3D from "./BloodDrop3D";
+import BangladeshMap from "./BangladeshMap";
 
 export default function Hero({
   donorCount,
@@ -30,13 +31,12 @@ export default function Hero({
       {/* Background */}
       <div className="absolute inset-0 bg-gradient-to-br from-brand-900 via-brand-800 to-brand-700" />
       <div className="absolute inset-0 opacity-[0.18] [background-image:radial-gradient(circle_at_30%_20%,white_1px,transparent_1px)] [background-size:34px_34px]" />
-      {/* aurora blobs (reduced motion) */}
       <div className="pointer-events-none absolute -right-40 -top-40 h-[34rem] w-[34rem] animate-aurora rounded-full bg-blood-500/20 blur-[120px]" />
       <div className="pointer-events-none absolute -bottom-48 -left-32 h-[30rem] w-[30rem] animate-aurora rounded-full bg-brand-400/20 blur-[110px]" />
       <BloodDrops />
       <Particles />
 
-      <div className="container-page relative grid items-center gap-10 py-12 lg:grid-cols-2 lg:py-20">
+      <div className="container-page relative grid items-center gap-10 py-12 lg:grid-cols-2 lg:py-16">
         {/* Left: Content */}
         <div className="animate-fade-up">
           {/* Badge */}
@@ -49,7 +49,7 @@ export default function Hero({
           </span>
 
           {/* Headline */}
-          <h1 className="mt-5 font-display text-4xl font-extrabold leading-[1.08] tracking-tight text-white sm:text-5xl lg:text-[3.4rem]">
+          <h1 className="mt-5 font-display text-4xl font-extrabold leading-[1.08] tracking-tight text-white sm:text-5xl lg:text-[3.2rem]">
             {en ? (
               <>Every Drop <span className="bg-gradient-to-r from-rose-300 via-white to-rose-200 bg-clip-text text-transparent">Saves a Life.</span></>
             ) : (
@@ -73,7 +73,7 @@ export default function Hero({
           </div>
 
           {/* Quick group search — glass */}
-          <div className="mt-7 rounded-2xl border border-white/10 bg-white/5 p-3 backdrop-blur-md">
+          <div className="mt-6 rounded-2xl border border-white/10 bg-white/5 p-3 backdrop-blur-md">
             <p className="mb-2.5 text-xs font-medium text-brand-200">
               {en ? "Quick search by blood group:" : "গ্রুপ অনুযায়ী দ্রুত খুঁজুন:"}
             </p>
@@ -89,42 +89,23 @@ export default function Hero({
               ))}
             </div>
           </div>
+
+          {/* Live Stats */}
+          <div className="mt-6 grid grid-cols-3 gap-3">
+            <Stat value={num(donorCount)} label={en ? "Registered Donors" : "নিবন্ধিত দাতা"} />
+            <Stat value={num(openRequestCount)} label={en ? "Blood Requests" : "অনুরোধ"} accent="text-rose-300" />
+            <Stat value="100%" label={en ? "Sylhet Coverage" : "সিলেট কভারেজ"} accent="text-emerald-300" />
+          </div>
         </div>
 
-        {/* Right: Live Stats Card (replaces old 3D map) */}
-        <div className="relative">
+        {/* Right: Bangladesh Map */}
+        <div className="relative flex justify-center">
           <div className="animate-fade-up [animation-delay:200ms]">
-            <div className="rounded-3xl border border-white/15 bg-white/[0.07] p-6 backdrop-blur-md shadow-glow">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="rounded-2xl bg-white/10 p-4 text-center">
-                  <p className="font-display text-3xl font-extrabold text-white">{num(donorCount)}</p>
-                  <p className="mt-0.5 text-xs text-brand-100/70">{en ? "Donors" : "দাতা"}</p>
-                </div>
-                <div className="rounded-2xl bg-white/10 p-4 text-center">
-                  <p className="font-display text-3xl font-extrabold text-rose-200">{num(openRequestCount)}</p>
-                  <p className="mt-0.5 text-xs text-brand-100/70">{en ? "Requests" : "অনুরোধ"}</p>
-                </div>
-              </div>
-
-              <div className="mt-4 overflow-hidden rounded-2xl bg-gradient-to-br from-blood-500 to-blood-700 p-4 text-center shadow-glow-red">
-                <p className="text-[11px] font-bold uppercase tracking-wide text-blood-50/90">{en ? "LIVE" : "লাইভ"}</p>
-                <p className="mt-1 font-display text-2xl font-extrabold text-white">{num(openRequestCount)} {en ? "active" : "টি চলমান"}</p>
-                <p className="mt-0.5 text-xs text-blood-50/80">{en ? "Your decision can save a life" : "আপনার একটি সিদ্ধান্ত একটি পরিবারকে বাঁচাতে পারে"}</p>
-              </div>
-
-              <div className="mt-4 flex items-center justify-center gap-2 rounded-xl bg-white/5 px-4 py-2">
-                <span className="relative flex h-2 w-2">
-                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-success-400 opacity-75" />
-                  <span className="relative inline-flex h-2 w-2 rounded-full bg-success-500" />
-                </span>
-                <span className="text-xs font-bold text-success-300">{en ? "100% Sylhet Coverage" : "১০০% সিলেট কভারেজ"}</span>
-              </div>
-            </div>
+            <BangladeshMap lang={lang} variant="dark" />
           </div>
-
           {/* Floating 3D drop accent */}
-          <div className="absolute -bottom-3 -right-1 rotate-[12deg]">
-            <BloodDrop3D size={56} />
+          <div className="absolute -bottom-2 right-2 rotate-[12deg] sm:right-6">
+            <BloodDrop3D size={44} />
           </div>
         </div>
       </div>
@@ -134,5 +115,14 @@ export default function Hero({
         <path d="M0,32 C240,60 480,60 720,40 C960,20 1200,20 1440,40 L1440,60 L0,60 Z" />
       </svg>
     </section>
+  );
+}
+
+function Stat({ value, label, accent = "text-white" }: { value: string; label: string; accent?: string }) {
+  return (
+    <div className="rounded-xl border border-white/10 bg-white/5 p-3 backdrop-blur-sm">
+      <p className={`font-display text-2xl font-extrabold ${accent}`}>{value}</p>
+      <p className="mt-0.5 text-[11px] font-medium text-brand-200/70">{label}</p>
+    </div>
   );
 }

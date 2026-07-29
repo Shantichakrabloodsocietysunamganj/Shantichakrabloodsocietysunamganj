@@ -4,7 +4,6 @@ import HeartbeatLine from "@/components/home/HeartbeatLine";
 import BloodGroupFinder from "@/components/home/BloodGroupFinder";
 import BloodAvailability from "@/components/home/BloodAvailability";
 import Leaderboard from "@/components/home/Leaderboard";
-import BangladeshMap from "@/components/home/BangladeshMap";
 import CompatibilityChart from "@/components/home/CompatibilityChart";
 import Faq from "@/components/home/Faq";
 import SectionHeading from "@/components/ui/SectionHeading";
@@ -84,19 +83,6 @@ export default async function Home() {
         <div className="container-page">
           <Reveal><SectionHeading eyebrow={lang === "en" ? "Top Donors" : "শীর্ষ দাতা"} title={lang === "en" ? "Donor Leaderboard" : "দাতা তালিকা"} subtitle={lang === "en" ? "Our heroes who stepped up first." : "যারা প্রথম এগিয়ে এলেন — আমাদের নায়ক।"} /></Reveal>
           <div className="mt-8"><Leaderboard lang={lang} /></div>
-        </div>
-      </section>
-
-      {/* কভারেজ ম্যাপ */}
-      <section className="container-page py-16 sm:py-20">
-        <div className="grid items-center gap-12 lg:grid-cols-2">
-          <Reveal>
-            <SectionHeading center={false} eyebrow={lang === "en" ? "Coverage" : "কভারেজ"} title={lang === "en" ? "Active across Sylhet" : "সিলেট জুড়ে আমরা সক্রিয়"} subtitle={lang === "en" ? "Sylhet Division is fully covered — every district and upazila. Next goal: all of Bangladesh." : "সিলেট বিভাগের প্রতিটি জেলা ও উপজেলায় রক্তসেবা সম্পূর্ণ সক্রিয়। পরবর্তী লক্ষ্য — সারা বাংলাদেশে সম্প্রসারণ।"} />
-            <div className="mt-6 flex flex-wrap gap-3">
-              <span className="inline-flex items-center gap-2 rounded-xl bg-brand-50 px-4 py-2 text-sm font-semibold text-brand-700">📍 {lang === "en" ? "Sunamganj · Sylhet · Habiganj · Moulvibazar" : "সুনামগঞ্জ · সিলেট · হবিগঞ্জ · মৌলভীবাজার"}</span>
-            </div>
-          </Reveal>
-          <Reveal delay={120}><BangladeshMap lang={lang} /></Reveal>
         </div>
       </section>
 
