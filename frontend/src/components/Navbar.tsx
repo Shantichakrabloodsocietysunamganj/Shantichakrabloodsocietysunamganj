@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import NotificationBell from "@/components/NotificationBell";
@@ -31,8 +31,16 @@ export default function Navbar({
   lang: Lang;
 }) {
   const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const router = useRouter();
   const supabase = createClient();
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 8);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   const logout = async () => {
     await supabase.auth.signOut();
@@ -40,13 +48,19 @@ export default function Navbar({
   };
 
   return (
-    <header className="sticky top-0 z-50 border-b border-zinc-100 bg-white/85 backdrop-blur-xl">
+    <header
+      className={`sticky top-0 z-50 transition-all duration-300 ${
+        scrolled
+          ? "border-b border-zinc-200/70 bg-white/80 shadow-soft backdrop-blur-xl dark:border-white/10 dark:bg-slate-950/70"
+          : "border-b border-transparent bg-white/60 backdrop-blur-md dark:bg-slate-950/40"
+      }`}
+    >
       <nav className="container-page flex h-16 items-center justify-between gap-4">
-        <Link href="/" className="flex items-center gap-2.5 shrink-0" onClick={() => setOpen(false)}>
+        <Link href="/" className="flex shrink-0 items-center gap-2.5" onClick={() => setOpen(false)}>
           <Logo logoUrl={logoUrl} />
           <div className="leading-tight">
-            <div className="text-[15px] font-bold text-ink">{site.shortName}</div>
-            <div className="text-[10px] font-semibold uppercase tracking-wide text-brand-600">
+            <div className="font-display text-[15px] font-extrabold tracking-tight text-ink">{site.shortName}</div>
+            <div className="text-[10px] font-semibold uppercase tracking-[0.12em] text-brand-600">
               {t("nav.subtype", lang)}
             </div>
           </div>
@@ -57,7 +71,7 @@ export default function Navbar({
             <Link
               key={l.href}
               href={l.href}
-              className="rounded-lg px-3 py-2 text-sm font-medium text-ink/70 transition hover:bg-brand-50 hover:text-brand-700"
+              className="rounded-lg px-3 py-2 text-sm font-medium text-ink/70 transition-colors hover:bg-brand-50 hover:text-brand-700"
             >
               {t(l.key, lang)}
             </Link>
@@ -74,8 +88,8 @@ export default function Navbar({
               )}
               <Link href="/dashboard" className="btn-ghost !px-3 !py-2 text-xs">📊 {t("nav.dashboard", lang)}</Link>
               <NotificationBell />
-              <div className="flex items-center gap-2 rounded-xl bg-zinc-50 px-2.5 py-1.5">
-                <span className="flex h-7 w-7 items-center justify-center rounded-full bg-brand-600 text-xs font-bold text-white">
+              <div className="flex items-center gap-2 rounded-xl bg-zinc-50 px-2.5 py-1.5 ring-1 ring-zinc-100 dark:bg-white/5 dark:ring-white/10">
+                <span className="flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-br from-brand-600 to-brand-800 text-xs font-bold text-white">
                   {(profile.full_name ?? "?").charAt(0)}
                 </span>
                 <span className="hidden text-sm font-medium text-ink lg:inline">
@@ -102,7 +116,7 @@ export default function Navbar({
       </nav>
 
       {open && (
-        <div className="border-t border-zinc-100 bg-white xl:hidden">
+        <div className="border-t border-zinc-100 bg-white/95 backdrop-blur-xl xl:hidden dark:border-white/10 dark:bg-slate-950/90">
           <div className="container-page flex flex-col gap-1 py-3">
             <div className="mb-1 flex items-center justify-between px-1">
               <LanguageToggle lang={lang} />
@@ -120,7 +134,10 @@ export default function Navbar({
             ))}
             <div className="mt-2 grid grid-cols-2 gap-2">
               {profile ? (
-                <button onClick={() => { setOpen(false); logout(); }} className="btn-outline">{t("nav.logout", lang)}</button>
+                <>
+                  <Link href="/dashboard" onClick={() => setOpen(false)} className="btn-outline text-center">{t("nav.dashboard", lang)}</Link>
+                  <button onClick={() => { setOpen(false); logout(); }} className="btn-outline">{t("nav.logout", lang)}</button>
+                </>
               ) : (
                 <>
                   <Link href="/login" onClick={() => setOpen(false)} className="btn-outline text-center">{t("nav.login", lang)}</Link>
@@ -148,8 +165,8 @@ function Logo({ logoUrl }: { logoUrl?: string | null }) {
     );
   }
   return (
-    <span className="relative flex h-9 w-9 items-center justify-center overflow-hidden rounded-xl bg-gradient-to-br from-brand-600 to-brand-800 text-white shadow-sm">
-      <svg viewBox="0 0 24 24" className="h-5 w-5" fill="currentColor" aria-hidden="true">
+    <span className="relative flex h-9 w-9 items-center justify-center overflow-hidden rounded-xl bg-gradient-to-br from-brand-600 via-brand-700 to-blood-700 text-white shadow-glow">
+      <svg viewBox="0 0 24 24" className="h-5 w-5 drop-shadow-sm" fill="currentColor" aria-hidden="true">
         <path d="M12 2s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11z" />
       </svg>
     </span>

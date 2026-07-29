@@ -57,8 +57,9 @@ export default async function Home() {
       <Hero donorCount={donorCount} openRequestCount={openRequestCount} lang={lang} heroBadge={settings.hero_badge} heroDesc={settings.hero_desc} />
 
       {/* পরিসংখ্যান - count-up */}
-      <section className="container-page">
-        <div className="card grid grid-cols-2 gap-4 px-6 py-8 sm:grid-cols-4 sm:gap-6">
+      <section className="container-page relative z-10 -mt-8">
+        <div className="card relative grid grid-cols-2 gap-4 overflow-hidden px-6 py-8 sm:grid-cols-4 sm:gap-6 lg:px-10">
+          <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-brand-500/60 to-transparent" />
           <Stat value={donorCount} label={t("home.stats.donors", lang)} />
           <Stat value={openRequestCount} label={t("home.stats.requests", lang)} accent="text-blood-600" />
           <Stat value={livesSaved} label={t("home.stats.lives", lang)} suffix="+" />
@@ -217,10 +218,10 @@ export default async function Home() {
 function Stat({ value, label, accent = "text-brand-600", suffix = "" }: { value: number; label: string; accent?: string; suffix?: string }) {
   return (
     <div className="text-center">
-      <p className={`text-3xl font-extrabold sm:text-4xl ${accent}`}>
+      <p className={`font-display text-4xl font-extrabold tracking-tight sm:text-5xl ${accent}`}>
         <CountUp end={value} suffix={suffix} />
       </p>
-      <p className="mt-1 text-sm font-medium text-ink/60">{label}</p>
+      <p className="mt-1.5 text-sm font-medium text-ink/60">{label}</p>
     </div>
   );
 }
@@ -228,11 +229,11 @@ function Stat({ value, label, accent = "text-brand-600", suffix = "" }: { value:
 function Step({ n, title, desc, href, cta }: { n: string; title: string; desc: string; href: string; cta: string }) {
   return (
     <div className="card-hover relative p-6">
-      <span className="absolute -top-4 left-6 flex h-10 w-10 items-center justify-center rounded-xl bg-brand-600 text-lg font-bold text-white shadow-glow">{n}</span>
-      <div className="pt-4">
-        <h3 className="text-lg font-semibold text-ink">{title}</h3>
+      <span className="absolute -top-4 left-6 flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-brand-600 to-brand-800 font-display text-lg font-extrabold text-white shadow-glow">{n}</span>
+      <div className="pt-5">
+        <h3 className="font-display text-lg font-bold text-ink">{title}</h3>
         <p className="mt-2 text-sm leading-relaxed text-ink/60">{desc}</p>
-        <Link href={href} className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-brand-600 hover:underline">{cta} →</Link>
+        <Link href={href} className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-brand-600 transition hover:gap-2 hover:text-brand-700">{cta} →</Link>
       </div>
     </div>
   );

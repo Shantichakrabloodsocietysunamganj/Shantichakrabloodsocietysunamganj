@@ -5,6 +5,9 @@
 :root {
   --background: #f5f7fa;
   --foreground: #1f2937;
+  --grad-brand: linear-gradient(135deg, #093f7d 0%, #0b4f9c 38%, #256fc0 70%, #d62828 145%);
+  --grad-blood: linear-gradient(135deg, #d62828 0%, #bf2020 55%, #841515 120%);
+  --ring: 11 79 156;
 }
 
 * {
@@ -20,6 +23,7 @@ body {
   color: var(--foreground);
   font-feature-settings: "rlig" 1, "calt" 1;
   -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
 ::selection {
@@ -27,10 +31,24 @@ body {
   color: #fff;
 }
 
+/* subtle artistic mesh on the page background */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image:
+    radial-gradient(at 12% 6%, rgba(37, 111, 192, 0.08) 0px, transparent 45%),
+    radial-gradient(at 88% 2%, rgba(214, 40, 40, 0.06) 0px, transparent 40%),
+    radial-gradient(at 70% 96%, rgba(11, 79, 156, 0.06) 0px, transparent 45%);
+}
+
 /* ===== Dark Mode (professional slate palette via .dark on <html>) ===== */
 .dark { color-scheme: dark; }
 .dark body { background-color: #0f172a; color: #e2e8f0; }
 .dark .card { background-color: #1e293b; border-color: #334155; box-shadow: 0 8px 30px -12px rgb(0 0 0 / 0.6); }
+.dark .glass { background-color: rgba(30,41,59,0.6) !important; border-color: rgba(148,163,184,0.18) !important; }
 .dark .input { background-color: #0f172a; border-color: #334155; color: #f1f5f9; }
 .dark .input::placeholder { color: #64748b; }
 .dark .btn-outline { background-color: #1e293b; color: #e2e8f0; border-color: #334155; }
@@ -81,6 +99,8 @@ body {
 /* faint brand text on dark gradient sections */
 .dark .text-brand-100 { color: #e2e8f0 !important; }
 .dark .text-brand-50 { color: #f8fafc !important; }
+/* gradient text stays vivid in dark */
+.dark .text-gradient { background-position: 0% 50%; }
 /* scrollbar in dark */
 .dark ::-webkit-scrollbar-track { background: #0f172a; }
 .dark ::-webkit-scrollbar-thumb { background: #334155; border-color: #0f172a; }
@@ -100,8 +120,9 @@ body {
 
 /* ===== Print (PDF save) ===== */
 @media print {
-  header, footer, nav, .fixed, .print\:hidden { display: none !important; }
+  header, footer, nav, .fixed, .print\\:hidden { display: none !important; }
   body { background: #fff !important; color: #000 !important; }
+  body::before { display: none !important; }
   .card { box-shadow: none !important; border: 1px solid #ddd !important; background: #fff !important; }
   .container-page { max-width: 100% !important; padding: 0 !important; }
 }
@@ -145,9 +166,17 @@ body {
   .btn:active::after { opacity: 1; transform: scale(1.4); transition: opacity 0s, transform 0s; }
   .btn-primary {
     @apply btn bg-brand-600 text-white shadow-sm hover:bg-brand-700 hover:shadow-glow focus-visible:ring-brand-500;
+    background-image: linear-gradient(135deg, #0b4f9c 0%, #1d6fd0 100%);
+  }
+  .btn-primary:hover {
+    background-image: linear-gradient(135deg, #093f7d 0%, #0b4f9c 100%);
   }
   .btn-blood {
     @apply btn bg-blood-500 text-white shadow-sm hover:bg-blood-600 hover:shadow-glow-red focus-visible:ring-blood-500;
+    background-image: linear-gradient(135deg, #d62828 0%, #bf2020 100%);
+  }
+  .btn-blood:hover {
+    background-image: linear-gradient(135deg, #bf2020 0%, #841515 100%);
   }
   .btn-outline {
     @apply btn border border-zinc-200 bg-white text-ink hover:border-brand-300 hover:bg-brand-50 hover:text-brand-700 focus-visible:ring-brand-500;
@@ -159,12 +188,27 @@ body {
     @apply btn bg-white text-brand-700 hover:bg-brand-50 focus-visible:ring-white/60;
   }
 
-  /* Cards */
+  /* Cards — modern, soft, layered */
   .card {
     @apply rounded-2xl border border-zinc-100 bg-white shadow-card;
   }
   .card-hover {
-    @apply card transition-all duration-300 hover:-translate-y-1 hover:shadow-glow;
+    @apply card transition-all duration-300 hover:-translate-y-1 hover:shadow-card-hover;
+  }
+
+  /* Glassmorphism surface */
+  .glass {
+    background-color: rgba(255, 255, 255, 0.65);
+    -webkit-backdrop-filter: blur(16px) saturate(140%);
+    backdrop-filter: blur(16px) saturate(140%);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    box-shadow: 0 8px 32px -8px rgb(16 24 40 / 0.18), inset 0 1px 0 0 rgb(255 255 255 / 0.5);
+  }
+  .glass-dark {
+    background-color: rgba(15, 23, 42, 0.35);
+    -webkit-backdrop-filter: blur(16px) saturate(140%);
+    backdrop-filter: blur(16px) saturate(140%);
+    border: 1px solid rgba(255, 255, 255, 0.12);
   }
 
   /* Form controls */
@@ -180,7 +224,16 @@ body {
     @apply inline-flex items-center gap-2 rounded-full bg-brand-50 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-brand-600;
   }
   .section-title {
-    @apply text-2xl font-bold tracking-tight text-ink sm:text-3xl;
+    @apply font-display text-3xl font-extrabold tracking-tight text-ink text-balance sm:text-4xl;
+  }
+
+  /* Gradient text (artistic accent) */
+  .text-gradient {
+    background-image: linear-gradient(120deg, #093f7d 0%, #256fc0 40%, #d62828 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    background-size: 200% auto;
   }
 
   /* Skeleton shimmer */
@@ -223,4 +276,7 @@ body {
   /* card hover zoom helper */
   .hover-zoom img { transition: transform 0.6s cubic-bezier(0.22,1,0.36,1); }
   .hover-zoom:hover img { transform: scale(1.08); }
+  /* hide scrollbar but keep scroll */
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 }
