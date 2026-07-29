@@ -45,7 +45,7 @@ export default function AdminFaqPage() {
   return (
     <div className="container-page py-10">
       <header className="mb-8 flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-ink">❓ FAQ ব্যবস্থাপনা</h1>
+        <h1 className="font-display text-2xl font-extrabold tracking-tight text-ink">❓ FAQ ব্যবস্থাপনা</h1>
         <Link href="/admin" className="btn-outline">← ড্যাশবোর্ড</Link>
       </header>
 

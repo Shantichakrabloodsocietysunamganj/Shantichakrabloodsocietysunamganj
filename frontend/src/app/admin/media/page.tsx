@@ -74,7 +74,7 @@ export default function AdminMediaPage() {
     <div className="container-page py-10">
       <header className="mb-6 flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-ink">🖼️ মিডিয়া লাইব্রেরি</h1>
+          <h1 className="font-display text-2xl font-extrabold tracking-tight text-ink">🖼️ মিডিয়া লাইব্রেরি</h1>
           <p className="text-sm text-ink/60">সাইটে ব্যবহৃত সব ছবি — {items.length} টি।</p>
         </div>
         <Link href="/admin" className="btn-outline">← ড্যাশবোর্ড</Link>

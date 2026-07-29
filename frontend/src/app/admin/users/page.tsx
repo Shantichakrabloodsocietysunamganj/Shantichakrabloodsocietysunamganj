@@ -53,7 +53,7 @@ export default function AdminUsersPage() {
     <div className="container-page py-10">
       <header className="mb-8 flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-ink">👥 User & Role Management</h1>
+          <h1 className="font-display text-2xl font-extrabold tracking-tight text-ink">👥 User & Role Management</h1>
           <p className="text-sm text-ink/60">সব নিবন্ধিত ইউজার ও তাদের role পরিচালনা করুন।</p>
         </div>
         <Link href="/admin" className="btn-outline">← ড্যাশবোর্ড</Link>

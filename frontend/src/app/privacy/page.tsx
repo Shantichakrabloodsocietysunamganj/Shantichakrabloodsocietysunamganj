@@ -6,9 +6,10 @@ export const metadata: Metadata = { title: "গোপনীয়তা নী�
 export default function PrivacyPage() {
   return (
     <div className="container-page max-w-3xl py-12">
-      <h1 className="text-3xl font-bold text-ink">গোপনীয়তা নীতি</h1>
-      <p className="mt-1 text-sm text-ink/50">সর্বশেষ আপডেট: ২০২৬</p>
-      <div className="prose mt-6 max-w-none space-y-4 text-sm leading-relaxed text-ink/70">
+      <span className="eyebrow">Privacy</span>
+      <h1 className="section-title mt-3">গোপনীয়তা নীতি</h1>
+      <p className="mt-2 text-sm text-ink/50">সর্বশেষ আপডেট: ২০২৬</p>
+      <div className="card mt-6 space-y-4 p-6 text-sm leading-relaxed text-ink/70 sm:p-8">
         <p>{site.name} আপনার গোপনীয়তা সম্মান করে। এই নীতিটি ব্যাখ্যা করে আমরা কী তথ্য সংগ্রহ করি এবং কীভাবে ব্যবহার করি।</p>
         <h2 className="text-lg font-bold text-ink">আমরা যা সংগ্রহ করি</h2>
         <p>রক্তদাতা হিসেবে নিবন্ধন বা রক্তের অনুরোধ করার সময় আপনার নাম, ফোন নম্বর, রক্তের গ্রুপ ও এলাকার তথ্য সংগ্রহ করা হয়।</p>

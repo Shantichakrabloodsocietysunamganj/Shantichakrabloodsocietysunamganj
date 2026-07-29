@@ -84,9 +84,10 @@ export default function BecomeDonorPage() {
   return (
     <div className="container-page py-10"><div className="mx-auto max-w-3xl">
       <header className="text-center">
-        <span className="inline-block rounded-full bg-brand-50 px-3 py-1 text-xs font-semibold text-brand-600">{en ? "Humanitarian Initiative" : "মানবিক উদ্যোগ"}</span>
-        <h1 className="mt-3 text-3xl font-bold tracking-tight text-zinc-900">{en ? "Register as a Blood Donor" : "রক্তদাতা হিসেবে নিবন্ধন করুন"}</h1>
-        <p className="mt-2 text-zinc-600">{en ? "Join the Sylhet blood donation network. Every registration is a potential life saved." : "আপনার তথ্য দিন এবং সিলেট বিভাগের রক্তদান নেটওয়ার্কে যুক্ত হোন। প্রতিটি নিবন্ধন একটি সম্ভাব্য জীবন রক্ষা।"}</p>
+        <span className="eyebrow">{en ? "Humanitarian Initiative" : "মানবিক উদ্যোগ"}</span>
+        <h1 className="section-title mt-3">{en ? "Register as a Blood Donor" : "রক্তদাতা হিসেবে নিবন্ধন করুন"}</h1>
+        <span className="mx-auto mt-4 block h-1 w-16 rounded-full bg-gradient-to-r from-brand-600 to-blood-500" />
+        <p className="mx-auto mt-4 max-w-xl text-ink/60">{en ? "Join the Sylhet blood donation network. Every registration is a potential life saved." : "আপনার তথ্য দিন এবং সিলেট বিভাগের রক্তদান নেটওয়ার্কে যুক্ত হোন। প্রতিটি নিবন্ধন একটি সম্ভাব্য জীবন রক্ষা।"}</p>
       </header>
       <form onSubmit={submit} className="mt-8 card p-6 sm:p-8">
         {serverError && <div className="mb-5 rounded-xl bg-brand-50 p-3 text-sm font-medium text-brand-700">⚠️ {serverError}</div>}

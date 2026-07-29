@@ -84,8 +84,10 @@ function DonorsContent() {
   return (
     <div className="container-page py-10">
       <header className="max-w-2xl">
-        <h1 className="text-3xl font-bold tracking-tight text-zinc-900">{t("donors.title", lang)}</h1>
-        <p className="mt-2 text-zinc-600">{t("donors.desc", lang)}</p>
+        <span className="eyebrow">{t("donors.group", lang)}</span>
+        <h1 className="section-title mt-3">{t("donors.title", lang)}</h1>
+        <span className="mt-4 block h-1 w-16 rounded-full bg-gradient-to-r from-brand-600 to-blood-500" />
+        <p className="mt-4 text-ink/60">{t("donors.desc", lang)}</p>
       </header>
 
       <div className="mt-8 card p-5">

@@ -58,7 +58,7 @@ export default function CertificatePage() {
             <p className="mt-1 text-sm text-ink/60">Certificate of Appreciation</p>
 
             <p className="mt-8 text-sm text-ink/60">এই সনদ প্রদান করা হলো</p>
-            <h2 className="mt-2 text-2xl font-bold text-ink">{donor.full_name}</h2>
+            <h2 className="mt-2 font-display text-2xl font-extrabold tracking-tight text-ink">{donor.full_name}</h2>
             <p className="mt-1 text-sm text-ink/60">
               রক্তের গ্রুপ <span className="font-semibold text-ink">{donor.blood_group}</span> • {donor.district}, {donor.upazila}
             </p>

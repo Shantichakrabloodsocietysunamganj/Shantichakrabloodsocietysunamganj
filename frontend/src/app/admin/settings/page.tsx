@@ -113,7 +113,7 @@ export default function AdminSettingsPage() {
     <div className="container-page py-10">
       <header className="mb-8 flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-ink">⚙️ ওয়েবসাইট সেটিংস</h1>
+          <h1 className="font-display text-2xl font-extrabold tracking-tight text-ink">⚙️ ওয়েবসাইট সেটিংস</h1>
           <p className="text-sm text-ink/60">এখান থেকে লোগো, যোগাযোগ ও গ্যালারি পরিবর্তন করুন।</p>
         </div>
         <div className="flex gap-2">

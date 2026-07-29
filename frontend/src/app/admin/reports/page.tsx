@@ -41,7 +41,7 @@ export default function AdminReportsPage() {
   return (
     <div className="container-page py-10">
       <header className="mb-6 flex flex-wrap items-center justify-between gap-3 print:hidden">
-        <h1 className="text-2xl font-bold text-ink">📊 রিপোর্ট</h1>
+        <h1 className="font-display text-2xl font-extrabold tracking-tight text-ink">📊 রিপোর্ট</h1>
         <div className="flex flex-wrap gap-2">
           <Link href="/admin" className="btn-outline">← ড্যাশবোর্ড</Link>
           <button onClick={() => exportCSV("donors.csv", donors)} className="btn-outline !py-2 text-xs">দাতা CSV</button>
