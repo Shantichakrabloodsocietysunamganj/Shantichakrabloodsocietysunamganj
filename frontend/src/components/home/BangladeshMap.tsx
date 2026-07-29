@@ -21,13 +21,18 @@ const DIVISIONS = [
   { n: "ময়মনসিংহ", en: "Mymensingh", x: 1474, y: 435 },
 ];
 
-export default function BangladeshMap({ lang }: { lang: Lang }) {
+export default function BangladeshMap({ lang, variant = "light" }: { lang: Lang; variant?: "light" | "dark" }) {
   const en = lang === "en";
+  const dark = variant === "dark";
   return (
-    <div className="card flex flex-col items-center gap-3 bg-gradient-to-b from-brand-50/60 to-white p-5">
+    <div
+      className={`flex flex-col items-center gap-3 p-5 ${
+        dark ? "rounded-3xl border border-white/15 bg-white/[0.07] backdrop-blur-md shadow-glow" : "card bg-gradient-to-b from-brand-50/60 to-white"
+      }`}
+    >
       <svg
         viewBox={VB}
-        className="block h-auto w-full max-w-[14rem] sm:max-w-[16rem]"
+        className="block h-auto w-full max-w-[13rem] sm:max-w-[15rem]"
         role="img"
         aria-label={en ? "Bangladesh map — Sylhet highlighted" : "বাংলাদেশ মানচিত্র — সিলেট হাইলাইট"}
       >
@@ -74,7 +79,7 @@ export default function BangladeshMap({ lang }: { lang: Lang }) {
       </svg>
 
       {/* Legend */}
-      <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-xs text-ink/70">
+      <div className={`flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-xs ${dark ? "text-white/70" : "text-ink/70"}`}>
         <span className="inline-flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-full bg-blood-500" />{en ? "Sylhet (active)" : "সিলেট (সক্রিয়)"}</span>
         <span className="inline-flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-full bg-brand-500" />{en ? "Other divisions" : "অন্যান্য বিভাগ"}</span>
       </div>
