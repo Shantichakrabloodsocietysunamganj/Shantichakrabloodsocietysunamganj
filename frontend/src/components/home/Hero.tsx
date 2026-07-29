@@ -101,7 +101,7 @@ export default function Hero({
         {/* Right: Bangladesh Map */}
         <div className="relative flex justify-center">
           <div className="animate-fade-up [animation-delay:200ms]">
-            <BangladeshMap lang={lang} variant="dark" />
+            <BangladeshMap lang={lang} />
           </div>
           {/* Floating 3D drop accent */}
           <div className="absolute -bottom-2 right-2 rotate-[12deg] sm:right-6">
