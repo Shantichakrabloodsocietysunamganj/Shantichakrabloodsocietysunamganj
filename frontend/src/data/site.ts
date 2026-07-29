@@ -16,14 +16,14 @@ export const site = {
   email: "shantichakrabloodsociety@gmail.com",
   address: "সুনামগঞ্জ, সিলেট, বাংলাদেশ",
   mapQuery: "Sunamganj, Sylhet, Bangladesh",
-  facebook: "https://m.me/j/AbZHC2OF-V3kNxqa/?send_source=gc%3Acopy_invite_link_t",
+  facebook: "https://www.facebook.com/share/g/192g4S4brD/",
   whatsapp: "https://chat.whatsapp.com/If9avlPk5qp2ecFy6Xze2S",
 
   // logo: যদি /images/logo.png থাকে তবে সেটা, নাহলে SVG fallback
   logo: "/images/logo.png",
 
   mission:
-    "শান্তিচক্র ব্লাড সোসাইটি, সুনামগঞ্জ একটি স্বেচ্ছাসেবী ও অলাভজনক রক্তদান সংগঠন। ২০২৪ সালে প্রতিষ্ঠিত এই সংগঠনের মূল লক্ষ্য হলো নিরাপদ ও স্বেচ্ছায় রক্তদানকে উৎসাহিত করা, জরুরি মুহূর্তে রক্তের প্রয়োজন এমন মানুষের পাশে দাঁড়ানো এবং মানবিক সেবার মাধ্যমে একটি সচেতন ও সহযোগিতাপূর্ণ সমাজ গড়ে তোলা। বর্তমানে এটি সিলেট বিভাগের চার জেলায় (সুনামগঞ্জ, সিলেট, হবিগঞ্জ, মৌলভীবাজার) তার কার্যক্রম বিস্তৃত করছে।",
+    "শান্তিচক্র ব্লাড সোসাইটি, সুনামগঞ্জ একটি স্বেচ্ছাসেবী ও অলাভজনক রক্তদান সংগঠন। ২০২৫ সালে প্রতিষ্ঠিত এই সংগঠনের মূল লক্ষ্য হলো নিরাপদ ও স্বেচ্ছায় রক্তদানকে উৎসাহিত করা, জরুরি মুহূর্তে রক্তের প্রয়োজন এমন মানুষের পাশে দাঁড়ানো এবং মানবিক সেবার মাধ্যমে একটি সচেতন ও সহযোগিতাপূর্ণ সমাজ গড়ে তোলা। বর্তমানে এটি সিলেট বিভাগের চার জেলায় (সুনামগঞ্জ, সিলেট, হবিগঞ্জ, মৌলভীবাজার) তার কার্যক্রম বিস্তৃত করছে।",
   vision: "এমন এক সিলেট বিভাগ গড়ে তোলা, যেখানে কেউ রক্তের অভাবে চিকিৎসা থেকে বঞ্চিত হবে না।",
 
   // পরিসংখ্যান fallback
@@ -50,7 +50,7 @@ export const site = {
   // কমিটি (পরিবর্তনযোগ্য)
   founders: [
     { name: "সালমান আহমেদ", role: "প্রতিষ্ঠাতা সদস্য", photo_url: "https://res.cloudinary.com/easd4c4k/image/upload/v1785333426/IMG_20260710_181427963_jzig7z.jpg" },
-    { name: "রাহাত আহমেদ", role: "প্রতিষ্ঠাতা সদস্য", photo_url: "https://res.cloudinary.com/easd4c4k/image/upload/v1785333427/IMG_20260520_122929449_lqtjjm.jpg" },
+    { name: "রাহাত আহমেদ", role: "সহ-প্রতিষ্ঠাতা ও সাধারণ সম্পাদক", photo_url: "https://res.cloudinary.com/easd4c4k/image/upload/v1785333427/IMG_20260520_122929449_lqtjjm.jpg" },
     { name: "জুবায়ের আহমেদ", role: "প্রতিষ্ঠাতা সদস্য", photo_url: null },
     { name: "আশরাফুল আলম", role: "প্রতিষ্ঠাতা সদস্য", photo_url: null },
     { name: "হিরণ", role: "প্রতিষ্ঠাতা সদস্য", photo_url: null },
