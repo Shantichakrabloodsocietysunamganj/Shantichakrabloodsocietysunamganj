@@ -67,9 +67,6 @@ create table if not exists public.donors (
   notes text,
   created_at timestamptz not null default now()
 );
-alter table public.donors add column if not exists user_id uuid references public.profiles(id) on delete set null;
-alter table public.donors add column if not exists union_name text;
-alter table public.donors add column if not exists is_verified boolean not null default false;
 
 -- 3) blood_requests (+ new columns if the old table already exists)
 create table if not exists public.blood_requests (
@@ -89,8 +86,6 @@ create table if not exists public.blood_requests (
   requested_by uuid references public.profiles(id) on delete set null,
   created_at timestamptz not null default now()
 );
-alter table public.blood_requests add column if not exists request_type text not null default 'normal';
-alter table public.blood_requests add column if not exists requested_by uuid references public.profiles(id) on delete set null;
 
 -- 4) donations
 create table if not exists public.donations (
@@ -198,9 +193,6 @@ create table if not exists public.site_settings (
 );
 insert into public.site_settings (id) values (1) on conflict (id) do nothing;
 -- add new columns if old site_settings already exists
-alter table public.site_settings add column if not exists org_name text;
-alter table public.site_settings add column if not exists youtube text;
-alter table public.site_settings add column if not exists map_url text;
 alter table public.site_settings add column if not exists hero_badge text;
 alter table public.site_settings add column if not exists hero_desc text;
 alter table public.site_settings add column if not exists mission text;
