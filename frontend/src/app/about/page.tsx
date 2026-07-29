@@ -108,31 +108,33 @@ export default async function AboutPage() {
       </section>
 
       {/* Developer Section */}
-      <section className="bg-gradient-to-br from-brand-900 via-brand-800 to-brand-900 py-16">
-        <div className="container-page">
+      <section className="relative overflow-hidden bg-gradient-to-br from-brand-950 via-brand-900 to-brand-800 py-16">
+        <div className="pointer-events-none absolute -top-24 left-1/2 h-64 w-[42rem] -translate-x-1/2 rounded-full bg-brand-500/15 blur-3xl" />
+        <div className="pointer-events-none absolute bottom-0 right-0 h-64 w-64 rounded-full bg-blood-600/15 blur-3xl" />
+        <div className="container-page relative">
           <Reveal>
-            <div className="mx-auto max-w-4xl overflow-hidden rounded-3xl border border-white/10 bg-white/5 backdrop-blur-md">
+            <div className="mx-auto max-w-4xl overflow-hidden rounded-3xl border border-white/10 bg-white/[0.06] shadow-glow backdrop-blur-md">
               <div className="grid items-center gap-8 p-8 md:grid-cols-2 md:p-10">
                 {/* Left: Photo */}
                 <div className="flex flex-col items-center gap-4">
                   <div className="relative">
-                    <div className="absolute -inset-2 rounded-full bg-gradient-to-br from-brand-500/30 to-blood-500/30 blur-2xl" />
+                    <div className="absolute -inset-3 rounded-full bg-gradient-to-br from-brand-400/40 to-blood-500/40 blur-2xl" />
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src="https://res.cloudinary.com/easd4c4k/image/upload/v1785333427/IMG_20260520_122929449_lqtjjm.jpg"
                       alt="Rahat Ahmed"
-                      className="relative h-32 w-32 rounded-full object-cover ring-4 ring-white/10"
+                      className="relative h-32 w-32 rounded-full object-cover ring-4 ring-white/15"
                     />
-                    <span className="absolute bottom-1 right-1 flex h-6 w-6 items-center justify-center rounded-full bg-success-500 text-xs ring-4 ring-brand-900">
+                    <span className="absolute bottom-1 right-1 flex h-6 w-6 items-center justify-center rounded-full bg-success-500 text-xs ring-4 ring-brand-950">
                       <span className="h-2 w-2 rounded-full bg-white" />
                     </span>
                   </div>
                   <div className="text-center">
-                    <h3 className="text-xl font-bold text-white">Rahat Ahmed</h3>
-                    <p className="text-sm text-brand-200">Full-Stack Developer</p>
-                    <div className="mt-2 flex justify-center gap-1.5">
+                    <h3 className="font-display text-xl font-extrabold text-white">Rahat Ahmed</h3>
+                    <p className="text-sm text-brand-200">{lang === "en" ? "Full-Stack Web Developer" : "ফুল-স্ট্যাক ওয়েব ডেভেলপার"}</p>
+                    <div className="mt-2 flex flex-wrap justify-center gap-1.5">
                       {["Next.js", "Supabase", "Cloudinary", "Tailwind", "TypeScript"].map((t) => (
-                        <span key={t} className="rounded-md bg-white/8 px-2 py-0.5 text-[10px] font-medium text-white/70">{t}</span>
+                        <span key={t} className="rounded-md bg-white/10 px-2 py-0.5 text-[10px] font-medium text-white/80 ring-1 ring-white/10">{t}</span>
                       ))}
                     </div>
                   </div>
@@ -141,9 +143,9 @@ export default async function AboutPage() {
                 {/* Right: Info */}
                 <div className="text-center md:text-left">
                   <span className="inline-flex items-center gap-1.5 rounded-full bg-blood-500/15 px-3 py-1 text-xs font-bold text-blood-300">
-                    💻 Website Developer
+                    💻 {lang === "en" ? "Website Developer" : "ওয়েবসাইট ডেভেলপার"}
                   </span>
-                  <h2 className="mt-3 text-2xl font-bold text-white">
+                  <h2 className="mt-3 font-display text-2xl font-extrabold tracking-tight text-white">
                     {lang === "en" ? "Built by Rahat Ahmed" : "ডেভেলপার: রাহাত আহমেদ"}
                   </h2>
                   <p className="mt-2 text-sm leading-relaxed text-brand-100/70">
@@ -153,50 +155,46 @@ export default async function AboutPage() {
                   </p>
 
                   {/* Stats */}
-                  <div className="mt-4 grid grid-cols-3 gap-2 text-center md:text-left">
-                    <div className="rounded-lg bg-white/5 p-2">
-                      <p className="text-lg font-bold text-white">25+</p>
+                  <div className="mt-4 grid grid-cols-3 gap-2">
+                    <div className="rounded-xl bg-white/5 p-3 text-center ring-1 ring-white/10">
+                      <p className="font-display text-xl font-extrabold text-white">25+</p>
                       <p className="text-[10px] text-brand-200/60">{lang === "en" ? "Pages" : "পেজ"}</p>
                     </div>
-                    <div className="rounded-lg bg-white/5 p-2">
-                      <p className="text-lg font-bold text-white">19+</p>
+                    <div className="rounded-xl bg-white/5 p-3 text-center ring-1 ring-white/10">
+                      <p className="font-display text-xl font-extrabold text-white">19+</p>
                       <p className="text-[10px] text-brand-200/60">{lang === "en" ? "Admin Modules" : "অ্যাডমিন মডিউল"}</p>
                     </div>
-                    <div className="rounded-lg bg-white/5 p-2">
-                      <p className="text-lg font-bold text-white">100%</p>
+                    <div className="rounded-xl bg-white/5 p-3 text-center ring-1 ring-white/10">
+                      <p className="font-display text-xl font-extrabold text-white">100%</p>
                       <p className="text-[10px] text-brand-200/60">{lang === "en" ? "Custom" : "কাস্টম"}</p>
                     </div>
                   </div>
 
                   {/* CTA */}
                   <div className="mt-5 flex flex-col gap-2 sm:flex-row">
-                    <a
-                      href="https://rahatahmedbd.github.io/"
-                      target="_blank"
-                      rel="noreferrer"
-                      className="btn bg-white text-brand-700 hover:bg-brand-50"
-                    >
-                      🌐 Portfolio দেখুন →
+                    <a href="https://rahatahmedbd.github.io/" target="_blank" rel="noreferrer" className="btn bg-white text-brand-700 hover:bg-brand-50">
+                      🌐 {lang === "en" ? "View Portfolio →" : "Portfolio দেখুন →"}
                     </a>
-                    <a
-                      href="https://rahatahmedbd.github.io/"
-                      target="_blank"
-                      rel="noreferrer"
-                      className="btn border border-white/25 text-white hover:bg-white/10"
-                    >
-                      💼 অর্ডার করুন
+                    <a href="https://rahatahmedbd.github.io/" target="_blank" rel="noreferrer" className="btn border border-white/25 text-white hover:bg-white/10">
+                      💼 {lang === "en" ? "Order a Website" : "অর্ডার করুন"}
                     </a>
                   </div>
                 </div>
               </div>
 
-              {/* Bottom strip */}
-              <div className="border-t border-white/8 bg-white/3 px-8 py-4 text-center">
-                <p className="text-xs text-brand-200/50">
-                  {lang === "en"
-                    ? "Need a website like this for your organization? Contact Rahat Ahmed."
-                    : "আপনার সংগঠনের জন্য এরকম ওয়েবসাইট দরকার? রাহাত আহমেদ-এর সাথে যোগাযোগ করুন।"}
-                </p>
+              {/* Bottom CTA bar (was a faint one-liner) */}
+              <div className="relative border-t border-white/10 bg-gradient-to-r from-brand-700/50 via-brand-600/30 to-blood-700/50 px-6 py-5 sm:px-10">
+                <div className="flex flex-col items-center justify-between gap-3 text-center sm:flex-row sm:text-left">
+                  <div className="flex items-center gap-3">
+                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white/10 text-lg ring-1 ring-white/10">💼</span>
+                    <p className="text-sm font-medium text-white">
+                      {lang === "en" ? "Need a website like this for your organization?" : "আপনার সংগঠনের জন্য এরকম ওয়েবসাইট দরকার?"}
+                    </p>
+                  </div>
+                  <a href="https://rahatahmedbd.github.io/" target="_blank" rel="noreferrer" className="btn shrink-0 bg-white text-brand-700 hover:bg-brand-50 !py-2 text-sm">
+                    {lang === "en" ? "Contact Rahat Ahmed →" : "রাহাত আহমেদের সাথে যোগাযোগ →"}
+                  </a>
+                </div>
               </div>
             </div>
           </Reveal>
