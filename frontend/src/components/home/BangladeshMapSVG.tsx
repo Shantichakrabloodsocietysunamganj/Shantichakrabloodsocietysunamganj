@@ -3,14 +3,16 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import bdData from "@/data/geo/bangladesh.json";
 
-// Real outline bounds (lng/lat)
-const LNG0 = 88.02, LNG1 = 92.64, LAT0 = 20.74, LAT1 = 26.62;
+// REAL outline (world-atlas natural-earth). Bounds + latitude-corrected projection.
+const LNG0 = 88.02, LNG1 = 92.64, LAT0 = 20.74, LAT1 = 26.62, CLAT = 23.7;
+const COS = Math.cos((CLAT * Math.PI) / 180);
+const LNG_SPAN = (LNG1 - LNG0) * COS; // east-west corrected
+const LAT_SPAN = LAT1 - LAT0;
 const VB_W = 360, PAD = 16;
-const VB_H = Math.round(VB_W * ((LAT1 - LAT0) / (LNG1 - LNG0)));
-const sx = (lng: number) => PAD + ((lng - LNG0) / (LNG1 - LNG0)) * (VB_W - 2 * PAD);
-const sy = (lat: number) => VB_H - (PAD + ((lat - LAT0) / (LAT1 - LAT0)) * (VB_H - 2 * PAD));
+const VB_H = Math.round(VB_W * (LAT_SPAN / LNG_SPAN));
+const sx = (lng: number) => PAD + (((lng - LNG0) * COS) / LNG_SPAN) * (VB_W - 2 * PAD);
+const sy = (lat: number) => VB_H - (PAD + ((lat - LAT0) / LAT_SPAN) * (VB_H - 2 * PAD));
 
-// real coords
 const ORIGIN: [number, number] = [91.3951, 25.0657]; // Sunamganj
 const SYLHET: [number, number][] = [
   [91.8687, 24.8949], [91.4147, 24.3758], [91.7833, 24.4833], [91.67, 25.04],
@@ -25,35 +27,26 @@ const DIVISIONS: [number, number][] = [
 ];
 const SYLHET_CENTER: [number, number] = [91.62, 24.72];
 
-function ringToPath(ring: number[][]): string {
-  return ring
-    .map((p, i) => `${i === 0 ? "M" : "L"}${sx(p[0]).toFixed(1)},${sy(p[1]).toFixed(1)}`)
-    .join(" ") + " Z";
-}
+const ringToPath = (ring: number[][]) =>
+  ring.map((p, i) => `${i === 0 ? "M" : "L"}${sx(p[0]).toFixed(1)},${sy(p[1]).toFixed(1)}`).join(" ") + " Z";
+
 const curve = (a: [number, number], b: [number, number]) => {
   const cx = (sx(a[0]) + sx(b[0])) / 2;
-  const cy = (sy(a[1]) + sy(b[1])) / 2 - 14;
+  const cy = (sy(a[1]) + sy(b[1])) / 2 - 16;
   return `M${sx(a[0])},${sy(a[1])} Q${cx.toFixed(1)},${cy.toFixed(1)} ${sx(b[0])},${sy(b[1])}`;
 };
-const partialEnd = (a: [number, number], b: [number, number], f: number) => [
-  a[0] + (b[0] - a[0]) * f,
-  a[1] + (b[1] - a[1]) * f,
-] as [number, number];
+const partialEnd = (a: [number, number], b: [number, number], f: number) =>
+  [a[0] + (b[0] - a[0]) * f, a[1] + (b[1] - a[1]) * f] as [number, number];
 
-export default function BangladeshMapSVG({ className = "" }: { className?: string }) {
+export default function BangladeshMapSVG() {
   const ref = useRef<HTMLDivElement>(null);
-  const [tilt, setTilt] = useState({ x: 12, y: -8 });
+  const [tilt, setTilt] = useState({ x: 10, y: -6 });
 
-  const { main, islands } = useMemo(() => {
+  const mainPath = useMemo(() => {
     const geom = bdData.features[0].geometry as any;
     const polys: number[][][][] = geom.type === "MultiPolygon" ? geom.coordinates : [geom.coordinates];
-    const big: string[] = [];
-    const small: string[] = [];
-    for (const poly of polys) {
-      const d = ringToPath(poly[0]) + poly.slice(1).map((h) => ringToPath(h)).join(" ");
-      (poly[0].length >= 12 ? big : small).push(d);
-    }
-    return { main: big, islands: small };
+    const largest = polys.reduce((a, b) => (b[0].length > a[0].length ? b : a)); // mainland only
+    return ringToPath(largest[0]) + largest.slice(1).map((h) => ringToPath(h)).join(" ");
   }, []);
 
   useEffect(() => {
@@ -63,9 +56,9 @@ export default function BangladeshMapSVG({ className = "" }: { className?: strin
       const r = el.getBoundingClientRect();
       const dx = (e.clientX - r.left - r.width / 2) / r.width;
       const dy = (e.clientY - r.top - r.height / 2) / r.height;
-      setTilt({ x: 12 + dy * 8, y: -8 - dx * 10 });
+      setTilt({ x: 10 + dy * 7, y: -6 - dx * 9 });
     };
-    const onLeave = () => setTilt({ x: 12, y: -8 });
+    const onLeave = () => setTilt({ x: 10, y: -6 });
     el.addEventListener("mousemove", onMove);
     el.addEventListener("mouseleave", onLeave);
     return () => {
@@ -75,7 +68,7 @@ export default function BangladeshMapSVG({ className = "" }: { className?: strin
   }, []);
 
   return (
-    <div ref={ref} className={`relative flex w-full items-center justify-center [perspective:900px] ${className}`}>
+    <div ref={ref} className="relative flex w-full items-center justify-center [perspective:900px]">
       <div className="pointer-events-none absolute inset-0 rounded-full bg-blood-500/10 blur-3xl" />
       {[
         { l: "14%", t: "20%", d: 7 }, { l: "80%", t: "28%", d: 9 }, { l: "70%", t: "72%", d: 8 },
@@ -85,7 +78,7 @@ export default function BangladeshMapSVG({ className = "" }: { className?: strin
       ))}
 
       <div className="animate-float w-full max-w-[15rem] sm:max-w-[17rem]" style={{ transform: `rotateX(${tilt.x}deg) rotateY(${tilt.y}deg)`, transition: "transform 0.25s cubic-bezier(0.16,1,0.3,1)" }}>
-        <svg viewBox={`0 0 ${VB_W} ${VB_H}`} className="block h-auto w-full drop-shadow-[0_24px_34px_rgba(0,0,0,0.5)]" role="img" aria-label="Bangladesh — Sylhet Division highlighted">
+        <svg viewBox={`0 0 ${VB_W} ${VB_H}`} className="block h-auto w-full drop-shadow-[0_24px_34px_rgba(0,0,0,0.5)]" role="img" aria-label="বাংলাদেশ — সিলেট বিভাগ হাইলাইট">
           <defs>
             <linearGradient id="sf-face" x1="0" y1="0" x2="0.5" y2="1">
               <stop offset="0%" stopColor="#2a5586" />
@@ -97,11 +90,11 @@ export default function BangladeshMapSVG({ className = "" }: { className?: strin
               <stop offset="100%" stopColor="#fff" stopOpacity="0" />
             </linearGradient>
             <radialGradient id="sf-sylhet">
-              <stop offset="0%" stopColor="#ef4444" stopOpacity="0.6" />
+              <stop offset="0%" stopColor="#ef4444" stopOpacity="0.62" />
               <stop offset="100%" stopColor="#ef4444" stopOpacity="0" />
             </radialGradient>
             <filter id="sf-edge" x="-30%" y="-30%" width="160%" height="160%">
-              <feDropShadow dx="0" dy="0" stdDeviation="2.2" floodColor="#38bdf8" floodOpacity="0.5" />
+              <feDropShadow dx="0" dy="0" stdDeviation="2.4" floodColor="#38bdf8" floodOpacity="0.5" />
             </filter>
             <linearGradient id="sf-drop" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0%" stopColor="#ff6b6b" />
@@ -110,25 +103,15 @@ export default function BangladeshMapSVG({ className = "" }: { className?: strin
           </defs>
 
           {/* Sylhet glow */}
-          <circle cx={sx(SYLHET_CENTER[0])} cy={sy(SYLHET_CENTER[1])} r="64" fill="url(#sf-sylhet)" />
+          <circle cx={sx(SYLHET_CENTER[0])} cy={sy(SYLHET_CENTER[1])} r="60" fill="url(#sf-sylhet)" />
 
           {/* extrude illusion */}
-          {main.map((d, i) => (
-            <path key={`x${i}`} d={d} transform="translate(0,5)" fill="#06182b" opacity="0.85" />
-          ))}
-
+          <path d={mainPath} transform="translate(0,5)" fill="#06182b" opacity="0.85" />
           {/* Bangladesh real shape */}
-          {main.map((d, i) => (
-            <path key={`m${i}`} d={d} fill="url(#sf-face)" stroke="rgba(125,190,255,0.45)" strokeWidth="1.1" strokeLinejoin="round" />
-          ))}
-          {main.map((d, i) => (
-            <path key={`g${i}`} d={d} fill="url(#sf-glass)" />
-          ))}
-          {islands.map((d, i) => (
-            <path key={`is${i}`} d={d} fill="url(#sf-face)" stroke="rgba(125,190,255,0.35)" strokeWidth="0.8" />
-          ))}
+          <path d={mainPath} fill="url(#sf-face)" stroke="rgba(125,190,255,0.5)" strokeWidth="1.2" strokeLinejoin="round" />
+          <path d={mainPath} fill="url(#sf-glass)" />
 
-          {/* coming-soon routes (gray dashed) */}
+          {/* coming-soon routes */}
           {DIVISIONS.map((d, i) => (
             <path key={`r${i}`} d={curve(ORIGIN, d)} fill="none" stroke="#64748b" strokeWidth="1" strokeOpacity="0.5" strokeDasharray="3 5">
               <animate attributeName="stroke-dashoffset" values="0;-32" dur="3.5s" begin={`${i * 0.4}s`} repeatCount="indefinite" />
@@ -146,7 +129,7 @@ export default function BangladeshMapSVG({ className = "" }: { className?: strin
             <circle key={`n${i}`} cx={sx(p[0])} cy={sy(p[1])} r="3" fill="#fecaca" opacity="0.9" />
           ))}
 
-          {/* blood network paths + drops from Sunamganj */}
+          {/* blood network from Sunamganj */}
           {SYLHET.map((p, i) => {
             const id = `sfbp${i}`;
             const dur = 2.4 + (i % 5) * 0.35;
