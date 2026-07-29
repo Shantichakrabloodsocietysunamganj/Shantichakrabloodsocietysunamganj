@@ -86,6 +86,27 @@ export default async function AboutPage() {
         {members.length > 0 && <PeopleGroup title={t("about.committee", lang)} people={members} />}
       </section>
 
+      {/* খবরে আমরা / In the News */}
+      <section className="bg-zinc-50 py-16">
+        <div className="container-page">
+          <Reveal><SectionHeading eyebrow={lang === "en" ? "Media Coverage" : "গণমাধ্যমে"} title={lang === "en" ? "Shantichakra in the News" : "খবরে শান্তিচক্র"} subtitle={lang === "en" ? "Where the press has covered our work." : "বিভিন্ন গণমাধ্যমে আমাদের কার্যক্রমের প্রতিবেদন।"} /></Reveal>
+          <div className="mx-auto mt-10 grid max-w-4xl gap-4 sm:grid-cols-2">
+            {PRESS.map((p, i) => (
+              <Reveal key={p.url} delay={i * 80}>
+                <a href={p.url} target="_blank" rel="noreferrer" className="card-hover flex h-full flex-col gap-2 p-5">
+                  <div className="flex items-center justify-between">
+                    <span className="inline-flex items-center gap-1.5 rounded-full bg-brand-50 px-2.5 py-1 text-xs font-bold text-brand-600">📰 {p.source}</span>
+                    <span className="text-xs text-ink/40">{p.date}</span>
+                  </div>
+                  <p className="font-display text-sm font-bold leading-snug text-ink">{p.title}</p>
+                  <span className="mt-auto text-xs font-semibold text-brand-600">{lang === "en" ? "Read article →" : "পড়ুন →"}</span>
+                </a>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Developer Section */}
       <section className="bg-gradient-to-br from-brand-900 via-brand-800 to-brand-900 py-16">
         <div className="container-page">
@@ -226,4 +247,12 @@ const VALUES = [
   { icon: "💎", title: "স্বেচ্ছাসেবা", desc: "কোনো আর্থিক লেনদেশন নেই — পুরোপুরি স্বেচ্ছাসেবী নেটওয়ার্ক।" },
   { icon: "📍", title: "স্থানীয়তা", desc: "সিলেট বিভাগের মানুষের জন্য, সিলেটের মানুষের দ্বারা।" },
   { icon: "🔄", title: "নিরবচ্ছিন্নতা", desc: "২৪/৭ অনুরোধ গ্রহণ ও সমন্বয় — কখনো থামি না।" },
+];
+
+// গণমাধ্যমে প্রকাশিত প্রতিবেদন (verified)
+const PRESS = [
+  { source: "Online Sylhet", date: "২৭ জুন ২০২৬", title: "শান্তিচক্র ব্লাড সোসাইটির প্রতিষ্ঠাবার্ষিকীতে নতুন কমিটি ঘোষণা", url: "https://onlinesylhet.com/2026/06/27/11-1704/" },
+  { source: "Business Times BD", date: "27 Jun 2026", title: "Shanti Chakra Blood Society Marks Second Anniversary, Announces New Committee", url: "https://www.businesstimes-bd.com/bangladesh/8306" },
+  { source: "The Daily Sylheter Shomoy", date: "২৬ আগস্ট ২০২৫", title: "শান্তিগঞ্জ জেবিবি উচ্চ বিদ্যালয়ে বিনামূল্যে রক্তের গ্রুপ নির্ধারণ কর্মসূচি", url: "https://dailysylhetersomoy.com/wc-96/" },
+  { source: "Sylher Kotha", date: "২৬ আগস্ট ২০২৫", title: "শান্তিগঞ্জ জেবিবি উচ্চ বিদ্যালয়ে বিনামূল্যে রক্তের গ্রুপ নির্ধারণ কর্মসূচি", url: "https://sylherkotha.com/2025/08/26/%E0%A6%B6%E0%A6%BE%E0%A6%A8%E0%A7%8D%E0%A6%A4%E0%A6%BF%E0%A6%97%E0%A6%9E%E0%A7%8D%E0%A6%9C-%E0%A6%9C%E0%A7%87%E0%A6%AC%E0%A6%BF%E0%A6%AC%E0%A6%BF-%E0%A6%89%E0%A6%9A%E0%A7%8D%E0%A6%9A-%E0%A6%AC/" },
 ];

@@ -97,6 +97,18 @@ export default async function Home() {
         </div>
       </section>
 
+      {/* আসন্ন কর্মসূচি / Events */}
+      {events.length > 0 && (
+        <section className="container-page py-16 sm:py-20">
+          <Reveal><SectionHeading eyebrow={lang === "en" ? "Upcoming" : "আসন্ন"} title={lang === "en" ? "Upcoming Events" : "আসন্ন কর্মসূচি"} subtitle={lang === "en" ? "Join our next blood donation camps and programs." : "আমাদের পরবর্তী রক্তদান শিবির ও কর্মসূচিতে যুক্ত হোন।"} /></Reveal>
+          <div className="mt-10 grid gap-6 md:grid-cols-3">
+            {events.map((e: any, i: number) => (
+              <Reveal key={e.id} delay={i * 100}><EventCard event={e} lang={lang} /></Reveal>
+            ))}
+          </div>
+        </section>
+      )}
+
       {/* রক্ত সামঞ্জস্যতা */}
       <section className="bg-white py-16 sm:py-20">
         <div className="container-page grid items-center gap-12 lg:grid-cols-2">
@@ -233,6 +245,25 @@ function Step({ n, title, desc, href, cta }: { n: string; title: string; desc: s
         <h3 className="font-display text-lg font-bold text-ink">{title}</h3>
         <p className="mt-2 text-sm leading-relaxed text-ink/60">{desc}</p>
         <Link href={href} className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-brand-600 transition hover:gap-2 hover:text-brand-700">{cta} →</Link>
+      </div>
+    </div>
+  );
+}
+
+function EventCard({ event, lang }: { event: any; lang: string }) {
+  return (
+    <div className="card-hover overflow-hidden">
+      {event.cover_url && (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img src={event.cover_url} alt={event.title} className="h-40 w-full object-cover" />
+      )}
+      <div className="p-5">
+        <span className="inline-flex items-center gap-1.5 rounded-full bg-brand-50 px-2.5 py-1 text-xs font-semibold text-brand-600">
+          📅 {new Date(event.event_date).toLocaleDateString("bn-BD", { day: "numeric", month: "short", year: "numeric" })}
+        </span>
+        <h3 className="mt-3 font-display text-lg font-bold text-ink">{event.title}</h3>
+        {event.location && <p className="mt-1 flex items-center gap-1 text-sm text-ink/50">📍 {event.location}</p>}
+        {event.description && <p className="mt-2 line-clamp-2 text-sm text-ink/60">{event.description}</p>}
       </div>
     </div>
   );
