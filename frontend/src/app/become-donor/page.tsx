@@ -74,8 +74,8 @@ export default function BecomeDonorPage() {
     return (
       <div className="container-page py-20"><div className="mx-auto max-w-md card p-10 text-center">
         <div className="mx-auto mb-4 flex h-16 w-16 animate-pop items-center justify-center rounded-full bg-emerald-50 text-3xl">✓</div>
-        <h1 className="text-2xl font-bold text-zinc-900">{en ? "Thank you, hero! 🙏" : "ধন্যবাদ, নায়ক! 🙏"}</h1>
-        <p className="mt-2 text-zinc-600">{en ? "Welcome to Shantichakra Blood Society. Your information has been saved." : "আপনাকে শান্তিচক্র ব্লাড সোসাইটিতে স্বাগতম। আপনার তথ্য সংরক্ষিত হয়েছে।"}</p>
+        <h1 className="text-2xl font-bold text-zinc-900">{en ? "Application received! 🙏" : "আবেদন গৃহীত হয়েছে! 🙏"}</h1>
+        <p className="mt-2 text-zinc-600">{en ? "Thank you for stepping up. An admin will review and approve your registration — you'll appear on the live donor list after approval." : "এগিয়ে আসার জন্য ধন্যবাদ। অ্যাডমিন আপনার আবেদন যাচাই করে অনুমোদন করবে — অনুমোদনের পরেই আপনার নাম লাইভ দাতা তালিকায় দেখা যাবে।"}</p>
         <div className="mt-6 flex flex-col gap-3"><Link href="/donors" className="btn-primary">{en ? "View Donors" : "রক্তদাতা তালিকা দেখুন"}</Link><Link href="/" className="btn-ghost">{en ? "Home" : "হোমে ফিরুন"}</Link></div>
       </div></div>
     );

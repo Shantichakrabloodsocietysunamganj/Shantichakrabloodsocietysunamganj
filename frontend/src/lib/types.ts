@@ -17,6 +17,7 @@ export type Donor = {
   is_available: boolean;
   is_verified: boolean;
   notes: string | null;
+  approved: boolean;
   created_at: string;
 };
 
