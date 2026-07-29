@@ -142,7 +142,7 @@ export default async function Home() {
         <div className="mt-10">
           {ok && featuredDonors.length > 0 ? (
             <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-              {featuredDonors.map((d, i) => <Reveal key={d.id} delay={i * 100}><DonorCard donor={d} /></Reveal>)}
+              {featuredDonors.map((d, i) => <Reveal key={d.id} delay={i * 100}><DonorCard donor={d} lang={lang} /></Reveal>)}
             </div>
           ) : ok && featuredDonors.length === 0 ? (
             <div className="card p-12 text-center">

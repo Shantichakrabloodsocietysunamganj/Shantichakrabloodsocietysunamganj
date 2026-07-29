@@ -88,7 +88,7 @@ export default function RequestsPage() {
         ) : (
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {requests.map((r, i) => (
-              <Reveal key={r.id} delay={(i % 3) * 80}><RequestCard req={r} /></Reveal>
+              <Reveal key={r.id} delay={(i % 3) * 80}><RequestCard req={r} lang={lang} /></Reveal>
             ))}
           </div>
         )}

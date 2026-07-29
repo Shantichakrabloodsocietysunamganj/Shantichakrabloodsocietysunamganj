@@ -163,7 +163,7 @@ function DonorsContent() {
                   <span className="rounded-full bg-zinc-100 px-2.5 py-0.5 text-xs font-medium text-zinc-600">{list.length.toLocaleString("bn-BD")} {lang === "en" ? "donors" : "জন"}</span>
                 </div>
                 <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-                  {list.map((d, i) => (<Reveal key={d.id} delay={(i % 3) * 80}><DonorCard donor={d} /></Reveal>))}
+                  {list.map((d, i) => (<Reveal key={d.id} delay={(i % 3) * 80}><DonorCard donor={d} lang={lang} /></Reveal>))}
                 </div>
               </section>
             ))}
