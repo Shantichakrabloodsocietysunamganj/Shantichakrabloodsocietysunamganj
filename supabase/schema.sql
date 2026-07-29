@@ -328,6 +328,9 @@ create policy "Admin donations write" on public.donations for insert with check 
 -- অ্যাডমিন রক্তদান রেকর্ড মুছতে পারবে
 drop policy if exists "Admin donations delete" on public.donations;
 create policy "Admin donations delete" on public.donations for delete using (public.is_admin());
+-- অ্যাডমিন রক্তদান রেকর্ড আপডেট করতে পারবে
+drop policy if exists "Admin donations update" on public.donations;
+create policy "Admin donations update" on public.donations for update using (public.is_admin());
 
 -- volunteers policies
 drop policy if exists "Public volunteers read" on public.volunteers;
@@ -379,12 +382,20 @@ create policy "Own notifications update" on public.notifications for update usin
 drop policy if exists "Admin notifications insert" on public.notifications;
 create policy "Admin notifications insert" on public.notifications
   for insert with check (public.is_admin());
+-- অ্যাডমিন notification মুছতে পারবে
+drop policy if exists "Admin notifications delete" on public.notifications;
+create policy "Admin notifications delete" on public.notifications for delete using (public.is_admin());
 
 -- reports policies
 drop policy if exists "Public reports read" on public.reports;
 create policy "Public reports read" on public.reports for select using (true);
 drop policy if exists "Admin reports write" on public.reports;
 create policy "Admin reports write" on public.reports for insert with check (public.is_admin());
+-- অ্যাডমিন report পরিচালনা করতে পারবে
+drop policy if exists "Admin reports update" on public.reports;
+create policy "Admin reports update" on public.reports for update using (public.is_admin());
+drop policy if exists "Admin reports delete" on public.reports;
+create policy "Admin reports delete" on public.reports for delete using (public.is_admin());
 
 -- contacts policies
 drop policy if exists "Anyone submit contact" on public.contacts;
@@ -450,6 +461,8 @@ drop policy if exists "Admin partners write" on public.partners;
 create policy "Admin partners write" on public.partners for insert with check (public.is_admin());
 drop policy if exists "Admin partners delete" on public.partners;
 create policy "Admin partners delete" on public.partners for delete using (public.is_admin());
+drop policy if exists "Admin partners update" on public.partners;
+create policy "Admin partners update" on public.partners for update using (public.is_admin());
 
 -- indexes for fast search
 create index if not exists donors_blood_group_idx on public.donors(blood_group);

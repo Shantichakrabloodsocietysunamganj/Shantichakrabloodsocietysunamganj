@@ -24,7 +24,7 @@ export default function RequestsPage() {
         let query = supabase
           .from("blood_requests")
           .select("*")
-          .in("status", ["pending", "approved", "open"])
+          .in("status", ["pending", "approved"])
           .order("needed_date", { ascending: true })
           .order("created_at", { ascending: false });
         if (group) query = query.eq("blood_group", group);

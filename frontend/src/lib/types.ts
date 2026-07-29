@@ -37,7 +37,7 @@ export type BloodRequest = {
   contact_phone: string;
   message: string | null;
   request_type?: string;
-  status: "open" | "pending" | "approved" | "completed" | "cancelled" | "fulfilled";
+  status: "pending" | "approved" | "completed" | "cancelled";
   requested_by?: string | null;
   created_at: string;
 };

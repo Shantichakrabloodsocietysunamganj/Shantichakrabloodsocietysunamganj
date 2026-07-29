@@ -23,7 +23,7 @@ async function getData() {
   try {
     const [donors, openReqs, featured, events, testimonials, faqItems, partnersData] = await Promise.all([
       supabase.from("donors").select("*", { count: "exact", head: true }),
-      supabase.from("blood_requests").select("*", { count: "exact", head: true }).in("status", ["pending", "approved", "open"]),
+      supabase.from("blood_requests").select("*", { count: "exact", head: true }).in("status", ["pending", "approved"]),
       supabase.from("donors").select("*").order("is_available", { ascending: false }).order("created_at", { ascending: false }).limit(3),
       supabase.from("events").select("*").eq("status", "upcoming").order("event_date", { ascending: true }).limit(3),
       supabase.from("testimonials").select("*").eq("approved", true).order("created_at", { ascending: false }).limit(3),
