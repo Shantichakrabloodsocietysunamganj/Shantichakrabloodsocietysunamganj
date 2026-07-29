@@ -68,7 +68,7 @@ export default function BangladeshMapSVG() {
   }, []);
 
   return (
-    <div ref={ref} className="relative flex w-full items-center justify-center [perspective:900px]">
+    <div ref={ref} className="group relative flex w-full items-center justify-center [perspective:900px]">
       <div className="pointer-events-none absolute inset-0 rounded-full bg-blood-500/10 blur-3xl" />
       {[
         { l: "14%", t: "20%", d: 7 }, { l: "80%", t: "28%", d: 9 }, { l: "70%", t: "72%", d: 8 },
@@ -77,7 +77,7 @@ export default function BangladeshMapSVG() {
         <span key={i} className="pointer-events-none absolute h-1 w-1 rounded-full bg-white/40" style={{ left: p.l, top: p.t, animation: `svgP ${p.d}s ease-in-out ${i * 0.5}s infinite` }} />
       ))}
 
-      <div className="animate-float w-full max-w-[15rem] sm:max-w-[17rem]" style={{ transform: `rotateX(${tilt.x}deg) rotateY(${tilt.y}deg)`, transition: "transform 0.25s cubic-bezier(0.16,1,0.3,1)" }}>
+      <div className="animate-float w-full max-w-[15rem] transition-transform duration-500 group-hover:scale-[1.05] sm:max-w-[17rem]" style={{ transform: `rotateX(${tilt.x}deg) rotateY(${tilt.y}deg)`, transition: "transform 0.25s cubic-bezier(0.16,1,0.3,1)" }}>
         <svg viewBox={`0 0 ${VB_W} ${VB_H}`} className="block h-auto w-full drop-shadow-[0_24px_34px_rgba(0,0,0,0.5)]" role="img" aria-label="বাংলাদেশ — সিলেট বিভাগ হাইলাইট">
           <defs>
             <linearGradient id="sf-face" x1="0" y1="0" x2="0.5" y2="1">
