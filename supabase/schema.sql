@@ -466,6 +466,7 @@ create index if not exists donors_blood_group_idx on public.donors(blood_group);
 create index if not exists donors_upazila_idx on public.donors(upazila);
 create index if not exists donors_is_available_idx on public.donors(is_available);
 create index if not exists donors_is_verified_idx on public.donors(is_verified);
+create index if not exists donors_approved_idx on public.donors(approved);
 create index if not exists blood_requests_status_idx on public.blood_requests(status);
 create index if not exists blood_requests_blood_group_idx on public.blood_requests(blood_group);
 create index if not exists donations_donor_idx on public.donations(donor_id);
