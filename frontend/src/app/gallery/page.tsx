@@ -1,0 +1,44 @@
+import type { Metadata } from "next";
+import { createClient } from "@/lib/supabase/server";
+import SectionHeading from "@/components/ui/SectionHeading";
+
+export const metadata: Metadata = { title: "গ্যালারি" };
+
+export default async function GalleryPage() {
+  const supabase = createClient();
+  let images: any[] = [];
+  let ok = false;
+  try {
+    const { data, error } = await supabase.from("gallery").select("*").order("created_at", { ascending: false });
+    if (!error) { images = data ?? []; ok = true; }
+  } catch {}
+
+  return (
+    <div className="container-page py-12">
+      <SectionHeading eyebrow="গ্যালারি" title="আমাদের মুহূর্তগুলো"
+        subtitle="রক্তদান শিবির, কর্মসূচি ও সমিতির কার্যক্রমের ছবি।" />
+
+      <div className="mt-10">
+        {!ok ? (
+          <p className="text-center text-sm text-ink/50">গ্যালারি লোড করা যায়নি।</p>
+        ) : images.length === 0 ? (
+          <div className="card p-12 text-center">
+            <p className="text-3xl">🖼️</p>
+            <p className="mt-2 font-medium text-ink">এখনো কোনো ছবি যোগ করা হয়নি</p>
+            <p className="mt-1 text-sm text-ink/60">অ্যাডমিন ড্যাশবোর্ড থেকে ছবি যোগ করা হবে।</p>
+          </div>
+        ) : (
+          <div className="columns-1 gap-4 sm:columns-2 lg:columns-3 [&>*]:mb-4">
+            {images.map((img) => (
+              <figure key={img.id} className="card overflow-hidden break-inside-avoid">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={img.image_url} alt={img.title ?? "gallery"} className="w-full" loading="lazy" />
+                {img.title && <figcaption className="p-3 text-sm font-medium text-ink">{img.title}</figcaption>}
+              </figure>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
