@@ -35,6 +35,8 @@ export async function generateMetadata(): Promise<Metadata> {
     },
     twitter: { card: "summary_large_image", title, description: desc, ...(settings.og_image ? { images: [settings.og_image] } : {}) },
     alternates: { canonical: "/" },
+    verification: { google: process.env.GOOGLE_SITE_VERIFICATION },
+    category: "health",
   };
 }
 
@@ -44,6 +46,22 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
   const { profile } = await getSession();
   const settings = await getSettings();
   const lang = await getLang();
+
+  const SITE_URL = "https://shantichakrabloodsocietysunamganj-g.vercel.app";
+  const orgJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "NGO",
+    name: site.name,
+    alternateName: site.nameEn,
+    url: SITE_URL,
+    logo: settings.logo_url || `${SITE_URL}/icon.svg`,
+    description: site.mission.slice(0, 280),
+    telephone: settings.phone || site.phone,
+    email: settings.email || site.email,
+    address: { "@type": "PostalAddress", addressLocality: "Sunamganj", addressRegion: "Sylhet", addressCountry: "BD" },
+    areaServed: "Sylhet Division, Bangladesh",
+    sameAs: [settings.facebook || site.facebook, settings.whatsapp || site.whatsapp].filter(Boolean),
+  };
 
   return (
     <html lang={lang}>
@@ -58,6 +76,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
             <script dangerouslySetInnerHTML={{ __html: `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${settings.ga_id}');` }} />
           </>
         )}
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }} />
       </head>
       <body className="font-sans bg-canvas text-ink antialiased">
         <ToastProvider>
