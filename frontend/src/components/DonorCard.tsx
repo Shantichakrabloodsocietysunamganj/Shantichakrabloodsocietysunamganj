@@ -1,10 +1,12 @@
 "use client";
 
 import type { Donor } from "@/lib/types";
+import type { Lang } from "@/lib/i18n";
 import BloodGroupBadge from "./BloodGroupBadge";
 import Link from "next/link";
 
-export default function DonorCard({ donor }: { donor: Donor }) {
+export default function DonorCard({ donor, lang = "bn" }: { donor: Donor; lang?: Lang }) {
+  const en = lang === "en";
   const initials = donor.full_name.trim().charAt(0).toUpperCase();
 
   return (
@@ -12,15 +14,9 @@ export default function DonorCard({ donor }: { donor: Donor }) {
       <div className="flex items-start gap-4">
         {donor.photo_url ? (
           // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={donor.photo_url}
-            alt={donor.full_name}
-            className="h-14 w-14 rounded-2xl object-cover ring-2 ring-white shadow-soft"
-          />
+          <img src={donor.photo_url} alt={donor.full_name} className="h-14 w-14 rounded-2xl object-cover ring-2 ring-white shadow-soft" />
         ) : (
-          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-brand-500 to-brand-700 font-display text-xl font-extrabold text-white shadow-glow">
-            {initials}
-          </div>
+          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-brand-500 to-brand-700 font-display text-xl font-extrabold text-white shadow-glow">{initials}</div>
         )}
         <div className="min-w-0 flex-1">
           <h3 className="truncate font-display text-base font-bold text-ink">{donor.full_name}</h3>
@@ -37,31 +33,27 @@ export default function DonorCard({ donor }: { donor: Donor }) {
 
       <div className="mt-4 grid grid-cols-2 gap-2 text-xs text-ink/50">
         <div>
-          <span className="block text-[11px] uppercase tracking-wide text-ink/35">বয়স</span>
-          <span className="font-medium text-ink/80">{donor.age ? `${donor.age} বছর` : "—"}</span>
+          <span className="block text-[11px] uppercase tracking-wide text-ink/35">{en ? "Age" : "বয়স"}</span>
+          <span className="font-medium text-ink/80">{donor.age ? `${donor.age} ${en ? "yrs" : "বছর"}` : "—"}</span>
         </div>
         <div>
-          <span className="block text-[11px] uppercase tracking-wide text-ink/35">লিঙ্গ</span>
+          <span className="block text-[11px] uppercase tracking-wide text-ink/35">{en ? "Gender" : "লিঙ্গ"}</span>
           <span className="font-medium text-ink/80">{donor.gender ?? "—"}</span>
         </div>
         <div className="col-span-2">
-          <span className="block text-[11px] uppercase tracking-wide text-ink/35">সর্বশেষ রক্তদান</span>
-          <span className="font-medium text-ink/80">
-            {donor.last_donation_date ? formatDate(donor.last_donation_date) : "এখনো নেই"}
-          </span>
+          <span className="block text-[11px] uppercase tracking-wide text-ink/35">{en ? "Last donation" : "সর্বশেষ রক্তদান"}</span>
+          <span className="font-medium text-ink/80">{donor.last_donation_date ? formatDate(donor.last_donation_date) : en ? "Never" : "এখনো নেই"}</span>
         </div>
       </div>
 
       <div className="mt-4 flex items-center justify-between gap-3 border-t border-zinc-100 pt-4">
-        <span
-          className={`inline-flex items-center gap-1.5 text-xs font-semibold ${donor.is_available ? "text-emerald-600" : "text-ink/40"}`}
-        >
+        <span className={`inline-flex items-center gap-1.5 text-xs font-semibold ${donor.is_available ? "text-emerald-600" : "text-ink/40"}`}>
           <span className={`h-2 w-2 rounded-full ${donor.is_available ? "bg-emerald-500 shadow-[0_0_0_3px_rgba(16,185,129,0.18)]" : "bg-zinc-300"}`} />
-          {donor.is_available ? "রক্তদানে প্রস্তুত" : "এই মুহূর্তে অনুপস্থিত"}
+          {donor.is_available ? (en ? "Available" : "রক্তদানে প্রস্তুত") : en ? "Unavailable" : "এই মুহূর্তে অনুপস্থিত"}
         </span>
         <div className="flex items-center gap-2">
-          <Link href={`/donor/${donor.id}`} className="btn-ghost !px-2 !py-2 text-xs" title="QR যাচাই">QR</Link>
-          <a href={`tel:${donor.phone}`} className="btn-primary !px-3 !py-2 text-xs"><PhoneIcon /> কল</a>
+          <Link href={`/donor/${donor.id}`} className="btn-ghost !px-2 !py-2 text-xs" title={en ? "Verify QR" : "QR যাচায়া"}>QR</Link>
+          <a href={`tel:${donor.phone}`} className="btn-primary !px-3 !py-2 text-xs"><PhoneIcon /> {en ? "Call" : "কল"}</a>
         </div>
       </div>
     </div>
