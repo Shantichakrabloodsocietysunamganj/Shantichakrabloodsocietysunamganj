@@ -11,6 +11,8 @@ import Reveal from "@/components/Reveal";
 import CountUp from "@/components/CountUp";
 import Newsletter from "@/components/Newsletter";
 import DonorCard from "@/components/DonorCard";
+import TrustBand from "@/components/home/TrustBand";
+import ActivityFeed from "@/components/home/ActivityFeed";
 import { createClient } from "@/lib/supabase/server";
 import { site } from "@/data/site";
 import { t } from "@/lib/i18n";
@@ -112,6 +114,9 @@ export default async function Home() {
         </section>
       )}
 
+      {/* Trust & Credibility */}
+      <TrustBand lang={lang} donorCount={donorCount} requestCount={openRequestCount} />
+
       {/* রক্ত সামঞ্জস্যতা */}
       <section className="bg-white py-16 sm:py-20">
         <div className="container-page grid items-center gap-12 lg:grid-cols-2">
@@ -156,6 +161,9 @@ export default async function Home() {
           )}
         </div>
       </section>
+
+      {/* Real-time Activity Feed */}
+      <ActivityFeed lang={lang} />
 
       {/* সাফল্যের গল্প / Testimonials */}
       <section className="bg-brand-900 py-16 text-white sm:py-20">

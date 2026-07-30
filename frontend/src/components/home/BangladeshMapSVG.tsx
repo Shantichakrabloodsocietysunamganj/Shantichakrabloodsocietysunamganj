@@ -156,6 +156,11 @@ export default function BangladeshMapSVG() {
         </svg>
       </div>
 
+      <div className="mt-3 text-center text-xs">
+        <p className="font-bold text-white">✅ সিলেট বিভাগ সম্পূর্ণ সক্রিয়</p>
+        <p className="mt-0.5 text-brand-200/70">🔜 পরবর্তী লক্ষ্য: সারা বাংলাদেশে রক্তসেবা</p>
+      </div>
+
       <style>{`@keyframes svgP { 0%,100%{transform:translateY(0) scale(1);opacity:.2} 50%{transform:translateY(-12px) scale(1.4);opacity:.55} }`}</style>
     </div>
   );
