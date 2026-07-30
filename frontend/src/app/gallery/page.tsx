@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
 import SectionHeading from "@/components/ui/SectionHeading";
+import GalleryGrid from "@/components/GalleryGrid";
 
 export const metadata: Metadata = { title: "গ্যালারি" };
 
@@ -28,15 +29,7 @@ export default async function GalleryPage() {
             <p className="mt-1 text-sm text-ink/60">অ্যাডমিন ড্যাশবোর্ড থেকে ছবি যোগ করা হবে।</p>
           </div>
         ) : (
-          <div className="columns-1 gap-4 sm:columns-2 lg:columns-3 [&>*]:mb-4">
-            {images.map((img) => (
-              <figure key={img.id} className="card overflow-hidden break-inside-avoid">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={img.image_url} alt={img.title ?? "gallery"} className="w-full" loading="lazy" />
-                {img.title && <figcaption className="p-3 text-sm font-medium text-ink">{img.title}</figcaption>}
-              </figure>
-            ))}
-          </div>
+          <GalleryGrid images={images} />
         )}
       </div>
     </div>
