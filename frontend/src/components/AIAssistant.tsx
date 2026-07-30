@@ -61,8 +61,8 @@ export default function AIAssistant() {
   const greet: Msg = {
     from: "bot",
     text: en
-      ? "Yes! 👋 I'm the Shantichakra Blood Society helper 🤖. Need blood, want to find a donor, or have a question? I'm here to help."
-      : "হ্যাঁ জি! 👋 আমি শান্তিচক্র ব্লাড সোসাইটির হেল্পার 🤖। রক্ত লাগলে, দাতা খুঁজতে হলে বা যেকোনো প্রশ্ন থাকলে বলুন — আমি সাহায্য করব।",
+      ? "Yes! 👋 I'm Shanti, the AI helper of Shantichakra Blood Society 🤖. Need blood, want to find a donor, or have a question? I'm here to help."
+      : "হ্যাঁ জি! 👋 আমি শান্তি — শান্তিচক্র ব্লাড সোসাইটির AI হেল্পার 🤖। রক্ত লাগলে, দাতা খুঁজতে হলে বা যেকোনো প্রশ্ন থাকলে বলুন — আমি সাহায্য করব।",
   };
   const [msgs, setMsgs] = useState<Msg[]>([greet]);
   useEffect(() => { setMsgs([greet]); /* re-greet when language changes */ }, [en]);
@@ -133,11 +133,11 @@ export default function AIAssistant() {
       {/* Floating AI button — distinct violet squircle (not like WhatsApp's green circle) */}
       <div className="group fixed bottom-6 right-6 z-[55] flex items-center">
         <span className="pointer-events-none mr-2 whitespace-nowrap rounded-full bg-white px-3 py-1.5 text-xs font-bold text-violet-700 opacity-0 shadow-glow transition-opacity duration-200 group-hover:opacity-100 dark:bg-slate-800 dark:text-violet-300">
-          {en ? "AI Helper" : "AI হেল্পার"}
+          {en ? "Shanti" : "শান্তি"}
         </span>
         <button
           onClick={() => setOpen((v) => !v)}
-          aria-label={en ? "AI Helper" : "AI হেল্পার"}
+          aria-label={en ? "Shanti" : "শান্তি"}
           className="relative flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-violet-600 via-fuchsia-600 to-brand-600 text-white shadow-[0_14px_34px_-8px_rgba(124,58,237,0.6)] transition-transform hover:scale-105"
         >
           <span className="absolute -right-1 -top-1 flex h-3.5 w-3.5">
@@ -159,8 +159,8 @@ export default function AIAssistant() {
           <div className="flex items-center gap-3 bg-gradient-to-r from-violet-700 via-fuchsia-700 to-brand-700 px-4 py-3 text-white">
             <span className="flex h-9 w-9 items-center justify-center rounded-full bg-white/15">🤖</span>
             <div>
-              <p className="text-sm font-bold leading-tight">{en ? "Shantichakra AI Helper" : "শান্তিচক্র AI হেল্পার"}</p>
-              <p className="text-[10px] text-white/70">{en ? "Ask anything — blood, donors, contact" : "রক্ত, দাতা, যোগাযোগ — যা খুশি জিজ্ঞাসা করুন"}</p>
+              <p className="text-sm font-bold leading-tight">{en ? "Shanti" : "শান্তি"}</p>
+              <p className="text-[10px] text-white/70">{en ? "Your blood donation assistant" : "আপনার রক্তদান সহকারী"}</p>
             </div>
           </div>
 
