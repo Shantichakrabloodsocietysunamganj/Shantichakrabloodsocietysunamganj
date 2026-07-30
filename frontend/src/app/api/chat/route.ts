@@ -18,41 +18,75 @@ Rules:
 - Never invent phone numbers, addresses, prices or medical advice. If unsure, point them to call 01626224878.
 - Keep replies short. If the question is unrelated to blood donation / the org, gently steer back.`;
 
+function sanitize(incoming: any) {
+  if (!Array.isArray(incoming?.messages)) return [];
+  return incoming.messages
+    .filter((m: any) => m && (m.role === "user" || m.role === "assistant") && typeof m.content === "string")
+    .slice(-10)
+    .map((m: any) => ({ role: m.role, content: m.content.slice(0, 1000) }));
+}
+
+// --- Gemini (Google Generative Language API) ---
+async function gemini(history: { role: string; content: string }[], key: string, model: string) {
+  const contents = history.map((m) => ({ role: m.role === "assistant" ? "model" : "user", parts: [{ text: m.content }] }));
+  const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      systemInstruction: { parts: [{ text: SYSTEM_PROMPT }] },
+      contents,
+      generationConfig: { temperature: 0.5, maxOutputTokens: 400 },
+    }),
+  });
+  if (!res.ok) throw new Error(`gemini:${res.status}:${await res.text()}`);
+  const data = await res.json();
+  const text = data?.candidates?.[0]?.content?.parts?.map((p: any) => p.text).join("").trim() ?? "";
+  if (!text) throw new Error("gemini:empty");
+  return text;
+}
+
+// --- OpenAI Chat Completions ---
+async function openai(history: { role: string; content: string }[], key: string) {
+  const res = await fetch("https://api.openai.com/v1/chat/completions", {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Authorization: `Bearer ${key}` },
+    body: JSON.stringify({
+      model: "gpt-4o-mini",
+      temperature: 0.5,
+      max_tokens: 400,
+      messages: [{ role: "system", content: SYSTEM_PROMPT }, ...history],
+    }),
+  });
+  if (!res.ok) throw new Error(`openai:${res.status}:${await res.text()}`);
+  const data = await res.json();
+  const text = data?.choices?.[0]?.message?.content?.trim() ?? "";
+  if (!text) throw new Error("openai:empty");
+  return text;
+}
+
 export async function POST(req: NextRequest) {
   try {
-    const key = process.env.OPENAI_API_KEY;
-    if (!key) {
-      return NextResponse.json({ error: "no_key" }, { status: 503 });
+    const history = sanitize(await req.json());
+    const geminiKey = process.env.GEMINI_API_KEY;
+    const openaiKey = process.env.OPENAI_API_KEY;
+    const geminiModel = process.env.GEMINI_MODEL || "gemini-1.5-flash";
+
+    // Try Gemini first, then OpenAI, then signal no provider (client falls back to local)
+    if (geminiKey) {
+      try {
+        return NextResponse.json({ reply: await gemini(history, geminiKey, geminiModel) });
+      } catch (e) {
+        if (!openaiKey) return NextResponse.json({ error: "gemini_failed", detail: String((e as Error).message) }, { status: 502 });
+      }
     }
-
-    const body = await req.json();
-    const incoming = Array.isArray(body?.messages) ? body.messages : [];
-    // sanitize + cap history
-    const history = incoming
-      .filter((m: any) => m && (m.role === "user" || m.role === "assistant") && typeof m.content === "string")
-      .slice(-10)
-      .map((m: any) => ({ role: m.role, content: m.content.slice(0, 1000) }));
-
-    const res = await fetch("https://api.openai.com/v1/chat/completions", {
-      method: "POST",
-      headers: { "Content-Type": "application/json", Authorization: `Bearer ${key}` },
-      body: JSON.stringify({
-        model: "gpt-4o-mini",
-        temperature: 0.5,
-        max_tokens: 400,
-        messages: [{ role: "system", content: SYSTEM_PROMPT }, ...history],
-      }),
-    });
-
-    if (!res.ok) {
-      const detail = await res.text();
-      return NextResponse.json({ error: "upstream", detail }, { status: 502 });
+    if (openaiKey) {
+      try {
+        return NextResponse.json({ reply: await openai(history, openaiKey) });
+      } catch (e) {
+        return NextResponse.json({ error: "openai_failed", detail: String((e as Error).message) }, { status: 502 });
+      }
     }
-
-    const data = await res.json();
-    const reply: string = data?.choices?.[0]?.message?.content?.trim() ?? "";
-    if (!reply) return NextResponse.json({ error: "empty" }, { status: 502 });
-    return NextResponse.json({ reply });
+    return NextResponse.json({ error: "no_key" }, { status: 503 });
   } catch (e: any) {
     return NextResponse.json({ error: "server", detail: String(e?.message ?? e) }, { status: 500 });
   }
