@@ -9,7 +9,7 @@ cloudinary.config({
   secure: true,
 });
 
-const MAX_SIZE = 5 * 1024 * 1024; // ৫ মেগাবাইট
+const MAX_SIZE = 200 * 1024; // ২০০ কিলোবাইট
 
 // চিত্রের আসল magic bytes — যাতে ভুয়া content-type দিয়ে অন্য ফাইল আপলোড না হয়
 const MAGIC: { type: string; bytes: number[] }[] = [
@@ -61,7 +61,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "কোনো ফাইল পাওয়া যায়নি" }, { status: 400 });
     }
     if (file.size > MAX_SIZE) {
-      return NextResponse.json({ error: "ছবি ৫ মেগাবাইটের বেশি নয়" }, { status: 400 });
+      return NextResponse.json({ error: "ছবি ২০০ কিলোবাইটের মধ্যে হতে হবে (১০০KB-এর কাছাকাছি রাখুন)" }, { status: 400 });
     }
     if (!file.type.startsWith("image/")) {
       return NextResponse.json({ error: "শুধুমাত্র ছবি আপলোড করুন" }, { status: 400 });
