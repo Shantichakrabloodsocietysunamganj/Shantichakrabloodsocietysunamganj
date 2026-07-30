@@ -17,7 +17,7 @@ export default function AdminTestimonialsPage() {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) { router.push("/login"); return; }
     const { data: prof } = await supabase.from("profiles").select("role").eq("id", user.id).single();
-    if (prof?.role !== "admin") { setReady(true); return; }
+    if (prof?.role !== "admin" && prof?.role !== "moderator") { setReady(true); return; }
     setAuthed(true);
     const { data } = await supabase.from("testimonials").select("*").order("created_at", { ascending: false });
     setItems(data ?? []);

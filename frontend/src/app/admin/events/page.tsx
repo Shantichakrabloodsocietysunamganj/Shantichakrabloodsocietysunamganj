@@ -17,7 +17,7 @@ export default function AdminEventsPage() {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) { router.push("/login"); return; }
     const { data: prof } = await supabase.from("profiles").select("role").eq("id", user.id).single();
-    if (prof?.role !== "admin") { setReady(true); return; }
+    if (prof?.role !== "admin" && prof?.role !== "moderator") { setReady(true); return; }
     setAuthed(true);
     const { data } = await supabase.from("events").select("*").order("event_date", { ascending: false });
     setItems(data ?? []);

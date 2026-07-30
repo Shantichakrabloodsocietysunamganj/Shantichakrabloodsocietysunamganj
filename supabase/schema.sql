@@ -508,4 +508,86 @@ create index if not exists blood_requests_blood_group_idx on public.blood_reques
 create index if not exists donations_donor_idx on public.donations(donor_id);
 create index if not exists notifications_user_idx on public.notifications(user_id);
 
+-- =====================================================
+-- MODERATOR ROLE: staff = admin OR moderator
+-- Blood-related tables managed by staff; admin-only features stay admin
+-- =====================================================
+
+-- allow 'moderator' in profiles.role
+alter table public.profiles drop constraint if exists profiles_role_check;
+alter table public.profiles add constraint profiles_role_check check (role in ('user','donor','admin','moderator'));
+
+-- helper: is current user staff (admin or moderator)?
+create or replace function public.is_staff()
+returns boolean language sql security definer stable as $$
+  select exists (
+    select 1 from public.profiles
+    where id = auth.uid() and role in ('admin','moderator')
+  );
+$$;
+
+-- blood_requests: staff can update + delete
+drop policy if exists "Requester or admin update" on public.blood_requests;
+create policy "Requester or staff update" on public.blood_requests for update using (requested_by = auth.uid() or public.is_staff());
+drop policy if exists "Admin requests delete" on public.blood_requests;
+create policy "Staff requests delete" on public.blood_requests for delete using (public.is_staff());
+
+-- donors: staff can update + delete
+drop policy if exists "Donor or admin update" on public.donors;
+create policy "Donor or staff update" on public.donors for update using (user_id = auth.uid() or public.is_staff());
+drop policy if exists "Admin donors delete" on public.donors;
+create policy "Staff donors delete" on public.donors for delete using (public.is_staff());
+
+-- donations: staff can read/write/update/delete
+drop policy if exists "Donor/admin donations read" on public.donations;
+create policy "Staff donations read" on public.donations for select using (
+  exists (select 1 from public.donors d where d.id = donor_id and d.user_id = auth.uid())
+  or public.is_staff()
+);
+drop policy if exists "Admin donations write" on public.donations;
+create policy "Staff donations write" on public.donations for insert with check (public.is_staff());
+drop policy if exists "Admin donations update" on public.donations;
+create policy "Staff donations update" on public.donations for update using (public.is_staff());
+drop policy if exists "Admin donations delete" on public.donations;
+create policy "Staff donations delete" on public.donations for delete using (public.is_staff());
+
+-- events: staff can write/update/delete
+drop policy if exists "Admin events write" on public.events;
+create policy "Staff events write" on public.events for insert with check (public.is_staff());
+drop policy if exists "Admin events update" on public.events;
+create policy "Staff events update" on public.events for update using (public.is_staff());
+drop policy if exists "Admin events delete" on public.events;
+create policy "Staff events delete" on public.events for delete using (public.is_staff());
+
+-- volunteers: staff can manage
+drop policy if exists "Admin manage volunteers" on public.volunteers;
+create policy "Staff manage volunteers" on public.volunteers for update using (public.is_staff());
+drop policy if exists "Admin volunteers delete" on public.volunteers;
+create policy "Staff volunteers delete" on public.volunteers for delete using (public.is_staff());
+
+-- blogs, gallery, testimonials, faqs, committee, media_coverage, activity, contacts
+drop policy if exists "Admin blogs write" on public.blogs; create policy "Staff blogs write" on public.blogs for insert with check (public.is_staff());
+drop policy if exists "Admin blogs update" on public.blogs; create policy "Staff blogs update" on public.blogs for update using (public.is_staff());
+drop policy if exists "Admin blogs delete" on public.blogs; create policy "Staff blogs delete" on public.blogs for delete using (public.is_staff());
+drop policy if exists "Admin gallery write" on public.gallery; create policy "Staff gallery write" on public.gallery for insert with check (public.is_staff());
+drop policy if exists "Admin gallery update" on public.gallery; create policy "Staff gallery update" on public.gallery for update using (public.is_staff());
+drop policy if exists "Admin gallery delete" on public.gallery; create policy "Staff gallery delete" on public.gallery for delete using (public.is_staff());
+drop policy if exists "Admin testimonials update" on public.testimonials; create policy "Staff testimonials update" on public.testimonials for update using (public.is_staff());
+drop policy if exists "Admin testimonials delete" on public.testimonials; create policy "Staff testimonials delete" on public.testimonials for delete using (public.is_staff());
+drop policy if exists "Admin faqs write" on public.faqs; create policy "Staff faqs write" on public.faqs for insert with check (public.is_staff());
+drop policy if exists "Admin faqs update" on public.faqs; create policy "Staff faqs update" on public.faqs for update using (public.is_staff());
+drop policy if exists "Admin faqs delete" on public.faqs; create policy "Staff faqs delete" on public.faqs for delete using (public.is_staff());
+drop policy if exists "Admin committee write" on public.committee_members; create policy "Staff committee write" on public.committee_members for insert with check (public.is_staff());
+drop policy if exists "Admin committee update" on public.committee_members; create policy "Staff committee update" on public.committee_members for update using (public.is_staff());
+drop policy if exists "Admin committee delete" on public.committee_members; create policy "Staff committee delete" on public.committee_members for delete using (public.is_staff());
+drop policy if exists "Admin media write" on public.media_coverage; create policy "Staff media write" on public.media_coverage for insert with check (public.is_staff());
+drop policy if exists "Admin media update" on public.media_coverage; create policy "Staff media update" on public.media_coverage for update using (public.is_staff());
+drop policy if exists "Admin media delete" on public.media_coverage; create policy "Staff media delete" on public.media_coverage for delete using (public.is_staff());
+drop policy if exists "Admin activity read" on public.activity_logs; create policy "Staff activity read" on public.activity_logs for select using (public.is_staff());
+drop policy if exists "Admin contacts read" on public.contacts; create policy "Staff contacts read" on public.contacts for select using (public.is_staff());
+drop policy if exists "Admin contacts delete" on public.contacts; create policy "Staff contacts delete" on public.contacts for delete using (public.is_staff());
+
+-- REMAIN ADMIN-ONLY: profiles update (role mgmt), site_settings,
+-- notifications broadcast, reports, partners — keep is_admin()
+
 -- DONE

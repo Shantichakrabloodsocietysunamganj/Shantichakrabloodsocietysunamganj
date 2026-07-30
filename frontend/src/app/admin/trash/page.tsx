@@ -23,7 +23,7 @@ export default function AdminTrashPage() {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) { router.push("/login"); return; }
     const { data: prof } = await supabase.from("profiles").select("role").eq("id", user.id).single();
-    if (prof?.role !== "admin") { setReady(true); return; }
+    if (prof?.role !== "admin" && prof?.role !== "moderator") { setReady(true); return; }
     setAuthed(true);
     const [d, r] = await Promise.all([
       supabase.from("donors").select("*").not("deleted_at", "is", null).order("deleted_at", { ascending: false }),

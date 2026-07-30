@@ -86,8 +86,8 @@ export default function Navbar({
           <LanguageToggle lang={lang} />
           {profile ? (
             <div className="flex items-center gap-2">
-              {profile.role === "admin" && (
-                <Link href="/admin" className="btn-ghost !px-3 !py-2 text-xs">🛡️ {t("nav.admin", lang)}</Link>
+              {(profile.role === "admin" || profile.role === "moderator") && (
+                <Link href="/admin" className="btn-ghost !px-3 !py-2 text-xs">{profile.role === "admin" ? `🛡️ ${t("nav.admin", lang)}` : "🔹 মডারেটর"}</Link>
               )}
               <Link href="/dashboard" className="btn-ghost !px-3 !py-2 text-xs">📊 {t("nav.dashboard", lang)}</Link>
               <NotificationBell />
