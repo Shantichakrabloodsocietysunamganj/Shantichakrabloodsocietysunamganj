@@ -65,12 +65,13 @@ create table if not exists public.donors (
   is_available boolean not null default true,
   is_verified boolean not null default false,
   notes text,
-  approved boolean not null default false,
+  approved boolean not null default true,
   created_at timestamptz not null default now()
 );
 
--- approval gate: নতুন রেজিস্ট্রেশন pending থাকে, admin approve করলে live হয়
-alter table public.donors add column if not exists approved boolean not null default false;
+-- approval gate সরানো হয়েছে — নতুন donor সরাসরি live (default approved)
+alter table public.donors add column if not exists approved boolean not null default true;
+alter table public.donors alter column approved set default true;
 update public.donors set approved = true where approved is not true;
 
 -- 3) blood_requests (+ new columns if the old table already exists)
