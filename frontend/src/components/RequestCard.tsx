@@ -1,3 +1,4 @@
+import Link from "next/link";
 import type { BloodRequest } from "@/lib/types";
 import type { Lang } from "@/lib/i18n";
 import BloodGroupBadge from "./BloodGroupBadge";
@@ -90,6 +91,7 @@ export default function RequestCard({ req, lang = "bn" }: { req: BloodRequest; l
           })}
           {req.status === "cancelled" && <span className="ml-2 shrink-0 text-[10px] font-bold text-blood-600">✕ {en ? "Cancelled" : "বাতিল"}</span>}
         </div>
+        <Link href={`/requests/${req.id}`} className="mt-2 block text-center text-xs font-bold text-brand-600 hover:underline">{en ? "View details →" : "বিস্তারিত দেখুন →"}</Link>
       </div>
     </div>
   );

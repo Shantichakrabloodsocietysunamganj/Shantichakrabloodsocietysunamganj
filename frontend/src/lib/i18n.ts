@@ -17,6 +17,7 @@ export const DICT: Record<string, { bn: string; en: string }> = {
   "nav.contact": { bn: "যোগাযোগ", en: "Contact" },
   "nav.impact": { bn: "আমাদের অর্জন", en: "Our Impact" },
   "nav.media": { bn: "মিডিয়া", en: "Media" },
+  "nav.events": { bn: "কর্মসূচি", en: "Events" },
   "nav.login": { bn: "লগইন", en: "Login" },
   "nav.register": { bn: "অ্যাকাউন্ট তৈরি", en: "Register" },
   "nav.becomeDonor": { bn: "রক্তদাতা হোন", en: "Become Donor" },

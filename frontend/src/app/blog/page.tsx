@@ -32,7 +32,7 @@ export default async function BlogPage() {
         ) : (
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {posts.map((p) => (
-              <article key={p.id} className="card-hover overflow-hidden">
+              <Link key={p.id} href={`/blog/${p.slug || p.id}`} className="card-hover block overflow-hidden">
                 {p.cover_url && (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img src={p.cover_url} alt={p.title} className="h-44 w-full object-cover" loading="lazy" />
@@ -42,7 +42,7 @@ export default async function BlogPage() {
                   <h3 className="mt-1 font-bold text-ink">{p.title}</h3>
                   {p.excerpt && <p className="mt-2 text-sm text-ink/60">{p.excerpt}</p>}
                 </div>
-              </article>
+              </Link>
             ))}
           </div>
         )}

@@ -20,6 +20,7 @@ const navLinks = [
   { href: "/about", key: "nav.about" },
   { href: "/impact", key: "nav.impact" },
   { href: "/media", key: "nav.media" },
+  { href: "/events", key: "nav.events" },
   { href: "/contact", key: "nav.contact" },
 ];
 
