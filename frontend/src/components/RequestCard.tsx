@@ -70,6 +70,26 @@ export default function RequestCard({ req, lang = "bn" }: { req: BloodRequest; l
             </a>
           </div>
         </div>
+
+        {/* status timeline */}
+        <div className="mt-3 flex items-center border-t border-zinc-100 pt-3">
+          {[
+            { key: "pending", label: en ? "Pending" : "অপেক্ষমাণ" },
+            { key: "approved", label: en ? "Approved" : "অনুমোদিত" },
+            { key: "completed", label: en ? "Done" : "সম্পন্ন" },
+          ].map((step, i) => {
+            const order: Record<string, number> = { pending: 0, approved: 1, completed: 2 };
+            const cur = order[req.status] ?? 0;
+            const done = req.status !== "cancelled" && cur >= i;
+            return (
+              <div key={step.key} className="flex flex-1 flex-col items-center gap-1">
+                <span className={`h-3 w-3 rounded-full ${done ? "bg-brand-600" : "bg-zinc-200"}`} />
+                <span className={`text-[9px] font-medium ${done ? "text-brand-600" : "text-ink/30"}`}>{step.label}</span>
+              </div>
+            );
+          })}
+          {req.status === "cancelled" && <span className="ml-2 shrink-0 text-[10px] font-bold text-blood-600">✕ {en ? "Cancelled" : "বাতিল"}</span>}
+        </div>
       </div>
     </div>
   );
