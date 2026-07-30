@@ -33,7 +33,7 @@ export default async function AboutPage() {
 
   return (
     <div>
-      <section className="relative overflow-hidden bg-gradient-to-b from-brand-50/70 to-white py-16">
+      <section className="relative overflow-hidden bg-gradient-to-b from-brand-50/70 to-white py-16 dark:from-slate-950 dark:to-slate-900">
         <div className="pointer-events-none absolute -top-24 right-0 h-64 w-64 rounded-full bg-blood-200/40 blur-3xl" />
         <div className="container-page relative max-w-3xl text-center">
           <span className="eyebrow">{t("about.eyebrow", lang)}</span>

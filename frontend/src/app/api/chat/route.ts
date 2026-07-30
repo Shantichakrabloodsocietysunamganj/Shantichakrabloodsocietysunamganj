@@ -1,0 +1,59 @@
+import { NextRequest, NextResponse } from "next/server";
+
+const SYSTEM_PROMPT = `You are "শান্তিচক্র সহকারী", the friendly AI helper for "শান্তিচক্র ব্লাড সোসাইটি, সুনামগঞ্জ" (Shantichakra Blood Society, Sunamganj) — a voluntary blood donation network across Sylhet Division, Bangladesh.
+
+Reply in the SAME language the user writes (Bangla or English). Be warm, concise and practical (2–4 short sentences). Use gentle emojis occasionally but stay professional.
+
+What you know about the organization:
+- Voluntary & 100% free blood donation network. Founded 2024.
+- Active across 4 districts of Sylhet Division: Sunamganj, Sylhet, Habiganj, Moulvibazar. Next goal: all of Bangladesh. Open 24/7.
+- To REQUEST blood: tell them to go to the "রক্তের অনুরোধ" page (/request-blood) and post patient name, blood group, hospital, date. For emergencies, call 01626224878 directly.
+- To FIND a donor: go to "রক্তদাতা" page (/donors), search by blood group + area, and call/WhatsApp the donor directly.
+- To BECOME a donor: go to "রক্তদাতা হোন" page (/become-donor) — free; an admin approves before the donor goes live.
+- Blood compatibility matters: O- is universal donor, AB+ is universal recipient; wrong group can be fatal — advise checking compatibility.
+- Contact: Phone/WhatsApp 01626224878, Email shantichakrabloodsociety@gmail.com, Facebook group available.
+
+Rules:
+- Always guide the user to the right page or action.
+- Never invent phone numbers, addresses, prices or medical advice. If unsure, point them to call 01626224878.
+- Keep replies short. If the question is unrelated to blood donation / the org, gently steer back.`;
+
+export async function POST(req: NextRequest) {
+  try {
+    const key = process.env.OPENAI_API_KEY;
+    if (!key) {
+      return NextResponse.json({ error: "no_key" }, { status: 503 });
+    }
+
+    const body = await req.json();
+    const incoming = Array.isArray(body?.messages) ? body.messages : [];
+    // sanitize + cap history
+    const history = incoming
+      .filter((m: any) => m && (m.role === "user" || m.role === "assistant") && typeof m.content === "string")
+      .slice(-10)
+      .map((m: any) => ({ role: m.role, content: m.content.slice(0, 1000) }));
+
+    const res = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${key}` },
+      body: JSON.stringify({
+        model: "gpt-4o-mini",
+        temperature: 0.5,
+        max_tokens: 400,
+        messages: [{ role: "system", content: SYSTEM_PROMPT }, ...history],
+      }),
+    });
+
+    if (!res.ok) {
+      const detail = await res.text();
+      return NextResponse.json({ error: "upstream", detail }, { status: 502 });
+    }
+
+    const data = await res.json();
+    const reply: string = data?.choices?.[0]?.message?.content?.trim() ?? "";
+    if (!reply) return NextResponse.json({ error: "empty" }, { status: 502 });
+    return NextResponse.json({ reply });
+  } catch (e: any) {
+    return NextResponse.json({ error: "server", detail: String(e?.message ?? e) }, { status: 500 });
+  }
+}
