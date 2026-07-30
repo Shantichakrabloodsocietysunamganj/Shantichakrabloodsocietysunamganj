@@ -590,4 +590,11 @@ drop policy if exists "Admin contacts delete" on public.contacts; create policy 
 -- REMAIN ADMIN-ONLY: profiles update (role mgmt), site_settings,
 -- notifications broadcast, reports, partners — keep is_admin()
 
+-- রোগীর অতিরিক্ত তথ্য (হিমোগ্লোবিন ইত্যাদি)
+alter table public.blood_requests add column if not exists hemoglobin text;
+alter table public.blood_requests add column if not exists patient_age int;
+alter table public.blood_requests add column if not exists patient_gender text;
+alter table public.blood_requests add column if not exists disease text;
+alter table public.blood_requests add column if not exists blood_component text default 'whole_blood';
+
 -- DONE
