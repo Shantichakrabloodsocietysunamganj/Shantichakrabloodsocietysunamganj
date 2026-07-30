@@ -21,6 +21,14 @@ export default async function DonorVerifyPage({ params }: { params: { id: string
     .select("*", { count: "exact", head: true })
     .eq("donor_id", donor.id);
 
+  const nextEligible = donor.last_donation_date
+    ? new Date(new Date(donor.last_donation_date).getTime() + 90 * 24 * 3600 * 1000)
+    : null;
+  const nextEligibleText =
+    nextEligible && nextEligible.getTime() > Date.now()
+      ? nextEligible.toLocaleDateString("bn-BD", { day: "numeric", month: "short", year: "numeric" })
+      : "এখন প্রস্তুত";
+
   const pageUrl = `https://shantichakrabloodsocietysunamganj-g.vercel.app/donor/${donor.id}`;
   const qr = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&margin=8&data=${encodeURIComponent(pageUrl)}`;
 
@@ -55,6 +63,7 @@ export default async function DonorVerifyPage({ params }: { params: { id: string
                   <Info label="এলাকা" value={`${donor.district}, ${donor.upazila}`} />
                   <Info label="সর্বশেষ দান" value={donor.last_donation_date ? new Date(donor.last_donation_date).toLocaleDateString("bn-BD", { day: "numeric", month: "short", year: "numeric" }) : "—"} />
                   <Info label="মোট রক্তদান" value={`${donationCount ?? 0} বার`} />
+                  <Info label="পরবর্তী উপযুক্ত" value={nextEligibleText} />
                   <Info label="প্রস্তুততা" value={donor.is_available ? "প্রস্তুত" : "অনুপস্থিত"} />
                 </div>
               </div>
