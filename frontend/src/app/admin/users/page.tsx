@@ -43,6 +43,7 @@ export default function AdminUsersPage() {
   const ROLES = [
     { value: "user", label: "User", icon: "👤" },
     { value: "donor", label: "Donor", icon: "🩸" },
+    { value: "moderator", label: "Moderator", icon: "🔹" },
     { value: "admin", label: "Admin", icon: "🛡️" },
   ];
 

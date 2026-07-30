@@ -19,6 +19,7 @@ export default function AdminPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [authed, setAuthed] = useState(false);
+  const [role, setRole] = useState("");
   const [tab, setTab] = useState<Tab>("overview");
   const [stats, setStats] = useState({ donors: 0, requests: 0, pending: 0, contacts: 0, completed: 0, volunteers: 0 });
   const [requests, setRequests] = useState<BloodRequest[]>([]);
@@ -34,8 +35,9 @@ export default function AdminPage() {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) { router.push("/login"); return; }
     const { data: prof } = await supabase.from("profiles").select("role").eq("id", user.id).single();
-    if (prof?.role !== "admin") { setLoading(false); return; }
+    if (prof?.role !== "admin" && prof?.role !== "moderator") { setLoading(false); return; }
     setAuthed(true);
+    setRole(prof?.role ?? "");
 
     const [d, br, c, v] = await Promise.all([
       supabase.from("donors").select("*").is("deleted_at", null).order("approved", { ascending: true }),
@@ -127,12 +129,12 @@ export default function AdminPage() {
     <div className="container-page py-10">
       <header className="mb-8 flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="font-display text-2xl font-extrabold tracking-tight text-ink">🛡️ অ্যাডমিন ড্যাশবোর্ড</h1>
+          <h1 className="font-display text-2xl font-extrabold tracking-tight text-ink">{role === "admin" ? "🛡️ অ্যাডমিন ড্যাশবোর্ড" : "🔹 মডারেটর ড্যাশবোর্ড"}</h1>
           <p className="text-sm text-ink/60">সমিতির সম্পূর্ণ ব্যবস্থাপনা এক জায়গায়।</p>
         </div>
         <div className="flex gap-2">
           <Link href="/" className="btn-outline">হোমে যান</Link>
-          <Link href="/admin/settings" className="btn-primary">⚙️ সেটিংস</Link>
+          {role === "admin" && <Link href="/admin/settings" className="btn-primary">⚙️ সেটিংস</Link>}
         </div>
       </header>
 

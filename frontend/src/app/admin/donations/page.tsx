@@ -20,7 +20,7 @@ export default function AdminDonationsPage() {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) { router.push("/login"); return; }
     const { data: prof } = await supabase.from("profiles").select("role").eq("id", user.id).single();
-    if (prof?.role !== "admin") { setReady(true); return; }
+    if (prof?.role !== "admin" && prof?.role !== "moderator") { setReady(true); return; }
     setAuthed(true);
     const [d, dons] = await Promise.all([
       supabase.from("donors").select("id, full_name, blood_group").order("full_name"),

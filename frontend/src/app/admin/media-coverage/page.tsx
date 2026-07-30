@@ -18,7 +18,7 @@ export default function AdminMediaCoveragePage() {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) { router.push("/login"); return; }
     const { data: prof } = await supabase.from("profiles").select("role").eq("id", user.id).single();
-    if (prof?.role !== "admin") { setReady(true); return; }
+    if (prof?.role !== "admin" && prof?.role !== "moderator") { setReady(true); return; }
     setAuthed(true);
     const { data } = await supabase.from("media_coverage").select("*").order("published_date", { ascending: false, nullsFirst: false });
     setItems(data ?? []);
