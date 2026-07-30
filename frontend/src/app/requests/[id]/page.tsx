@@ -62,6 +62,16 @@ export default async function RequestDetailPage({ params }: { params: { id: stri
               <Detail label="লাগবে তারিখ" value={fmt((req as any).needed_date)} />
               <Detail label="যোগাযোগ" value={(req as any).contact_name} />
               <Detail label="মোবাইল" value={(req as any).contact_phone} />
+              {(req as any).hemoglobin && <Detail label="হিমোগ্লোবিন" value={`${(req as any).hemoglobin} g/dL`} />}
+              {(req as any).patient_age && <Detail label="রোগীর বয়স" value={`${(req as any).patient_age} বছর`} />}
+              {(req as any).patient_gender && <Detail label="রোগীর লিঙ্গ" value={(req as any).patient_gender} />}
+              {(req as any).disease && <Detail label="রোগীর অবস্থা" value={(req as any).disease} />}
+              {(req as any).blood_component && (
+                <Detail label="কী দরকার" value={
+                  (req as any).blood_component === "platelets" ? "প্লেটলেট" :
+                  (req as any).blood_component === "plasma" ? "প্লাজমা" : "সম্পূর্ণ রক্ত"
+                } />
+              )}
             </div>
 
             {(req as any).message && (

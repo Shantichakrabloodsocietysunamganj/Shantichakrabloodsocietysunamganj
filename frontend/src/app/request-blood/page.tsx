@@ -18,6 +18,11 @@ const schema = z.object({
   contact_name: z.string().min(2),
   contact_phone: z.string().min(6).regex(/^[+0-9\s-]+$/),
   message: z.string().optional(),
+  hemoglobin: z.string().min(1),
+  patient_age: z.string().optional(),
+  patient_gender: z.string().optional(),
+  disease: z.string().optional(),
+  blood_component: z.string().optional(),
 });
 
 export default function RequestBloodPage() {
@@ -28,6 +33,7 @@ export default function RequestBloodPage() {
     patient_name: "", blood_group: "", units_needed: 1, hospital: "",
     district: "সুনামগঞ্জ", upazila: "", needed_date: "", contact_name: "",
     contact_phone: "", message: "",
+    hemoglobin: "", patient_age: "", patient_gender: "", disease: "", blood_component: "whole_blood",
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
@@ -45,7 +51,14 @@ export default function RequestBloodPage() {
     if (!parsed.success) { const errs: Record<string, string> = {}; for (const issue of parsed.error.issues) errs[issue.path[0] as string] = issue.message; setErrors(errs); return; }
     setSubmitting(true);
     try {
-      const { error } = await supabase.from("blood_requests").insert({ ...parsed.data, requested_by: userId });
+      const { error } = await supabase.from("blood_requests").insert({
+        ...parsed.data,
+        requested_by: userId,
+        patient_age: parsed.data.patient_age ? Number(parsed.data.patient_age) : null,
+        patient_gender: parsed.data.patient_gender || null,
+        disease: parsed.data.disease || null,
+        blood_component: parsed.data.blood_component || "whole_blood",
+      });
       if (error) throw new Error("error");
       setDone(true); window.scrollTo({ top: 0, behavior: "smooth" });
     } catch (e: any) { setServerError(e?.message ?? "error"); } finally { setSubmitting(false); }
@@ -85,6 +98,18 @@ export default function RequestBloodPage() {
           <Field label={en ? "Contact Mobile *" : "যোগাযোগ মোবাইল *"}><input className="input" value={form.contact_phone} onChange={(e) => set("contact_phone", e.target.value)} placeholder="01XXXXXXXXX" /></Field>
         </div>
         <div className="mt-5"><Field label={en ? "Details (optional)" : "বিস্তারিত (ঐচ্ছিক)"}><textarea className="input min-h-24" value={form.message} onChange={(e) => set("message", e.target.value)} /></Field></div>
+
+        {/* Patient Medical Info */}
+        <div className="mt-5 rounded-xl bg-brand-50/50 p-4 dark:bg-white/5">
+          <p className="mb-3 text-sm font-bold text-ink">{en ? "🩺 Patient Medical Info" : "🩺 রোগীর চিকিৎসা তথ্য"}</p>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <Field label={en ? "Hemoglobin * (g/dL)" : "হিমোগ্লোবিন * (g/dL)"}><input className="input" placeholder={en ? "e.g. 7.5" : "যেমন: ৭.৫"} value={form.hemoglobin} onChange={(e) => set("hemoglobin", e.target.value)} /></Field>
+            <Field label={en ? "Patient Age" : "রোগীর বয়স"}><input type="number" min={0} max={120} className="input" value={form.patient_age} onChange={(e) => set("patient_age", e.target.value)} /></Field>
+            <Field label={en ? "Patient Gender" : "রোগীর লিঙ্গ"}><select className="input" value={form.patient_gender} onChange={(e) => set("patient_gender", e.target.value)}><option value="">{en ? "Select" : "নির্বাচন"}</option><option value="পুরুষ">{en ? "Male" : "পুরুষ"}</option><option value="নারী">{en ? "Female" : "নারী"}</option><option value="অন্যান্য">{en ? "Other" : "অন্যান্য"}</option></select></Field>
+            <Field label={en ? "Condition / Disease" : "রোগীর অবস্থা / রোগ"}><input className="input" placeholder={en ? "Thalassemia, Surgery..." : "থ্যালাসেমিয়া, সার্জারি..."} value={form.disease} onChange={(e) => set("disease", e.target.value)} /></Field>
+            <Field label={en ? "Component Needed" : "কী দরকার"}><select className="input" value={form.blood_component} onChange={(e) => set("blood_component", e.target.value)}><option value="whole_blood">{en ? "Whole Blood" : "সম্পূর্ণ রক্ত"}</option><option value="platelets">{en ? "Platelets" : "প্লেটলেট"}</option><option value="plasma">{en ? "Plasma" : "প্লাজমা"}</option></select></Field>
+          </div>
+        </div>
         <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-end"><Link href="/" className="btn-ghost">{en ? "Cancel" : "বাতিল"}</Link><button type="submit" disabled={submitting} className="btn-primary">{submitting ? (en ? "Posting…" : "পোস্ট হচ্ছে…") : (en ? "Post Request" : "অনুরোধ পোস্ট করুন")}</button></div>
       </form>
     </div></div>

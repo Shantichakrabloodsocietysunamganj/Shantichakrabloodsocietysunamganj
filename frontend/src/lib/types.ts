@@ -37,6 +37,11 @@ export type BloodRequest = {
   contact_name: string;
   contact_phone: string;
   message: string | null;
+  hemoglobin: string | null;
+  patient_age: number | null;
+  patient_gender: string | null;
+  disease: string | null;
+  blood_component: string | null;
   request_type?: string;
   status: "pending" | "approved" | "completed" | "cancelled";
   requested_by?: string | null;
