@@ -18,6 +18,8 @@ const navLinks = [
   { href: "/gallery", key: "nav.gallery" },
   { href: "/blog", key: "nav.blog" },
   { href: "/about", key: "nav.about" },
+  { href: "/impact", key: "nav.impact" },
+  { href: "/media", key: "nav.media" },
   { href: "/contact", key: "nav.contact" },
 ];
 
