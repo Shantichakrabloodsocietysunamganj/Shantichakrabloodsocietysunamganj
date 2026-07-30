@@ -462,6 +462,41 @@ create policy "Admin partners delete" on public.partners for delete using (publi
 drop policy if exists "Admin partners update" on public.partners;
 create policy "Admin partners update" on public.partners for update using (public.is_admin());
 
+-- 19) media_coverage (press / news coverage)
+create table if not exists public.media_coverage (
+  id uuid primary key default gen_random_uuid(),
+  title text not null,
+  source text not null,
+  url text,
+  summary text,
+  thumbnail text,
+  category text default 'online',
+  published_date date,
+  created_at timestamptz not null default now()
+);
+alter table public.media_coverage enable row level security;
+drop policy if exists "Public media read" on public.media_coverage;
+create policy "Public media read" on public.media_coverage for select using (true);
+drop policy if exists "Admin media write" on public.media_coverage;
+create policy "Admin media write" on public.media_coverage for insert with check (public.is_admin());
+drop policy if exists "Admin media update" on public.media_coverage;
+create policy "Admin media update" on public.media_coverage for update using (public.is_admin());
+drop policy if exists "Admin media delete" on public.media_coverage;
+create policy "Admin media delete" on public.media_coverage for delete using (public.is_admin());
+
+-- impact stats (aggregate counts; callable by anyone via RPC)
+create or replace function public.impact_stats()
+returns table(donors bigint, completed bigint, active_requests bigint, volunteers bigint, donations bigint, units bigint)
+language sql security definer stable as $$
+  select
+    (select count(*) from public.donors where approved and deleted_at is null),
+    (select count(*) from public.blood_requests where status = 'completed' and deleted_at is null),
+    (select count(*) from public.blood_requests where status in ('pending','approved') and deleted_at is null),
+    (select count(*) from public.volunteers where deleted_at is null),
+    (select count(*) from public.donations),
+    (select coalesce(sum(units),0) from public.donations);
+$$;
+
 -- indexes for fast search
 create index if not exists donors_blood_group_idx on public.donors(blood_group);
 create index if not exists donors_upazila_idx on public.donors(upazila);
