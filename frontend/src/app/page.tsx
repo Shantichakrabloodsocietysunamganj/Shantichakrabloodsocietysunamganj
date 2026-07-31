@@ -13,6 +13,7 @@ import Newsletter from "@/components/Newsletter";
 import DonorCard from "@/components/DonorCard";
 import TrustBand from "@/components/home/TrustBand";
 import ActivityFeed from "@/components/home/ActivityFeed";
+import DonationSection from "@/components/home/DonationSection";
 import { createClient } from "@/lib/supabase/server";
 import { site } from "@/data/site";
 import { t } from "@/lib/i18n";
@@ -116,6 +117,9 @@ export default async function Home() {
 
       {/* Trust & Credibility */}
       <TrustBand lang={lang} donorCount={donorCount} requestCount={openRequestCount} />
+
+      {/* Premium Donation Section */}
+      <DonationSection lang={lang} />
 
       {/* রক্ত সামঞ্জস্যতা */}
       <section className="bg-white py-16 sm:py-20">
