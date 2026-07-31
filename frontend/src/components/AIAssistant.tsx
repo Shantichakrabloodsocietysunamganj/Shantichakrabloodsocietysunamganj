@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 
 type Msg = { from: "bot" | "user"; text: string; cta?: { label: string; href: string }; time: number };
@@ -22,12 +22,16 @@ const FOLLOWUPS: Record<string, string[]> = {
   donor: ["🩸 রক্তদাতা হব", "📞 যোগাযোগ", "📊 আমাদের অর্জন"],
   become: ["📞 যোগাযোগ", "🔎 দাতা খুঁজুন", "📊 আমাদের অর্জন"],
   contact: ["🩸 রক্তদাতা হব", "🔎 দাতা খুঁজুন", "🚨 রক্ত লাগবে"],
-  about: ["📊 আমাদের অর্জন", "📰 মিডিয়া", "📅 কর্মসূচি"],
+  about: ["📊 আমাদের অর্জন", "🔊 শান্তির ভয়েস", "📰 মিডিয়া", "📅 কর্মসূচি"],
   donate: ["📞 যোগাযোগ", "🙋 স্বেচ্ছাসেবক", "📊 আমাদের অর্জন"],
-  default: ["🩸 রক্ত লাগবে", "🔎 দাতা খুঁজুন", "🩸 রক্তদাতা হব", "📞 যোগাযোগ", "📊 আমাদের অর্জন"],
+  default: ["🩸 রক্ত লাগবে", "🔎 দাতা খুঁজুন", "🩸 রক্তদাতা হব", "🔊 শান্তির ভয়েস", "📞 যোগাযোগ", "📊 আমাদের অর্জন"],
 };
 
 const KB: Entry[] = [
+  { keys: ["ভয়েস", "voice", "কথা বলো", "শব্দ", "মহিলা ভয়েস", "নবনীতা", "তনিশা", "উচ্চারণ", "audio", "শুনব", "মেয়েদের ভয়েস", "শান্তির ভয়েস", "shanti's voice"],
+    bn: "🔊 আমার ভয়েস শুনতে যেকোনো মেসেজের নিচে 'শুনুন' বাটনে চাপ দিন। আমি বাংলাদেশি উচ্চারণে (bn-BD) Microsoft নবনীতা / তনিশা টাইপ সেরা মহিলা ভয়েসে কথা বলি!",
+    en: "🔊 To listen to my voice, click the 'Listen' button under any message. I speak in a natural female Bangladeshi Bengali voice!",
+    followUp: ["about"] },
   { keys: ["রক্ত লাগ", "রকত লাগ", "জরুরি", "রক্ত দরকার", "blood", "need", "emergency", "urgent", "প্রয়োজন", "মুমূর্ষু"],
     bn: "🚨 জরুরি রক্ত? দ্রুত করুন:\n১) কল: 01626224878\n২) /request-blood-এ অনুরোধ পোস্ট করুন\n৩) /donors-এ দাতা খুঁজে কল করুন\n২৪/৭ আমরা পাশে আছি।",
     en: "🚨 Urgent blood?\n1) Call: 01626224878\n2) Post on /request-blood\n3) Search /donors and call\nWe are here 24/7.",
@@ -78,6 +82,7 @@ export default function AIAssistant() {
   const [listening, setListening] = useState(false);
   const [followUp, setFollowUp] = useState<string[]>(FOLLOWUPS.default);
   const [speakingIdx, setSpeakingIdx] = useState<number | null>(null);
+  const [activeVoiceName, setActiveVoiceName] = useState<string>("");
   const scrollRef = useRef<HTMLDivElement>(null);
   const recogRef = useRef<any>(null);
   const speakRef = useRef<number | null>(null);
@@ -98,16 +103,6 @@ export default function AIAssistant() {
   useEffect(() => { scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" }); }, [msgs, open, typing]);
   useEffect(() => { if (!open) window.speechSynthesis?.cancel(); }, [open]);
 
-  // Load available TTS voices (async on most browsers)
-  useEffect(() => {
-    const load = () => { const v = window.speechSynthesis?.getVoices?.() ?? []; if (v.length) voicesRef.current = v; };
-    load();
-    if (typeof window !== "undefined" && window.speechSynthesis) {
-      window.speechSynthesis.addEventListener("voiceschanged", load);
-      return () => window.speechSynthesis.removeEventListener("voiceschanged", load);
-    }
-  }, []);
-
   // Strip emoji + symbols so TTS doesn't read them aloud; tidy spacing
   const cleanForSpeech = (text: string): string =>
     text
@@ -119,21 +114,96 @@ export default function AIAssistant() {
       .replace(/\s+/g, " ")
       .trim();
 
-  // Pick the best matching voice; prefer Bangla when in Bangla mode
-  const pickVoice = (): SpeechSynthesisVoice | undefined => {
+  // Auto-select the best Female Bengali voice (prioritizing Bangladeshi bn-BD pronunciation, Microsoft Nabanita / Tanisha type neural voices)
+  const pickVoice = useCallback((): SpeechSynthesisVoice | undefined => {
     const voices = voicesRef.current;
     if (!voices?.length) return undefined;
-    const want = en ? ["en"] : ["bn"];
-    for (const prefix of want) {
-      const matches = voices.filter((v) => v.lang?.toLowerCase().startsWith(prefix));
-      if (matches.length) {
-        const natural = matches.find((v) => /natural|neural|google|wavenet|samantha|aria|jenny|female/i.test(v.name));
-        return natural ?? matches[0];
+
+    const scoreVoice = (v: SpeechSynthesisVoice): number => {
+      const name = (v.name || "").toLowerCase();
+      const vLang = (v.lang || "").toLowerCase();
+      const uri = (v.voiceURI || "").toLowerCase();
+      const combined = `${name} ${vLang} ${uri}`;
+
+      if (en) {
+        if (!vLang.startsWith("en") && !combined.includes("english")) return -10000;
+        // Penalize male English voices
+        if (/guy|christopher|ryan|george|david|mark|wavenet-b|wavenet-d|standard-b|standard-d|neural2-b|neural2-d|\bmale\b/i.test(combined)) {
+          return -5000;
+        }
+        let score = 0;
+        if (/samantha|aria|jenny|sonia|natasha|victoria|zira|hazel|susan|google.*us.*english|female/i.test(combined)) score += 1000;
+        if (/natural|neural|online|wavenet|google/i.test(combined)) score += 300;
+        if (v.default) score += 50;
+        return score;
+      } else {
+        // Bengali mode: female Bengali voice with Bangladeshi (bn-BD) priority
+        const isBangla = vLang.startsWith("bn") || combined.includes("bangla") || combined.includes("bengali") || combined.includes("বাংলা");
+        if (!isBangla) return -10000;
+
+        // Heavily penalize male Bengali voices (Microsoft Pradeep, Microsoft Bashkar, Wavenet-B/D, male keywords)
+        if (/pradeep|bashkar|bhaskar|wavenet-b|wavenet-d|standard-b|standard-d|neural2-b|neural2-d|\bmale\b|পুরুষ|ছেলে/i.test(combined)) {
+          return -5000;
+        }
+
+        let score = 0;
+        // Priority 1: Bangladeshi pronunciation / accent (bn-BD)
+        const isBangladeshi = vLang.includes("bn-bd") || vLang.includes("bn_bd") || combined.includes("bangladesh") || combined.includes("বাংলাদেশ") || combined.includes("-bd");
+        const isIndianBangla = vLang.includes("bn-in") || vLang.includes("bn_in") || combined.includes("india") || combined.includes("ভারত") || combined.includes("-in");
+
+        if (isBangladeshi) {
+          score += 2000; // Highest priority: Bangladeshi accent
+        } else if (isIndianBangla) {
+          score += 1000; // Second priority: Indian Bengali
+        } else {
+          score += 500;  // General Bengali
+        }
+
+        // Priority 2: Microsoft Nabanita / Tanisha type and top Female Bengali voices
+        if (combined.includes("nabanita")) {
+          score += 1500; // Microsoft Nabanita Online / Neural (Bangladesh bn-BD Female #1)
+        } else if (combined.includes("tanisha")) {
+          score += 1200; // Microsoft Tanisha Online / Neural (India bn-IN Female #2)
+        } else if (/amrita|lekha|sampa|wavenet-a|wavenet-c|neural2-a|neural2-c|standard-a|standard-c|google\s*বাংলা|google.*bengali|female|নারী|মহিলা|মেয়ে/i.test(combined)) {
+          score += 800;  // Other high-quality female Bengali voices
+        }
+
+        // Priority 3: Natural / Neural / Online engine quality
+        if (/natural|neural|online|wavenet|google|azure|edge/i.test(combined)) {
+          score += 300;
+        }
+        if (v.default) score += 50;
+        if (v.localService) score += 20;
+
+        return score;
       }
+    };
+
+    const sorted = [...voices].sort((a, b) => scoreVoice(b) - scoreVoice(a));
+    const best = sorted[0];
+    if (best && scoreVoice(best) > -5000) {
+      return best;
     }
-    // Last resort: default English voice
-    return voices.find((v) => v.lang?.toLowerCase().startsWith("en")) ?? voices[0];
-  };
+    // Fallback: first bn voice or default
+    return voices.find((v) => (en ? v.lang?.toLowerCase().startsWith("en") : v.lang?.toLowerCase().startsWith("bn"))) ?? voices[0];
+  }, [en]);
+
+  // Load available TTS voices (async on most browsers)
+  useEffect(() => {
+    const load = () => {
+      const v = window.speechSynthesis?.getVoices?.() ?? [];
+      if (v.length) {
+        voicesRef.current = v;
+        const defaultVoice = pickVoice();
+        if (defaultVoice?.name) setActiveVoiceName(defaultVoice.name);
+      }
+    };
+    load();
+    if (typeof window !== "undefined" && window.speechSynthesis) {
+      window.speechSynthesis.addEventListener("voiceschanged", load);
+      return () => window.speechSynthesis.removeEventListener("voiceschanged", load);
+    }
+  }, [en, pickVoice]);
 
   const localReply = (q: string): Msg => {
     const t = q.toLowerCase();
@@ -181,7 +251,7 @@ export default function AIAssistant() {
     recog.start(); recogRef.current = recog;
   };
 
-  // Text-to-speech
+  // Text-to-speech (using best Female Bengali voice, Bangladeshi bn-BD pronunciation priority)
   const speak = (text: string, idx: number) => {
     window.speechSynthesis?.cancel();
     if (speakRef.current === idx) { speakRef.current = null; setSpeakingIdx(null); return; }
@@ -189,9 +259,17 @@ export default function AIAssistant() {
     if (!cleaned) return;
     const u = new SpeechSynthesisUtterance(cleaned);
     const voice = pickVoice();
-    if (voice) { u.voice = voice; u.lang = voice.lang; } else { u.lang = en ? "en-US" : "bn-BD"; }
-    u.rate = en ? 0.98 : 0.9;     // slightly slower, clearer for Bangla
-    u.pitch = 1.04;               // warm, friendly tone
+    if (voice) {
+      u.voice = voice;
+      u.lang = voice.lang || (en ? "en-US" : "bn-BD");
+      setActiveVoiceName(voice.name || "");
+      console.log(`[Shanti AI TTS] Auto-selected female voice: "${voice.name}" (${voice.lang || u.lang})`);
+    } else {
+      u.lang = en ? "en-US" : "bn-BD";
+      console.log(`[Shanti AI TTS] Using browser default voice for lang: ${u.lang}`);
+    }
+    u.rate = en ? 0.98 : 0.92;     // clear, natural pacing for Bangladeshi pronunciation
+    u.pitch = 1.08;                // warm, natural female voice tone
     u.volume = 1;
     u.onend = () => { speakRef.current = null; setSpeakingIdx(null); };
     u.onerror = () => { speakRef.current = null; setSpeakingIdx(null); };
@@ -201,7 +279,7 @@ export default function AIAssistant() {
   };
 
   const clearChat = () => { setMsgs([greet]); setFollowUp(FOLLOWUPS.default); localStorage.removeItem("shanti-chat"); window.speechSynthesis?.cancel(); setSpeakingIdx(null); };
-  const SUGGESTIONS = en ? ["🩸 Need blood", "🔎 Find donor", "➕ Become donor", "📞 Contact", "📊 Impact"] : ["🩸 রক্ত লাগবে", "🔎 দাতা খুঁজুন", "➕ রক্তদাতা হব", "📞 যোগাযোগ", "📊 অর্জন"];
+  const SUGGESTIONS = en ? ["🩸 Need blood", "🔎 Find donor", "➕ Become donor", "🔊 Shanti's Voice", "📞 Contact", "📊 Impact"] : ["🩸 রক্ত লাগবে", "🔎 দাতা খুঁজুন", "➕ রক্তদাতা হব", "🔊 শান্তির ভয়েস", "📞 যোগাযোগ", "📊 অর্জন"];
 
   return (
     <>
@@ -224,7 +302,7 @@ export default function AIAssistant() {
               <span className="flex h-9 w-9 items-center justify-center rounded-full bg-white/15">🤖</span>
               <div>
                 <p className="text-sm font-bold leading-tight">{en ? "Shanti" : "শান্তি"}</p>
-                <p className="text-[10px] text-white/60">{en ? "AI Helper • / for shortcuts" : "AI সহকারী • / দিয়ে শর্টকাট"}</p>
+                <p className="text-[10px] text-white/60">{en ? "AI Helper • Female Voice (bn-BD) • / for shortcuts" : "AI সহকারী • মহিলা ভয়েস (bn-BD) • / দিয়ে শর্টকাট"}</p>
               </div>
             </div>
             <button onClick={clearChat} aria-label={en ? "New chat" : "নতুন চ্যাট"} className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/10 text-white transition hover:bg-white/20" title={en ? "Clear chat" : "নতুন চ্যাট"}>
@@ -243,7 +321,11 @@ export default function AIAssistant() {
                   )}
                   {/* TTS button on bot messages */}
                   {m.from === "bot" && m.text.length > 10 && (
-                    <button onClick={() => speak(m.text, i)} className={`mt-1.5 inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-[10px] font-semibold transition ${speakingIdx === i ? "animate-pulse bg-fuchsia-100 text-fuchsia-700" : "text-violet-500 hover:bg-violet-50 hover:text-violet-700"}`}>
+                    <button
+                      onClick={() => speak(m.text, i)}
+                      title={en ? `Listen (Female Voice: ${activeVoiceName || "Auto-selected bn-BD"})` : `শান্তির মহিলা ভয়েসে শুনুন (${activeVoiceName ? activeVoiceName + " — " : ""}বাংলাদেশি উচ্চারণ নবনীতা/তনিশা টাইপ)`}
+                      className={`mt-1.5 inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-[10px] font-semibold transition ${speakingIdx === i ? "animate-pulse bg-fuchsia-100 text-fuchsia-700" : "text-violet-500 hover:bg-violet-50 hover:text-violet-700"}`}
+                    >
                       {speakingIdx === i
                         ? (<><span className="flex items-end gap-0.5"><span className="block h-2.5 w-0.5 animate-pulse rounded-full bg-fuchsia-500" /><span className="block h-3.5 w-0.5 animate-pulse rounded-full bg-fuchsia-500" style={{ animationDelay: "0.15s" }} /><span className="block h-2 w-0.5 animate-pulse rounded-full bg-fuchsia-500" style={{ animationDelay: "0.3s" }} /></span> {en ? "Stop" : "থামুন"}</>)
                         : "🔊 " + (en ? "Listen" : "শুনুন")}
