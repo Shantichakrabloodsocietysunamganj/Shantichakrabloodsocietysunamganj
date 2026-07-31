@@ -1,13 +1,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
-import { BLOOD_GROUPS } from "@/data/constants";
+import { BLOOD_GROUPS, BLOOD_GROUP_COLORS } from "@/data/constants";
 import type { Lang } from "@/lib/i18n";
 
-// Blood group availability dashboard — কোন গ্রুপে কতজন দাতা
 export default function BloodAvailability({ lang }: { lang: Lang }) {
   const supabase = createClient();
+  const router = useRouter();
   const [data, setData] = useState<Record<string, number>>({});
   const [loading, setLoading] = useState(true);
   const en = lang === "en";
@@ -15,7 +16,10 @@ export default function BloodAvailability({ lang }: { lang: Lang }) {
   useEffect(() => {
     (async () => {
       try {
-        const { data: donors } = await supabase.from("donors").select("blood_group,is_available").eq("is_available", true);
+        const { data: donors } = await supabase
+          .from("donors")
+          .select("blood_group,is_available")
+          .eq("is_available", true);
         const map: Record<string, number> = {};
         BLOOD_GROUPS.forEach((g) => (map[g] = 0));
         (donors ?? []).forEach((d: any) => { if (map[d.blood_group] !== undefined) map[d.blood_group]++; });
@@ -41,20 +45,31 @@ export default function BloodAvailability({ lang }: { lang: Lang }) {
         const c = getColor(count);
         const pct = loading ? 0 : (count / max) * 100;
         return (
-          <div key={g} className="card p-4 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-glow">
+          <button
+            key={g}
+            onClick={() => router.push(`/donors?group=${encodeURIComponent(g)}`)}
+            className="group card relative p-4 text-left transition-all duration-300 hover:-translate-y-1 hover:shadow-glow"
+          >
+            {/* Click hint */}
+            <span className="absolute right-2 top-2 text-[10px] font-medium text-brand-400 opacity-0 transition-opacity group-hover:opacity-100">
+              {en ? "View →" : "দেখুন →"}
+            </span>
+
             <div className="flex items-center justify-between">
-              <span className="text-lg font-extrabold text-ink">{g}</span>
+              <span className={`flex h-9 w-9 items-center justify-center rounded-xl text-sm font-bold ring-1 ${BLOOD_GROUP_COLORS[g]}`}>{g}</span>
               <span className={`text-xs font-semibold ${c.text}`}>{c.label}</span>
             </div>
+
             <div className="mt-2 flex items-end gap-1">
-              <span className="text-2xl font-extrabold text-ink">{loading ? "—" : count}</span>
+              <span className="font-display text-2xl font-extrabold text-ink">{loading ? "—" : count}</span>
               <span className="mb-0.5 text-xs text-ink/40">{en ? "donors" : "জন"}</span>
             </div>
+
             {/* Availability bar */}
-            <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-zinc-100">
+            <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-zinc-100 dark:bg-white/10">
               <div className={`h-full rounded-full transition-all duration-700 ${c.bg}`} style={{ width: `${loading ? 0 : Math.max(pct, count > 0 ? 8 : 0)}%` }} />
             </div>
-          </div>
+          </button>
         );
       })}
     </div>
