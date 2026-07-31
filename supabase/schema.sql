@@ -597,4 +597,58 @@ alter table public.blood_requests add column if not exists patient_gender text;
 alter table public.blood_requests add column if not exists disease text;
 alter table public.blood_requests add column if not exists blood_component text default 'whole_blood';
 
+-- =====================================================
+-- SOFT-DELETE FILTER: deleted items hidden from public (RLS level)
+-- =====================================================
+
+-- donors: public sees only approved + not-deleted; staff sees all
+drop policy if exists "Public donor read" on public.donors;
+create policy "Public donor read" on public.donors
+  for select using ((approved and deleted_at is null) or public.is_staff());
+
+-- blood_requests: public sees only not-deleted; staff sees all
+drop policy if exists "Public blood request read" on public.blood_requests;
+create policy "Public blood request read" on public.blood_requests
+  for select using (deleted_at is null or public.is_staff());
+
+-- events
+drop policy if exists "Public events read" on public.events;
+create policy "Public events read" on public.events
+  for select using (deleted_at is null or public.is_staff());
+
+-- volunteers
+drop policy if exists "Public volunteers read" on public.volunteers;
+create policy "Public volunteers read" on public.volunteers
+  for select using (deleted_at is null or public.is_staff());
+
+-- blogs: published + not-deleted for public; staff sees all
+drop policy if exists "Public blogs read" on public.blogs;
+create policy "Public blogs read" on public.blogs
+  for select using ((published and deleted_at is null) or public.is_staff());
+
+-- gallery
+drop policy if exists "Public gallery read" on public.gallery;
+create policy "Public gallery read" on public.gallery
+  for select using (deleted_at is null or public.is_staff());
+
+-- testimonials: approved + not-deleted for public
+drop policy if exists "Public testimonials read" on public.testimonials;
+create policy "Public testimonials read" on public.testimonials
+  for select using ((approved and deleted_at is null) or public.is_staff());
+
+-- committee_members
+drop policy if exists "Public committee read" on public.committee_members;
+create policy "Public committee read" on public.committee_members
+  for select using (deleted_at is null or public.is_staff());
+
+-- faqs
+drop policy if exists "Public faqs read" on public.faqs;
+create policy "Public faqs read" on public.faqs
+  for select using (deleted_at is null or public.is_staff());
+
+-- partners (admin-only manage)
+drop policy if exists "Public partners read" on public.partners;
+create policy "Public partners read" on public.partners
+  for select using (deleted_at is null or public.is_admin());
+
 -- DONE
