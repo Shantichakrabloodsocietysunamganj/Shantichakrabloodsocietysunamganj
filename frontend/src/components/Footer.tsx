@@ -51,7 +51,7 @@ export default function Footer({ settings, lang }: { settings: SiteSettings; lan
             <li><Link className="transition hover:text-white" href="/donors">{t("nav.donors", lang)}</Link></li>
             <li><Link className="transition hover:text-white" href="/request-blood">{t("nav.needBlood", lang)}</Link></li>
             <li><Link className="transition hover:text-white" href="/become-donor">{t("nav.becomeDonor", lang)}</Link></li>
-            <li><Link className="transition hover:text-white" href="/register">{t("nav.register", lang)}</Link></li>
+            <li><Link className="transition hover:text-white" href="/donate">{t("nav.donate", lang)}</Link></li>
           </ul>
         </div>
 
@@ -59,6 +59,9 @@ export default function Footer({ settings, lang }: { settings: SiteSettings; lan
           <h4 className="text-sm font-semibold text-white">{t("footer.more", lang)}</h4>
           <ul className="mt-4 space-y-2.5 text-sm text-slate-400">
             <li><Link className="transition hover:text-white" href="/about">{t("nav.about", lang)}</Link></li>
+            <li><Link className="transition hover:text-white" href="/impact">{t("nav.impact", lang)}</Link></li>
+            <li><Link className="transition hover:text-white" href="/media">{t("nav.media", lang)}</Link></li>
+            <li><Link className="transition hover:text-white" href="/events">{t("nav.events", lang)}</Link></li>
             <li><Link className="transition hover:text-white" href="/gallery">{t("nav.gallery", lang)}</Link></li>
             <li><Link className="transition hover:text-white" href="/blog">{t("nav.blog", lang)}</Link></li>
             <li><Link className="transition hover:text-white" href="/faq">{lang === "en" ? "FAQ" : "সাধারণ প্রশ্ন"}</Link></li>

@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const base = "https://shantichakrabloodsocietysunamganj-g.vercel.app";
-  const routes = ["", "/donors", "/request-blood", "/requests", "/become-donor", "/about", "/impact", "/media", "/events", "/contact", "/faq", "/gallery", "/blog", "/login", "/register"];
+  const routes = ["", "/donors", "/request-blood", "/requests", "/become-donor", "/about", "/impact", "/media", "/events", "/donate", "/contact", "/faq", "/gallery", "/blog", "/login", "/register"];
   return routes.map((r) => ({
     url: `${base}${r}`,
     lastModified: new Date(),
