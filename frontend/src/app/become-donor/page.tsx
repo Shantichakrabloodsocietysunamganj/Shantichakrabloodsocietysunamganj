@@ -6,6 +6,7 @@ import { z } from "zod";
 import { createClient } from "@/lib/supabase/client";
 import { BLOOD_GROUPS, DISTRICTS, upazilasOf, GENDERS } from "@/data/constants";
 import { useLangClient, t } from "@/lib/i18n";
+import { getEligibility } from "@/lib/donation";
 
 const schema = z.object({
   full_name: z.string().min(2),
@@ -116,7 +117,7 @@ export default function BecomeDonorPage() {
           <Field label={en ? "Age (18–60)" : "বয়স (১৮–৬০)"} error={errors.age ? (en ? "18–60" : "১৮-৬০") : undefined}><input type="number" min={18} max={60} className="input" value={form.age} onChange={(e) => set("age", e.target.value)} /></Field>
           <Field label={en ? "Gender" : "লিঙ্গ"}><select className="input" value={form.gender} onChange={(e) => set("gender", e.target.value)}><option value="">{en ? "Select" : "নির্বাচন"}</option>{GENDERS.map((g) => <option key={g} value={g}>{g}</option>)}</select></Field>
           <Field label={en ? "Area" : "এলাকা"}><input className="input" value={form.area} onChange={(e) => set("area", e.target.value)} /></Field>
-          <Field label={en ? "Last Donation Date" : "সর্বশেষ রক্তদান"}><input type="date" className="input" value={form.last_donation_date} onChange={(e) => set("last_donation_date", e.target.value)} /></Field>
+          <Field label={en ? "Last Donation Date" : "সর্বশেষ রক্তদান"}><input type="date" className="input" value={form.last_donation_date} onChange={(e) => { const d = e.target.value; set("last_donation_date", d); const el = getEligibility(d || null); set("is_available", el.eligible); }} />{form.last_donation_date && (() => { const el = getEligibility(form.last_donation_date); return <p className={`mt-1 text-xs font-medium ${el.eligible ? "text-emerald-600" : "text-amber-600"}`}>{el.eligible ? (en ? "✓ Eligible to donate now." : "✓ আপনি এখন রক্তদানে প্রস্তুত।") : (en ? `⏳ ${el.daysRemaining} days remaining (eligible ${el.nextEligibleText}).` : `⏳ আর ${el.daysRemaining.toLocaleString("bn-BD")} দিন বাকি (${el.nextEligibleText})।`)}</p>; })()}</Field>
         </div>
         <div className="mt-5"><Field label={en ? "Additional Info (optional)" : "অতিরিক্ত তথ্য (ঐচ্ছিক)"}><textarea className="input min-h-24" value={form.notes} onChange={(e) => set("notes", e.target.value)} /></Field></div>
         <label className="mt-4 flex items-start gap-3 rounded-xl bg-emerald-50 p-4"><input type="checkbox" checked={form.is_available} onChange={(e) => set("is_available", e.target.checked)} className="mt-0.5 h-4 w-4 rounded border-zinc-300 text-brand-600 focus:ring-brand-500" /><span className="text-sm font-medium text-emerald-800">{en ? "I am currently available to donate blood." : "আমি বর্তমানে রক্তদানে প্রস্তুত আছি।"}</span></label>
