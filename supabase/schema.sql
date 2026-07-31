@@ -651,4 +651,28 @@ drop policy if exists "Public partners read" on public.partners;
 create policy "Public partners read" on public.partners
   for select using (deleted_at is null or public.is_admin());
 
+-- 20) donation_methods (bKash/Nagad/Rocket/Bank)
+create table if not exists public.donation_methods (
+  id uuid primary key default gen_random_uuid(),
+  method_name text not null,
+  account_number text not null,
+  account_type text,
+  logo_url text,
+  qr_url text,
+  instructions text,
+  is_active boolean not null default true,
+  "order" int default 0,
+  created_at timestamptz not null default now()
+);
+alter table public.donation_methods enable row level security;
+drop policy if exists "Public donation methods read" on public.donation_methods;
+create policy "Public donation methods read" on public.donation_methods for select using (is_active and deleted_at is null or public.is_staff());
+drop policy if exists "Staff donation methods write" on public.donation_methods;
+create policy "Staff donation methods write" on public.donation_methods for insert with check (public.is_staff());
+drop policy if exists "Staff donation methods update" on public.donation_methods;
+create policy "Staff donation methods update" on public.donation_methods for update using (public.is_staff());
+drop policy if exists "Staff donation methods delete" on public.donation_methods;
+create policy "Staff donation methods delete" on public.donation_methods for delete using (public.is_staff());
+alter table public.donation_methods add column if not exists deleted_at timestamptz;
+
 -- DONE
