@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 
 type Msg = { from: "bot" | "user"; text: string; cta?: { label: string; href: string }; time: number };
@@ -22,12 +22,16 @@ const FOLLOWUPS: Record<string, string[]> = {
   donor: ["🩸 রক্তদাতা হব", "📞 যোগাযোগ", "📊 আমাদের অর্জন"],
   become: ["📞 যোগাযোগ", "🔎 দাতা খুঁজুন", "📊 আমাদের অর্জন"],
   contact: ["🩸 রক্তদাতা হব", "🔎 দাতা খুঁজুন", "🚨 রক্ত লাগবে"],
-  about: ["📊 আমাদের অর্জন", "📰 মিডিয়া", "📅 কর্মসূচি"],
+  about: ["📊 আমাদের অর্জন", "🔊 শান্তির ভয়েস", "📰 মিডিয়া", "📅 কর্মসূচি"],
   donate: ["📞 যোগাযোগ", "🙋 স্বেচ্ছাসেবক", "📊 আমাদের অর্জন"],
-  default: ["🩸 রক্ত লাগবে", "🔎 দাতা খুঁজুন", "🩸 রক্তদাতা হব", "📞 যোগাযোগ", "📊 আমাদের অর্জন"],
+  default: ["🩸 রক্ত লাগবে", "🔎 দাতা খুঁজুন", "🩸 রক্তদাতা হব", "🔊 শান্তির ভয়েস", "📞 যোগাযোগ", "📊 আমাদের অর্জন"],
 };
 
 const KB: Entry[] = [
+  { keys: ["ভয়েস", "voice", "কথা বলো", "শব্দ", "মহিলা ভয়েস", "নবনীতা", "তনিশা", "উচ্চারণ", "audio", "শুনব", "মেয়েদের ভয়েস", "শান্তির ভয়েস", "shanti's voice"],
+    bn: "🔊 আমার ভয়েস শুনতে যেকোনো মেসেজের নিচে 'শুনুন' বাটনে চাপ দিন। আমি বাংলাদেশি উচ্চারণে (bn-BD) Microsoft নবনীতা / তনিশা টাইপ সেরা মহিলা ভয়েসে কথা বলি!",
+    en: "🔊 To listen to my voice, click the 'Listen' button under any message. I speak in a natural female Bangladeshi Bengali voice!",
+    followUp: ["about"] },
   { keys: ["রক্ত লাগ", "রকত লাগ", "জরুরি", "রক্ত দরকার", "blood", "need", "emergency", "urgent", "প্রয়োজন", "মুমূর্ষু"],
     bn: "🚨 জরুরি রক্ত? দ্রুত করুন:\n১) কল: 01626224878\n২) /request-blood-এ অনুরোধ পোস্ট করুন\n৩) /donors-এ দাতা খুঁজে কল করুন\n২৪/৭ আমরা পাশে আছি।",
     en: "🚨 Urgent blood?\n1) Call: 01626224878\n2) Post on /request-blood\n3) Search /donors and call\nWe are here 24/7.",
@@ -78,6 +82,7 @@ export default function AIAssistant() {
   const [listening, setListening] = useState(false);
   const [followUp, setFollowUp] = useState<string[]>(FOLLOWUPS.default);
   const [speakingIdx, setSpeakingIdx] = useState<number | null>(null);
+  const [activeVoiceName, setActiveVoiceName] = useState<string>("");
   const scrollRef = useRef<HTMLDivElement>(null);
   const recogRef = useRef<any>(null);
   const speakRef = useRef<number | null>(null);
@@ -98,26 +103,6 @@ export default function AIAssistant() {
   useEffect(() => { scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" }); }, [msgs, open, typing]);
   useEffect(() => { if (!open) window.speechSynthesis?.cancel(); }, [open]);
 
-  // Load available TTS voices — async on most browsers, retry up to 2s
-  useEffect(() => {
-    const load = () => {
-      const v = window.speechSynthesis?.getVoices?.() ?? [];
-      if (v.length) voicesRef.current = v;
-    };
-    load();
-    if (typeof window !== "undefined" && window.speechSynthesis) {
-      window.speechSynthesis.addEventListener("voiceschanged", load);
-      // Retry: voices often arrive async after component mounts (especially Edge/Chrome)
-      const t1 = setTimeout(load, 100);
-      const t2 = setTimeout(load, 500);
-      const t3 = setTimeout(load, 1500);
-      return () => {
-        window.speechSynthesis.removeEventListener("voiceschanged", load);
-        clearTimeout(t1); clearTimeout(t2); clearTimeout(t3);
-      };
-    }
-  }, []);
-
   // Strip emoji + symbols so TTS doesn't read them aloud; tidy spacing
   const cleanForSpeech = (text: string): string =>
     text
@@ -131,71 +116,103 @@ export default function AIAssistant() {
 
   // Detect whether a voice is female by name heuristic
   const isFemaleName = (name: string): boolean =>
-    /female|woman|zira|sara|hazel|susan|linda|samantha|victoria|karen|moira|fiona|tessa|allison|ava|sophie|helena|paulina|polly|vicki|veena|lekha|shelby|princess|nabanita|tanishaa|tanisha|tanushri|bansuri|ritu|shreya|kajal|piya|tara|mayuri|google\s*বাংলা|মহিলা/i.test(name);
+    /female|woman|zira|sara|hazel|susan|linda|samantha|victoria|karen|moira|fiona|tessa|allison|ava|sophie|helena|paulina|polly|vicki|veena|lekha|shelby|princess|nabanita|tanishaa|tanisha|tanushri|bansuri|ritu|shreya|kajal|piya|tara|mayuri|google\s*বাংলা|মহিলা|নারী|মেয়ে/i.test(name);
 
-  // Pick the best matching voice; prefer female Bangla (Bangladeshi accent) for শান্তি
-  // Returns [voice, isFemale]
-  const pickVoice = (): { voice: SpeechSynthesisVoice | undefined; isFemale: boolean } => {
+  // Auto-select the best Female Bengali voice (prioritizing Bangladeshi bn-BD pronunciation, Microsoft Nabanita / Tanisha type neural voices)
+  // Returns { voice, isFemale }
+  const pickVoice = useCallback((): { voice: SpeechSynthesisVoice | undefined; isFemale: boolean } => {
     const voices = voicesRef.current;
     if (!voices?.length) return { voice: undefined, isFemale: false };
 
-    if (!en) {
-      // --- BANGLA MODE ---
-      // Tier 1: bn-BD + female (e.g. "Microsoft Tanishaa Online (Natural)" on Edge)
-      const bnBDFemale = voices.filter(
-        (v) => v.lang?.toLowerCase() === "bn-bd" && isFemaleName(v.name)
-      );
-      if (bnBDFemale.length) {
-        const nat = bnBDFemale.find((v) => /natural|neural|online|premium|enhanced|google/i.test(v.name));
-        return { voice: nat ?? bnBDFemale[0], isFemale: true };
-      }
+    const scoreVoice = (v: SpeechSynthesisVoice): number => {
+      const name = (v.name || "").toLowerCase();
+      const vLang = (v.lang || "").toLowerCase();
+      const uri = (v.voiceURI || "").toLowerCase();
+      const combined = `${name} ${vLang} ${uri}`;
 
-      // Tier 2: bn-BD any voice
-      const bnBD = voices.filter((v) => v.lang?.toLowerCase() === "bn-bd");
-      if (bnBD.length) {
-        const nat = bnBD.find((v) => /natural|neural|online|google/i.test(v.name));
-        return { voice: nat ?? bnBD[0], isFemale: isFemaleName((nat ?? bnBD[0]).name) };
-      }
+      if (en) {
+        if (!vLang.startsWith("en") && !combined.includes("english")) return -10000;
+        if (/guy|christopher|ryan|george|david|mark|wavenet-b|wavenet-d|standard-b|standard-d|neural2-b|neural2-d|\bmale\b/i.test(combined)) {
+          return -5000;
+        }
+        let score = 0;
+        if (/samantha|aria|jenny|sonia|natasha|victoria|zira|hazel|susan|google.*us.*english|female/i.test(combined)) score += 1000;
+        if (/natural|neural|online|wavenet|google/i.test(combined)) score += 300;
+        if (v.default) score += 50;
+        return score;
+      } else {
+        const isBangla = vLang.startsWith("bn") || combined.includes("bangla") || combined.includes("bengali") || combined.includes("বাংলা");
+        if (!isBangla) return -10000;
 
-      // Tier 3: any bn + female (bn-IN, generic bn)
-      const bnFemale = voices.filter(
-        (v) => v.lang?.toLowerCase().startsWith("bn") && isFemaleName(v.name)
-      );
-      if (bnFemale.length) {
-        const nat = bnFemale.find((v) => /natural|neural|online|premium|enhanced|google/i.test(v.name));
-        return { voice: nat ?? bnFemale[0], isFemale: true };
-      }
+        // Heavily penalize male Bengali voices (Microsoft Pradeep, Microsoft Bashkar, Wavenet-B/D, male keywords)
+        if (/pradeep|bashkar|bhaskar|wavenet-b|wavenet-d|standard-b|standard-d|neural2-b|neural2-d|\bmale\b|পুরুষ|ছেলে/i.test(combined)) {
+          return -5000;
+        }
 
-      // Tier 4: any bn voice
-      const bn = voices.filter((v) => v.lang?.toLowerCase().startsWith("bn"));
-      if (bn.length) {
-        const nat = bn.find((v) => /natural|neural|online|google/i.test(v.name));
-        return { voice: nat ?? bn[0], isFemale: isFemaleName((nat ?? bn[0]).name) };
-      }
+        let score = 0;
+        // Priority 1: Bangladeshi pronunciation / accent (bn-BD)
+        const isBangladeshi = vLang.includes("bn-bd") || vLang.includes("bn_bd") || combined.includes("bangladesh") || combined.includes("বাংলাদেশ") || combined.includes("-bd");
+        const isIndianBangla = vLang.includes("bn-in") || vLang.includes("bn_in") || combined.includes("india") || combined.includes("ভারত") || combined.includes("-in");
 
-      // Tier 5: hi fallback (phonetically close)
-      const hi = voices.filter((v) => v.lang?.toLowerCase().startsWith("hi"));
-      if (hi.length) {
-        const hiFemale = hi.filter((v) => isFemaleName(v.name));
-        if (hiFemale.length) return { voice: hiFemale[0], isFemale: true };
-        return { voice: hi[0], isFemale: false };
+        if (isBangladeshi) {
+          score += 2000; // Highest priority: Bangladeshi accent
+        } else if (isIndianBangla) {
+          score += 1000; // Second priority: Indian Bengali
+        } else {
+          score += 500;  // General Bengali
+        }
+
+        // Priority 2: Microsoft Nabanita / Tanisha type and top Female Bengali voices
+        if (combined.includes("nabanita")) {
+          score += 1500; // Microsoft Nabanita Online / Neural (Bangladesh bn-BD Female #1)
+        } else if (combined.includes("tanisha")) {
+          score += 1200; // Microsoft Tanisha Online / Neural (India bn-IN Female #2)
+        } else if (/amrita|lekha|sampa|wavenet-a|wavenet-c|neural2-a|neural2-c|standard-a|standard-c|google\s*বাংলা|google.*bengali|female|নারী|মহিলা|মেয়ে/i.test(combined)) {
+          score += 800;  // Other high-quality female Bengali voices
+        }
+
+        // Priority 3: Natural / Neural / Online engine quality
+        if (/natural|neural|online|wavenet|google|azure|edge/i.test(combined)) {
+          score += 300;
+        }
+        if (v.default) score += 50;
+        if (v.localService) score += 20;
+
+        return score;
       }
+    };
+
+    const sorted = [...voices].sort((a, b) => scoreVoice(b) - scoreVoice(a));
+    const best = sorted[0];
+    if (best && scoreVoice(best) > -5000) {
+      return { voice: best, isFemale: isFemaleName(best.name) || !/male|guy|pradeep|bashkar|bhaskar|wavenet-b|wavenet-d/i.test(best.name) };
     }
+    const fallback = voices.find((v) => (en ? v.lang?.toLowerCase().startsWith("en") : v.lang?.toLowerCase().startsWith("bn"))) ?? voices[0];
+    return { voice: fallback, isFemale: fallback ? isFemaleName(fallback.name) : false };
+  }, [en]);
 
-    // --- ENGLISH MODE ---
-    const enMatches = voices.filter((v) => v.lang?.toLowerCase().startsWith("en"));
-    if (enMatches.length) {
-      const enFemale = enMatches.filter((v) => isFemaleName(v.name));
-      if (enFemale.length) {
-        const nat = enFemale.find((v) => /natural|neural|online|google|wavenet|aria|jenny|samantha/i.test(v.name));
-        return { voice: nat ?? enFemale[0], isFemale: true };
+  // Load available TTS voices — async on most browsers, retry up to 2s
+  useEffect(() => {
+    const load = () => {
+      const v = window.speechSynthesis?.getVoices?.() ?? [];
+      if (v.length) {
+        voicesRef.current = v;
+        const { voice } = pickVoice();
+        if (voice?.name) setActiveVoiceName(voice.name);
       }
-      const nat = enMatches.find((v) => /natural|neural|online|google|wavenet|premium/i.test(v.name));
-      return { voice: nat ?? enMatches[0], isFemale: isFemaleName((nat ?? enMatches[0]).name) };
+    };
+    load();
+    if (typeof window !== "undefined" && window.speechSynthesis) {
+      window.speechSynthesis.addEventListener("voiceschanged", load);
+      const t1 = setTimeout(load, 100);
+      const t2 = setTimeout(load, 500);
+      const t3 = setTimeout(load, 1500);
+      return () => {
+        window.speechSynthesis.removeEventListener("voiceschanged", load);
+        clearTimeout(t1); clearTimeout(t2); clearTimeout(t3);
+      };
     }
-
-    return { voice: voices[0], isFemale: false };
-  };
+  }, [en, pickVoice]);
 
   const localReply = (q: string): Msg => {
     const t = q.toLowerCase();
@@ -243,7 +260,7 @@ export default function AIAssistant() {
     recog.start(); recogRef.current = recog;
   };
 
-  // Text-to-speech
+  // Text-to-speech (using best Female Bengali voice, Bangladeshi bn-BD pronunciation priority)
   const speak = (text: string, idx: number) => {
     window.speechSynthesis?.cancel();
     if (speakRef.current === idx) { speakRef.current = null; setSpeakingIdx(null); return; }
@@ -251,23 +268,29 @@ export default function AIAssistant() {
     if (!cleaned) return;
     const u = new SpeechSynthesisUtterance(cleaned);
     const { voice, isFemale } = pickVoice();
-    if (voice) { u.voice = voice; u.lang = voice.lang; } else { u.lang = en ? "en-US" : "bn-BD"; }
+    if (voice) {
+      u.voice = voice;
+      u.lang = voice.lang || (en ? "en-US" : "bn-BD");
+      setActiveVoiceName(voice.name || "");
+      console.log(`[Shanti AI TTS] Auto-selected female voice: "${voice.name}" (${voice.lang || u.lang})`);
+    } else {
+      u.lang = en ? "en-US" : "bn-BD";
+      console.log(`[Shanti AI TTS] Using browser default voice for lang: ${u.lang}`);
+    }
 
-    // If no female voice found in Bangla mode, boost pitch so it sounds feminine
     const isBangla = !en;
     if (isBangla && !isFemale) {
-      // Higher pitch = more feminine perception; 1.35 gives warm-female without being squeaky
+      // If no female voice found in Bangla mode, boost pitch so it sounds feminine
       u.pitch = 1.35;
       u.rate = 0.92;
     } else if (isBangla) {
       u.pitch = 1.08;
       u.rate = 0.92;
     } else {
-      // English: female voice usually available; keep warm
-      u.pitch = 1.05;
+      u.pitch = 1.04;
       u.rate = 0.98;
     }
-    u.volume = 1;
+        u.volume = 1;
     u.onend = () => { speakRef.current = null; setSpeakingIdx(null); };
     u.onerror = () => { speakRef.current = null; setSpeakingIdx(null); };
     speakRef.current = idx;
@@ -276,7 +299,7 @@ export default function AIAssistant() {
   };
 
   const clearChat = () => { setMsgs([greet]); setFollowUp(FOLLOWUPS.default); localStorage.removeItem("shanti-chat"); window.speechSynthesis?.cancel(); setSpeakingIdx(null); };
-  const SUGGESTIONS = en ? ["🩸 Need blood", "🔎 Find donor", "➕ Become donor", "📞 Contact", "📊 Impact"] : ["🩸 রক্ত লাগবে", "🔎 দাতা খুঁজুন", "➕ রক্তদাতা হব", "📞 যোগাযোগ", "📊 অর্জন"];
+  const SUGGESTIONS = en ? ["🩸 Need blood", "🔎 Find donor", "➕ Become donor", "🔊 Shanti's Voice", "📞 Contact", "📊 Impact"] : ["🩸 রক্ত লাগবে", "🔎 দাতা খুঁজুন", "➕ রক্তদাতা হব", "🔊 শান্তির ভয়েস", "📞 যোগাযোগ", "📊 অর্জন"];
 
   return (
     <>
@@ -299,7 +322,7 @@ export default function AIAssistant() {
               <span className="flex h-9 w-9 items-center justify-center rounded-full bg-white/15">🤖</span>
               <div>
                 <p className="text-sm font-bold leading-tight">{en ? "Shanti" : "শান্তি"}</p>
-                <p className="text-[10px] text-white/60">{en ? "AI Helper • / for shortcuts" : "AI সহকারী • / দিয়ে শর্টকাট"}</p>
+                <p className="text-[10px] text-white/60">{en ? "AI Helper • Female Voice (bn-BD) • / for shortcuts" : "AI সহকারী • মহিলা ভয়েস (bn-BD) • / দিয়ে শর্টকাট"}</p>
               </div>
             </div>
             <button onClick={clearChat} aria-label={en ? "New chat" : "নতুন চ্যাট"} className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/10 text-white transition hover:bg-white/20" title={en ? "Clear chat" : "নতুন চ্যাট"}>
@@ -318,7 +341,11 @@ export default function AIAssistant() {
                   )}
                   {/* TTS button on bot messages */}
                   {m.from === "bot" && m.text.length > 10 && (
-                    <button onClick={() => speak(m.text, i)} className={`mt-1.5 inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-[10px] font-semibold transition ${speakingIdx === i ? "animate-pulse bg-fuchsia-100 text-fuchsia-700" : "text-violet-500 hover:bg-violet-50 hover:text-violet-700"}`}>
+                    <button
+                      onClick={() => speak(m.text, i)}
+                      title={en ? `Listen (Female Voice: ${activeVoiceName || "Auto-selected bn-BD"})` : `শান্তির মহিলা ভয়েসে শুনুন (${activeVoiceName ? activeVoiceName + " — " : ""}বাংলাদেশি উচ্চারণ নবনীতা/তনিশা টাইপ)`}
+                      className={`mt-1.5 inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-[10px] font-semibold transition ${speakingIdx === i ? "animate-pulse bg-fuchsia-100 text-fuchsia-700" : "text-violet-500 hover:bg-violet-50 hover:text-violet-700"}`}
+                    >
                       {speakingIdx === i
                         ? (<><span className="flex items-end gap-0.5"><span className="block h-2.5 w-0.5 animate-pulse rounded-full bg-fuchsia-500" /><span className="block h-3.5 w-0.5 animate-pulse rounded-full bg-fuchsia-500" style={{ animationDelay: "0.15s" }} /><span className="block h-2 w-0.5 animate-pulse rounded-full bg-fuchsia-500" style={{ animationDelay: "0.3s" }} /></span> {en ? "Stop" : "থামুন"}</>)
                         : "🔊 " + (en ? "Listen" : "শুনুন")}
