@@ -114,10 +114,15 @@ export default function AIAssistant() {
       .replace(/\s+/g, " ")
       .trim();
 
+  // Detect whether a voice is female by name heuristic
+  const isFemaleName = (name: string): boolean =>
+    /female|woman|zira|sara|hazel|susan|linda|samantha|victoria|karen|moira|fiona|tessa|allison|ava|sophie|helena|paulina|polly|vicki|veena|lekha|shelby|princess|nabanita|tanishaa|tanisha|tanushri|bansuri|ritu|shreya|kajal|piya|tara|mayuri|google\s*বাংলা|মহিলা|নারী|মেয়ে/i.test(name);
+
   // Auto-select the best Female Bengali voice (prioritizing Bangladeshi bn-BD pronunciation, Microsoft Nabanita / Tanisha type neural voices)
-  const pickVoice = useCallback((): SpeechSynthesisVoice | undefined => {
+  // Returns { voice, isFemale }
+  const pickVoice = useCallback((): { voice: SpeechSynthesisVoice | undefined; isFemale: boolean } => {
     const voices = voicesRef.current;
-    if (!voices?.length) return undefined;
+    if (!voices?.length) return { voice: undefined, isFemale: false };
 
     const scoreVoice = (v: SpeechSynthesisVoice): number => {
       const name = (v.name || "").toLowerCase();
@@ -127,7 +132,6 @@ export default function AIAssistant() {
 
       if (en) {
         if (!vLang.startsWith("en") && !combined.includes("english")) return -10000;
-        // Penalize male English voices
         if (/guy|christopher|ryan|george|david|mark|wavenet-b|wavenet-d|standard-b|standard-d|neural2-b|neural2-d|\bmale\b/i.test(combined)) {
           return -5000;
         }
@@ -137,7 +141,6 @@ export default function AIAssistant() {
         if (v.default) score += 50;
         return score;
       } else {
-        // Bengali mode: female Bengali voice with Bangladeshi (bn-BD) priority
         const isBangla = vLang.startsWith("bn") || combined.includes("bangla") || combined.includes("bengali") || combined.includes("বাংলা");
         if (!isBangla) return -10000;
 
@@ -182,26 +185,32 @@ export default function AIAssistant() {
     const sorted = [...voices].sort((a, b) => scoreVoice(b) - scoreVoice(a));
     const best = sorted[0];
     if (best && scoreVoice(best) > -5000) {
-      return best;
+      return { voice: best, isFemale: isFemaleName(best.name) || !/male|guy|pradeep|bashkar|bhaskar|wavenet-b|wavenet-d/i.test(best.name) };
     }
-    // Fallback: first bn voice or default
-    return voices.find((v) => (en ? v.lang?.toLowerCase().startsWith("en") : v.lang?.toLowerCase().startsWith("bn"))) ?? voices[0];
+    const fallback = voices.find((v) => (en ? v.lang?.toLowerCase().startsWith("en") : v.lang?.toLowerCase().startsWith("bn"))) ?? voices[0];
+    return { voice: fallback, isFemale: fallback ? isFemaleName(fallback.name) : false };
   }, [en]);
 
-  // Load available TTS voices (async on most browsers)
+  // Load available TTS voices — async on most browsers, retry up to 2s
   useEffect(() => {
     const load = () => {
       const v = window.speechSynthesis?.getVoices?.() ?? [];
       if (v.length) {
         voicesRef.current = v;
-        const defaultVoice = pickVoice();
-        if (defaultVoice?.name) setActiveVoiceName(defaultVoice.name);
+        const { voice } = pickVoice();
+        if (voice?.name) setActiveVoiceName(voice.name);
       }
     };
     load();
     if (typeof window !== "undefined" && window.speechSynthesis) {
       window.speechSynthesis.addEventListener("voiceschanged", load);
-      return () => window.speechSynthesis.removeEventListener("voiceschanged", load);
+      const t1 = setTimeout(load, 100);
+      const t2 = setTimeout(load, 500);
+      const t3 = setTimeout(load, 1500);
+      return () => {
+        window.speechSynthesis.removeEventListener("voiceschanged", load);
+        clearTimeout(t1); clearTimeout(t2); clearTimeout(t3);
+      };
     }
   }, [en, pickVoice]);
 
@@ -258,7 +267,7 @@ export default function AIAssistant() {
     const cleaned = cleanForSpeech(text);
     if (!cleaned) return;
     const u = new SpeechSynthesisUtterance(cleaned);
-    const voice = pickVoice();
+    const { voice, isFemale } = pickVoice();
     if (voice) {
       u.voice = voice;
       u.lang = voice.lang || (en ? "en-US" : "bn-BD");
@@ -268,9 +277,20 @@ export default function AIAssistant() {
       u.lang = en ? "en-US" : "bn-BD";
       console.log(`[Shanti AI TTS] Using browser default voice for lang: ${u.lang}`);
     }
-    u.rate = en ? 0.98 : 0.92;     // clear, natural pacing for Bangladeshi pronunciation
-    u.pitch = 1.08;                // warm, natural female voice tone
-    u.volume = 1;
+
+    const isBangla = !en;
+    if (isBangla && !isFemale) {
+      // If no female voice found in Bangla mode, boost pitch so it sounds feminine
+      u.pitch = 1.35;
+      u.rate = 0.92;
+    } else if (isBangla) {
+      u.pitch = 1.08;
+      u.rate = 0.92;
+    } else {
+      u.pitch = 1.04;
+      u.rate = 0.98;
+    }
+        u.volume = 1;
     u.onend = () => { speakRef.current = null; setSpeakingIdx(null); };
     u.onerror = () => { speakRef.current = null; setSpeakingIdx(null); };
     speakRef.current = idx;
