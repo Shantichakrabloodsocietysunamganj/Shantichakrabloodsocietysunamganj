@@ -119,20 +119,64 @@ export default function AIAssistant() {
       .replace(/\s+/g, " ")
       .trim();
 
-  // Pick the best matching voice; prefer Bangla when in Bangla mode
+  // Pick the best matching voice; prefer female Bangla (Bangladeshi accent) for শান্তি
   const pickVoice = (): SpeechSynthesisVoice | undefined => {
     const voices = voicesRef.current;
     if (!voices?.length) return undefined;
-    const want = en ? ["en"] : ["bn"];
-    for (const prefix of want) {
-      const matches = voices.filter((v) => v.lang?.toLowerCase().startsWith(prefix));
-      if (matches.length) {
-        const natural = matches.find((v) => /natural|neural|google|wavenet|samantha|aria|jenny|female/i.test(v.name));
-        return natural ?? matches[0];
+
+    // Known female Bangla voice name patterns (Microsoft Tanishaa, Google বাংলা, Nabanita, etc.)
+    const femaleBanglaPatterns = /tanishaa|tanisha|nabanita|nabani|nabya|bansuri|google\s*বাংলা|female|মহিলা/i;
+    // Natural / neural / high-quality voice patterns
+    const naturalPatterns = /natural|neural|google|wavenet|samantha|aria|jenny|premium|enhanced/i;
+
+    if (!en) {
+      // --- BANGLA MODE ---
+      // Tier 1: bn-BD (Bangladeshi accent) + female voice  → e.g. "Microsoft Tanishaa"
+      const bnBDFemale = voices.filter(
+        (v) => v.lang?.toLowerCase() === "bn-bd" && femaleBanglaPatterns.test(v.name)
+      );
+      if (bnBDFemale.length) {
+        const natural = bnBDFemale.find((v) => naturalPatterns.test(v.name));
+        return natural ?? bnBDFemale[0];
       }
+
+      // Tier 2: bn-BD (Bangladeshi accent) any voice
+      const bnBD = voices.filter((v) => v.lang?.toLowerCase() === "bn-bd");
+      if (bnBD.length) {
+        const natural = bnBD.find((v) => naturalPatterns.test(v.name));
+        return natural ?? bnBD[0];
+      }
+
+      // Tier 3: bn-IN or generic bn + female voice → e.g. "Google বাংলা", "Microsoft Nabanita"
+      const bnFemale = voices.filter(
+        (v) => v.lang?.toLowerCase().startsWith("bn") && femaleBanglaPatterns.test(v.name)
+      );
+      if (bnFemale.length) {
+        const natural = bnFemale.find((v) => naturalPatterns.test(v.name));
+        return natural ?? bnFemale[0];
+      }
+
+      // Tier 4: bn-IN or generic bn any voice
+      const bn = voices.filter((v) => v.lang?.toLowerCase().startsWith("bn"));
+      if (bn.length) {
+        const natural = bn.find((v) => naturalPatterns.test(v.name));
+        return natural ?? bn[0];
+      }
+
+      // Tier 5: any Hindi voice (phonetically close fallback)
+      const hi = voices.filter((v) => v.lang?.toLowerCase().startsWith("hi"));
+      if (hi.length) return hi[0];
     }
-    // Last resort: default English voice
-    return voices.find((v) => v.lang?.toLowerCase().startsWith("en")) ?? voices[0];
+
+    // --- ENGLISH MODE ---
+    const enMatches = voices.filter((v) => v.lang?.toLowerCase().startsWith("en"));
+    if (enMatches.length) {
+      const natural = enMatches.find((v) => /natural|neural|google|wavenet|samantha|aria|jenny|female/i.test(v.name));
+      return natural ?? enMatches[0];
+    }
+
+    // Last resort: any available voice
+    return voices[0];
   };
 
   const localReply = (q: string): Msg => {
