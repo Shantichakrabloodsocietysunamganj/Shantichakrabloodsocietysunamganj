@@ -8,7 +8,17 @@ import BloodGroupBadge from "@/components/BloodGroupBadge";
 import StatusBadge from "@/components/StatusBadge";
 import { GridSkeleton } from "@/components/ui/Skeleton";
 import { upazilasOf } from "@/data/constants";
+import { bn, bnDate } from "@/lib/format";
 import type { Donor, BloodRequest } from "@/lib/types";
+
+// রক্তদানের সংখ্যা অনুযায়ী ব্যাজ
+function badgeOf(count: number): { icon: string; name: string; next: string | null } | null {
+  if (count >= 10) return { icon: "💎", name: "জীবনরক্ষা যোদ্ধা", next: null };
+  if (count >= 6) return { icon: "🥇", name: "প্রবীণ রক্তযোদ্ধা", next: `💎 পরবর্তী ব্যাজে আর ${bn(10 - count)} বার` };
+  if (count >= 3) return { icon: "🥈", name: "নিয়মিত রক্তযোদ্ধা", next: `🥇 পরবর্তী ব্যাজে আর ${bn(6 - count)} বার` };
+  if (count >= 1) return { icon: "🥉", name: "নব্য রক্তযোদ্ধা", next: `🥈 পরবর্তী ব্যাজে আর ${bn(3 - count)} বার` };
+  return null;
+}
 
 export default function DashboardPage() {
   const supabase = createClient();
@@ -71,6 +81,14 @@ export default function DashboardPage() {
               <div>
                 <p className="font-semibold text-ink">{profile?.full_name}</p>
                 <p className="text-xs text-ink/50">{profile?.role === "admin" ? "🛡️ অ্যাডমিন" : "রক্তদাতা"}</p>
+                {(() => {
+                  const b = badgeOf(donations.length);
+                  return b ? (
+                    <span className="mt-1.5 inline-flex items-center gap-1 rounded-full bg-amber-50 px-2 py-0.5 text-[11px] font-bold text-amber-700 ring-1 ring-amber-200">
+                      {b.icon} {b.name}
+                    </span>
+                  ) : null;
+                })()}
               </div>
             </div>
             {donor && (
@@ -98,7 +116,7 @@ export default function DashboardPage() {
         </aside>
 
         <div className="lg:col-span-2">
-          {tab === "profile" && (donor ? <DonorProfile donor={donor} onChanged={load} /> : <NoDonor />)}
+          {tab === "profile" && (donor ? <DonorProfile donor={donor} donations={donations} onChanged={load} /> : <NoDonor />)}
           {tab === "donations" && <MyDonations donations={donations} hasDonor={!!donor} />}
           {tab === "requests" && <MyRequests requests={requests} onChanged={load} />}
         </div>
@@ -126,7 +144,87 @@ function NoDonor() {
   );
 }
 
-function DonorProfile({ donor, onChanged }: { donor: Donor; onChanged: () => void }) {
+function NextDonationCard({ donor, donations }: { donor: Donor; donations: any[] }) {
+  // সর্বশেষ রক্তদান: ম্যানুয়াল তারিখ বা রেকর্ডকৃত donation — যেটা নতুন
+  const dates: number[] = [];
+  if (donor.last_donation_date) {
+    const t = new Date(`${donor.last_donation_date}T00:00:00`).getTime();
+    if (!isNaN(t)) dates.push(t);
+  }
+  for (const d of donations) {
+    const t = new Date(d.donated_at).getTime();
+    if (!isNaN(t)) dates.push(t);
+  }
+
+  const interval = donor.gender === "নারী" ? 120 : 90; // পুরুষ ৩ মাস, নারী ৪ মাস
+  const DAY = 24 * 60 * 60 * 1000;
+
+  if (dates.length === 0) {
+    return (
+      <div className="card border-l-4 border-l-success-500 p-5">
+        <p className="font-semibold text-ink">✅ আপনি রক্তদানের জন্য প্রস্তুত</p>
+        <p className="mt-1 text-sm leading-relaxed text-ink/60">
+          এখনো কোনো পূর্বের রক্তদানের তারিখ নেই। রক্তদানের পর তারিখটি নিচের ফর্মে যুক্ত করুন — তাহলে এখানে পরবর্তী দিনের কাউন্টডাউন দেখাবে।
+        </p>
+        <Link href="/eligibility" className="mt-3 inline-block text-sm font-semibold text-brand-600 hover:underline">
+          🩸 যোগ্যতা যাচাই করুন →
+        </Link>
+      </div>
+    );
+  }
+
+  const last = Math.max(...dates);
+  const today = new Date(new Date().toDateString()).getTime();
+  const next = last + interval * DAY;
+  const daysLeft = Math.ceil((next - today) / DAY);
+  const elapsed = Math.floor((today - last) / DAY);
+  const pct = Math.min(100, Math.round((elapsed / interval) * 100));
+
+  if (daysLeft <= 0) {
+    return (
+      <div className="card border-l-4 border-l-success-500 p-5">
+        <p className="font-semibold text-ink">✅ আপনি আবার রক্ত দিতে প্রস্তুত!</p>
+        <p className="mt-1 text-sm leading-relaxed text-ink/60">
+          সর্বশেষ রক্তদান ({bnDate(new Date(last))})-এর নিরাপদ ব্যবধান ({genderName(donor.gender)} {bn(interval)} দিন) পূর্ণ হয়েছে।
+        </p>
+        <Link href="/requests" className="btn-primary mt-4 !py-2 text-sm">
+          🚨 জরুরি অনুরোধ দেখুন →
+        </Link>
+      </div>
+    );
+  }
+
+  return (
+    <div className="card border-l-4 border-l-amber-400 p-5">
+      <div className="flex items-center justify-between gap-3">
+        <p className="font-semibold text-ink">⏳ পরবর্তী রক্তদানের কাউন্টডাউন</p>
+        <span className="rounded-full bg-amber-50 px-2.5 py-1 text-xs font-bold text-amber-700 ring-1 ring-amber-200">
+          {bn(daysLeft)} দিন বাকি
+        </span>
+      </div>
+      <div className="mt-3 h-2.5 w-full overflow-hidden rounded-full bg-zinc-100 dark:bg-white/10">
+        <div
+          className="h-full rounded-full bg-gradient-to-r from-brand-500 to-success-500 transition-all"
+          style={{ width: `${pct}%` }}
+        />
+      </div>
+      <p className="mt-2.5 text-sm leading-relaxed text-ink/60">
+        সর্বশেষ রক্তদান: <span className="font-semibold text-ink">{bnDate(new Date(last))}</span>
+        {" "}• আবার দিতে পারবেন: <span className="font-semibold text-brand-700">{bnDate(new Date(next))}</span>
+      </p>
+      <p className="mt-1 text-xs text-ink/50">
+        {genderName(donor.gender)}দের জন্য নিরাপদ ব্যবধান {bn(interval)} দিন ({donor.gender === "নারী" ? "৪" : "৩"} মাস) ধরা হয়েছে।
+      </p>
+    </div>
+  );
+}
+
+function genderName(g: string | null): string {
+  if (g === "নারী") return "নারী";
+  return "পুরুষ";
+}
+
+function DonorProfile({ donor, donations, onChanged }: { donor: Donor; donations: any[]; onChanged: () => void }) {
   const supabase = createClient();
   const [saving, setSaving] = useState(false);
   const [available, setAvailable] = useState(donor.is_available);
@@ -154,6 +252,7 @@ function DonorProfile({ donor, onChanged }: { donor: Donor; onChanged: () => voi
 
   return (
     <div className="space-y-6">
+      <NextDonationCard donor={donor} donations={donations} />
       <div className="card p-6">
         <div className="flex items-center justify-between">
           <h2 className="font-semibold text-ink">রক্তদানের প্রস্তুততা</h2>
