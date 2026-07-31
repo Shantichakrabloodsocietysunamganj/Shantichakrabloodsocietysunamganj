@@ -9,34 +9,71 @@ type Entry = { keys: string[]; bn: string; en: string; cta?: { bn: string; en: s
 // Local fallback knowledge base (used if no API key or the API fails)
 const KB: Entry[] = [
   {
-    keys: ["রক্ত লাগ", "রকত লাগ", "জরুরি", "রক্ত দরকার", "blood", "need", "emergency", "urgent", "প্রয়োজন"],
-    bn: "জরুরি রক্ত লাগলে 'রক্তের অনুরোধ' পেজে রোগীর নাম, গ্রুপ, হাসপাতাল ও তারিখ দিয়ে অনুরোধ পোস্ট করুন। খুব জরুরি হলে সরাসরি কল করুন: 01626224878।",
-    en: "Need blood urgently? Post a request on the 'Request Blood' page with patient name, group, hospital and date. For emergencies call: 01626224878.",
+    keys: ["রক্ত লাগ", "রকত লাগ", "জরুরি", "রক্ত দরকার", "blood", "need", "emergency", "urgent", "প্রয়োজন", "মুমূর্ষু"],
+    bn: "🚨 জরুরি রক্ত লাগলে দ্রুত করুন:\n১) কল করুন: 01626224878\n২) /request-blood পেজে রোগীর নাম, গ্রুপ, হিমোগ্লোবিন, হাসপাতাল ও তারিখ দিয়ে অনুরোধ পোস্ট করুন\n৩) /donors পেজে গ্রুপ+এলাকা দিয়ে প্রস্তুত দাতা খুঁজে সরাসরি কল করুন\n\nআমরা ২৪/৭ পাশে আছি।",
+    en: "🚨 For urgent blood:\n1) Call: 01626224878\n2) Post a request on /request-blood (patient name, group, hemoglobin, hospital, date)\n3) Search /donors by group + area, call donors directly\n\nWe are here 24/7.",
     cta: { bn: "রক্তের অনুরোধ করুন →", en: "Request blood →", href: "/request-blood" },
   },
   {
-    keys: ["দাতা খুঁজ", "দাতা লাগ", "দাতা সার্চ", "find donor", "search donor", "where"],
-    bn: "রক্তের গ্রুপ, জেলা ও উপজেলা দিয়ে প্রস্তুত দাতা খুঁজে বের করুন। সরাসরি কল বা WhatsApp করা যায়।",
-    en: "Search available donors by blood group, district and upazila. Call or WhatsApp any donor directly.",
+    keys: ["দাতা খুঁজ", "দাতা লাগ", "দাতা সার্চ", "where", "find donor", "search donor", "কোথায়"],
+    bn: "রক্তের গ্রুপ, জেলা ও উপজেলা দিয়ে প্রস্তুত দাতা খুঁজে বের করুন। প্রতিটি দাতার সাথে সরাসরি কল বা WhatsApp করা যায়। দাতার কার্ডে দেখাবে সে প্রস্তুত কি না (৯০ দিন নিয়ম অনুযায়ী)।",
+    en: "Search available donors by blood group, district and upazila. Call or WhatsApp any donor directly. The card shows if they are eligible (90-day rule since last donation).",
     cta: { bn: "দাতা খুঁজুন →", en: "Find donors →", href: "/donors" },
   },
   {
     keys: ["দাতা হব", "রেজিস্ট্রি", "যুক্ত হব", "নিবন্ধন", "register", "become", "join"],
-    bn: "'রক্তদাতা হোন' ফর্মে নাম, মোবাইল, গ্রুপ ও এলাকা দিন। আবেদনের পর অ্যাডমিন অনুমোদন করলে লাইভ হবে। সম্পূর্ণ ফ্রি।",
-    en: "Fill the 'Become a Donor' form with name, phone, group and area. An admin approves it before you go live. Completely free.",
+    bn: "রক্তদাতা হতে /become-donor ফর্মে নাম, মোবাইল, গ্রুপ ও এলাকা দিন। সম্পূর্ণ ফ্রি। নিবন্ধন করলেই সরাসরি লাইভ তালিকায় যুক্ত হবেন (কোনো admin অনুমোদন লাগে না)। শেষ রক্তদানের তারিখ দিলে সিস্টেম স্বয়ংক্রিয়ভাবে ৯০ দিন পর 'প্রস্তুত' দেখাবে।",
+    en: "To become a donor, fill the /become-donor form with name, phone, group and area. Completely free. You go LIVE immediately (no admin approval needed). The system auto-shows 'ready' 90 days after your last donation.",
     cta: { bn: "রক্তদাতা হোন →", en: "Become a donor →", href: "/become-donor" },
   },
   {
-    keys: ["যোগাযোগ", "ফোন", "নম্বর", "মেইল", "contact", "phone", "email", "call"],
-    bn: "📞 ফোন/WhatsApp: 01626224878\n✉️ ইমেইল: shantichakrabloodsociety@gmail.com",
-    en: "📞 Phone/WhatsApp: 01626224878\n✉️ Email: shantichakrabloodsociety@gmail.com",
+    keys: ["হিমোগ্লোবিন", "hemoglobin", "hb", "হিমোগ্ল", "রক্তশূন্যতা", "anemia", "রক্তস্বল্পতা"],
+    bn: "হিমোগ্লোবিন (Hb) স্বাভাবিক মান: পুরুষ ১৩-১৭ g/dL, নারী ১২-১৫ g/dL। ১০-এর কম হলে রক্তস্বল্পতা হতে পারে। রক্তের অনুরোধে হিমোগ্লোবিন উল্লেখ করা বাধ্যতামূলক — তাহলে দাতারা দ্রুত সিদ্ধান্ত নিতে পারে।",
+    en: "Normal hemoglobin (Hb): men 13-17 g/dL, women 12-15 g/dL. Below 10 may indicate anemia. Hemoglobin is required in blood requests so donors can decide quickly.",
+  },
+  {
+    keys: ["৯০ দিন", "90 day", "কবে", "প্রস্তুত", "eligible", "কদিন", "কখন দিতে", "when donate"],
+    bn: "একবার রক্ত দেওয়ার পর কমপক্ষে ৯০ দিন (৩ মাস) অপেক্ষা করতে হয়। এই ৯০ দিন পার হলে সিস্টেম স্বয়ংক্রিয়ভাবে দাতাকে 'রক্তদানে প্রস্তুত' দেখায়। ৯০ দিনের কম হলে 'আর X দিন পর প্রস্তুত' দেখায়।",
+    en: "After donating blood, wait at least 90 days (3 months). The system automatically shows 'ready' after 90 days, and 'ready in X days' before that.",
+  },
+  {
+    keys: ["যোগাযোগ", "ফোন", "নম্বর", "মেইল", "contact", "phone", "email", "call", "WhatsApp"],
+    bn: "📞 ফোন/WhatsApp: 01626224878\n✉️ ইমেইল: shantichakrabloodsociety@gmail.com\n📘 Facebook গ্রুপেও যোগ দিন।\nসভাপতি: আবু সালেহ | সাধারণ সম্পাদক: রাহাত আহমেদ",
+    en: "Phone/WhatsApp: 01626224878\nEmail: shantichakrabloodsociety@gmail.com\nPresident: Abu Saleh | GS: Rahat Ahmed",
     cta: { bn: "যোগাযোগ পেজ →", en: "Contact page →", href: "/contact" },
   },
   {
+    keys: ["টাকা", "দান", "ডোনেশন", "সাহায্য করব", "অনুদান", "donate", "support", "contribute", "money"],
+    bn: "আমাদের মিশনে সহযোগিতা করতে পারেন! হোমপেজের 'Support Our Mission' সেকশনে bKash/Nagad/Rocket/Bank অপশন আছে। আপনার সামান্য সহযোগিতায় আমরা জরুরি রক্ত সমন্বয়, শিবির, সচেতনতা — সব চালিয়ে যেতে পারি।",
+    en: "Support our mission! The homepage has a 'Support Our Mission' section with bKash/Nagad/Rocket/Bank. Your contribution helps with emergency coordination, camps, awareness, and technology.",
+  },
+  {
     keys: ["কী", "কি এটা", "কে", "সংগঠন", "about", "shantichakra", "শান্তিচক্র", "পরিচয়", "what"],
-    bn: "শান্তিচক্র ব্লাড সোসাইটি, সুনামগঞ্জ — স্বেচ্ছাসেবী রক্তদান সংগঠন। সিলেট বিভাগের চার জেলায় সক্রিয়, পরবর্তী লক্ষ্য সারা বাংলাদেশ।",
-    en: "Shantichakra Blood Society, Sunamganj — a voluntary blood donation org active across all four districts of Sylhet Division. Next: all of Bangladesh.",
+    bn: "শান্তিচক্র ব্লাড সোসাইটি, সুনামগঞ্জ — ২০২৪ সালে প্রতিষ্ঠিত স্বেচ্ছাসেবী রক্তদান সংগঠন। সিলেট বিভাগের ৪ জেলায় সক্রিয়, পরবর্তী লক্ষ্য সারা বাংলাদেশ। সম্পূর্ণ ফ্রি ও ২৪/৭।",
+    en: "Shantichakra Blood Society, Sunamganj — founded 2024, a voluntary blood donation org active across all 4 districts of Sylhet Division. Next goal: all of Bangladesh. 100% free, 24/7.",
     cta: { bn: "আমাদের সম্পর্কে →", en: "About us →", href: "/about" },
+  },
+  {
+    keys: ["গ্রুপ মেলে", "সামঞ্জস্য", "কাকে দিতে", "কার কাছ থেকে", "compatible", "match group", "গ্রুপ মিল"],
+    bn: "ভুল গ্রুপের রক্ত প্রাণঘাতী! O- Universal Donor, AB+ Universal Recipient। হোমপেজের 'রক্ত সামঞ্জস্যতা' চেকারে আপনার গ্রুপ বেছে দেখুন কাকে দিতে/কার কাছ থেকে নিতে পারবেন।",
+    en: "Wrong blood group can be fatal! O- is universal donor, AB+ universal recipient. Use the compatibility checker on the homepage.",
+  },
+  {
+    keys: ["ফ্রি", "টাকা লাগে", "খরচ", "মূল্য", "price", "cost", "free", "money"],
+    bn: "সম্পূর্ণ ফ্রি ও স্বেচ্ছাসেবী। রক্তদানে বা রক্ত খোঁজায় কোনো টাকা লাগে না। আমরা কাউকে টাকা দিতে বলি না।",
+    en: "100% free and voluntary. No money needed for blood donation or finding donors.",
+  },
+  {
+    keys: ["ইভেন্ট", "শিবির", "কর্মসূচি", "event", "camp", "program"],
+    bn: "আমরা নিয়মিত রক্তদান শিবির ও ফ্রি রক্তের গ্রুপ নির্ধারণ কর্মসূচি আয়োজন করি। আসন্ন ও অতীত সব কর্মসূচি /events পেজে দেখুন।",
+    en: "We organize regular blood donation camps and free blood-grouping programs. See all events on /events.",
+    cta: { bn: "কর্মসূচি দেখুন →", en: "View events →", href: "/events" },
+  },
+  {
+    keys: ["উন্নতি", "অর্জন", "পরিসংখ্যান", "impact", "stats", "কত জন", "achievement"],
+    bn: "আমাদের প্রভাব: /impact পেজে দেখুন — মোট দাতা, সাহায্যপ্রাপ্ত রোগী, সংগৃহীত রক্ত ইউনিট, সক্রিয় স্বেচ্ছাসেবক। সম্পূর্ণ স্বচ্ছতায়।",
+    en: "Our impact: check /impact page — total donors, patients helped, blood units, volunteers. Fully transparent.",
+    cta: { bn: "অর্জন দেখুন →", en: "View impact →", href: "/impact" },
   },
 ];
 
