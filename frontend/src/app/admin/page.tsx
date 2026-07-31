@@ -169,6 +169,8 @@ export default function AdminPage() {
             <Link href="/admin/reports" className="card-hover flex items-center gap-3 p-4 text-sm font-medium text-ink"><span className="text-xl">📊</span> রিপোর্ট (PDF/CSV)</Link>
             <Link href="/admin/activity" className="card-hover flex items-center gap-3 p-4 text-sm font-medium text-ink"><span className="text-xl">📋</span> অ্যাক্টিভিটি লগ</Link>
             <Link href="/admin/donations" className="card-hover flex items-center gap-3 p-4 text-sm font-medium text-ink"><span className="text-xl">🩸</span> রক্তদান রেকর্ড</Link>
+            <Link href="/admin/media-coverage" className="card-hover flex items-center gap-3 p-4 text-sm font-medium text-ink"><span className="text-xl">📰</span> মিডিয়া কভারেজ</Link>
+            <Link href="/admin/donation-methods" className="card-hover flex items-center gap-3 p-4 text-sm font-medium text-ink"><span className="text-xl">💳</span> ডোনেশন মেথড</Link>
             <Link href="/admin/media" className="card-hover flex items-center gap-3 p-4 text-sm font-medium text-ink"><span className="text-xl">🖼️</span> মিডিয়া লাইব্রেরি</Link>
             <Link href="/admin/faq" className="card-hover flex items-center gap-3 p-4 text-sm font-medium text-ink"><span className="text-xl">❓</span> FAQ</Link>
             <Link href="/admin/partners" className="card-hover flex items-center gap-3 p-4 text-sm font-medium text-ink"><span className="text-xl">🤝</span> পার্টনার</Link>

@@ -8,6 +8,7 @@ import ScrollProgress from "@/components/ScrollProgress";
 import FloatingActions from "@/components/FloatingActions";
 import CookieBanner from "@/components/CookieBanner";
 import AIAssistant from "@/components/AIAssistant";
+import EmergencyBanner from "@/components/EmergencyBanner";
 import { ToastProvider } from "@/components/Toast";
 import { getSession } from "@/lib/auth";
 import { getSettings } from "@/lib/settings";
@@ -86,6 +87,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
           </a>
           <ScrollProgress />
           <Navbar profile={profile} logoUrl={settings.logo_url} lang={lang} />
+          <EmergencyBanner />
           <main id="main" className="min-h-[60vh]">{children}</main>
           <Footer settings={settings} lang={lang} />
           <BackToTop />

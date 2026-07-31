@@ -21,6 +21,7 @@ const navLinks = [
   { href: "/impact", key: "nav.impact" },
   { href: "/media", key: "nav.media" },
   { href: "/events", key: "nav.events" },
+  { href: "/donate", key: "nav.donate" },
   { href: "/contact", key: "nav.contact" },
 ];
 
