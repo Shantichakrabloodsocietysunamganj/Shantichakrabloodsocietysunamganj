@@ -1,4 +1,7 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
+
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 
 const SYSTEM_PROMPT = `You are "Shanti" (শান্তি), the friendly, empathetic AI assistant for "শান্তিচক্র ব্লাড সোসাইটি, সুনামগঞ্জ" (Shantichakra Blood Society, Sunamganj). Your name is Shanti (শান্তি). When asked who you are, introduce yourself warmly: "আমি শান্তি, শান্তিচক্র ব্লাড সোসাইটির AI সহকারী।"
 
@@ -56,8 +59,125 @@ function sanitize(incoming: any) {
     .map((m: any) => ({ role: m.role, content: m.content.slice(0, 1000) }));
 }
 
-// --- Gemini (Google Generative Language API) ---
-async function gemini(history: { role: string; content: string }[], key: string, model: string) {
+// --- In-memory LRU-ish cache for repeated FAQ questions (last 200 entries) ---
+type CacheEntry = { reply: string; ts: number };
+const CACHE = new Map<string, CacheEntry>();
+const CACHE_TTL_MS = 1000 * 60 * 60 * 6; // 6 hours
+const CACHE_MAX = 200;
+
+function cacheKey(history: { role: string; content: string }[]): string {
+  // Only the last user message matters for cache hit (assistant replies vary a bit by history but first reply is stable)
+  const last = [...history].reverse().find((m) => m.role === "user")?.content?.toLowerCase().trim() ?? "";
+  return last.slice(0, 200);
+}
+
+function cacheGet(k: string): string | null {
+  const v = CACHE.get(k);
+  if (!v) return null;
+  if (Date.now() - v.ts > CACHE_TTL_MS) { CACHE.delete(k); return null; }
+  // refresh recency
+  CACHE.delete(k); CACHE.set(k, v);
+  return v.reply;
+}
+function cacheSet(k: string, reply: string) {
+  if (!k) return;
+  if (CACHE.size >= CACHE_MAX) {
+    const firstKey = CACHE.keys().next().value;
+    if (firstKey) CACHE.delete(firstKey);
+  }
+  CACHE.set(k, { reply, ts: Date.now() });
+}
+
+// --- Per-IP simple rate limiting (best-effort) ---
+const RATE = new Map<string, { count: number; ts: number }>();
+const RATE_WINDOW_MS = 60_000; // 1 min
+const RATE_MAX = 30; // 30 requests / minute / IP
+function rateOk(ip: string): boolean {
+  const now = Date.now();
+  const r = RATE.get(ip);
+  if (!r || now - r.ts > RATE_WINDOW_MS) { RATE.set(ip, { count: 1, ts: now }); return true; }
+  r.count++;
+  return r.count <= RATE_MAX;
+}
+
+// --- Gemini streaming ---
+async function* geminiStream(history: { role: string; content: string }[], key: string, model: string): AsyncGenerator<string, void, void> {
+  const contents = history.map((m) => ({ role: m.role === "assistant" ? "model" : "user", parts: [{ text: m.content }] }));
+  const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:streamGenerateContent?alt=sse&key=${key}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      systemInstruction: { parts: [{ text: SYSTEM_PROMPT }] },
+      contents,
+      generationConfig: { temperature: 0.6, maxOutputTokens: 600 },
+    }),
+  });
+  if (!res.ok || !res.body) throw new Error(`gemini:${res.status}`);
+  const reader = res.body.getReader();
+  const decoder = new TextDecoder();
+  let buf = "";
+  while (true) {
+    const { value, done } = await reader.read();
+    if (done) break;
+    buf += decoder.decode(value, { stream: true });
+    // SSE: events separated by \n\n, data: lines
+    let idx;
+    while ((idx = buf.indexOf("\n\n")) !== -1) {
+      const event = buf.slice(0, idx);
+      buf = buf.slice(idx + 2);
+      const dataLine = event.split("\n").find((l) => l.startsWith("data:"));
+      if (!dataLine) continue;
+      const json = dataLine.slice(5).trim();
+      if (!json || json === "[DONE]") continue;
+      try {
+        const obj = JSON.parse(json);
+        const text = obj?.candidates?.[0]?.content?.parts?.map((p: any) => p.text).join("") ?? "";
+        if (text) yield text;
+      } catch { /* skip malformed */ }
+    }
+  }
+}
+
+// --- OpenAI streaming ---
+async function* openaiStream(history: { role: string; content: string }[], key: string): AsyncGenerator<string, void, void> {
+  const res = await fetch("https://api.openai.com/v1/chat/completions", {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Authorization: `Bearer ${key}` },
+    body: JSON.stringify({
+      model: "gpt-4o-mini",
+      temperature: 0.5,
+      max_tokens: 600,
+      stream: true,
+      messages: [{ role: "system", content: SYSTEM_PROMPT }, ...history],
+    }),
+  });
+  if (!res.ok || !res.body) throw new Error(`openai:${res.status}`);
+  const reader = res.body.getReader();
+  const decoder = new TextDecoder();
+  let buf = "";
+  while (true) {
+    const { value, done } = await reader.read();
+    if (done) break;
+    buf += decoder.decode(value, { stream: true });
+    let idx;
+    while ((idx = buf.indexOf("\n\n")) !== -1) {
+      const event = buf.slice(0, idx);
+      buf = buf.slice(idx + 2);
+      const dataLine = event.split("\n").find((l) => l.startsWith("data:"));
+      if (!dataLine) continue;
+      const json = dataLine.slice(5).trim();
+      if (!json || json === "[DONE]") continue;
+      try {
+        const obj = JSON.parse(json);
+        const delta = obj?.choices?.[0]?.delta?.content;
+        if (delta) yield delta;
+      } catch { /* skip malformed */ }
+    }
+  }
+}
+
+// --- Non-streaming fallbacks (used when SSE not requested) ---
+async function geminiOnce(history: { role: string; content: string }[], key: string, model: string): Promise<string> {
   const contents = history.map((m) => ({ role: m.role === "assistant" ? "model" : "user", parts: [{ text: m.content }] }));
   const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`, {
     method: "POST",
@@ -70,13 +190,10 @@ async function gemini(history: { role: string; content: string }[], key: string,
   });
   if (!res.ok) throw new Error(`gemini:${res.status}:${await res.text()}`);
   const data = await res.json();
-  const text = data?.candidates?.[0]?.content?.parts?.map((p: any) => p.text).join("").trim() ?? "";
-  if (!text) throw new Error("gemini:empty");
-  return text;
+  return data?.candidates?.[0]?.content?.parts?.map((p: any) => p.text).join("").trim() ?? "";
 }
 
-// --- OpenAI Chat Completions ---
-async function openai(history: { role: string; content: string }[], key: string) {
+async function openaiOnce(history: { role: string; content: string }[], key: string): Promise<string> {
   const res = await fetch("https://api.openai.com/v1/chat/completions", {
     method: "POST",
     headers: { "Content-Type": "application/json", Authorization: `Bearer ${key}` },
@@ -89,35 +206,107 @@ async function openai(history: { role: string; content: string }[], key: string)
   });
   if (!res.ok) throw new Error(`openai:${res.status}:${await res.text()}`);
   const data = await res.json();
-  const text = data?.choices?.[0]?.message?.content?.trim() ?? "";
-  if (!text) throw new Error("openai:empty");
-  return text;
+  return data?.choices?.[0]?.message?.content?.trim() ?? "";
+}
+
+function clientIp(req: NextRequest): string {
+  return (
+    req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+    req.headers.get("x-real-ip") ||
+    "unknown"
+  );
 }
 
 export async function POST(req: NextRequest) {
-  try {
-    const history = sanitize(await req.json());
-    const geminiKey = process.env.GEMINI_API_KEY;
-    const openaiKey = process.env.OPENAI_API_KEY;
-    const geminiModel = process.env.GEMINI_MODEL || "gemini-1.5-flash";
-
-    // Try Gemini first, then OpenAI, then signal no provider (client falls back to local)
-    if (geminiKey) {
-      try {
-        return NextResponse.json({ reply: await gemini(history, geminiKey, geminiModel) });
-      } catch (e) {
-        if (!openaiKey) return NextResponse.json({ error: "gemini_failed", detail: String((e as Error).message) }, { status: 502 });
-      }
-    }
-    if (openaiKey) {
-      try {
-        return NextResponse.json({ reply: await openai(history, openaiKey) });
-      } catch (e) {
-        return NextResponse.json({ error: "openai_failed", detail: String((e as Error).message) }, { status: 502 });
-      }
-    }
-    return NextResponse.json({ error: "no_key" }, { status: 503 });
-  } catch (e: any) {
-    return NextResponse.json({ error: "server", detail: String(e?.message ?? e) }, { status: 500 });
+  const ip = clientIp(req);
+  if (!rateOk(ip)) {
+    return new Response(JSON.stringify({ error: "rate_limited" }), { status: 429, headers: { "Content-Type": "application/json" } });
   }
+
+  let body: any;
+  try { body = await req.json(); } catch { return new Response("invalid json", { status: 400 }); }
+
+  const history = sanitize(body);
+  if (!history.length) return new Response(JSON.stringify({ error: "empty" }), { status: 400, headers: { "Content-Type": "application/json" } });
+
+  const wantsStream = req.headers.get("accept")?.includes("text/event-stream") || body?.stream === true;
+  const geminiKey = process.env.GEMINI_API_KEY;
+  const openaiKey = process.env.OPENAI_API_KEY;
+  const geminiModel = process.env.GEMINI_MODEL || "gemini-1.5-flash";
+
+  // Cache hit (only for non-streaming, FAQ-style single-turn last-user-message)
+  const ck = cacheKey(history);
+  if (!wantsStream) {
+    const hit = cacheGet(ck);
+    if (hit) return Response.json({ reply: hit, cached: true });
+  }
+
+  // ── STREAMING MODE (SSE) ──
+  if (wantsStream) {
+    const encoder = new TextEncoder();
+    const stream = new ReadableStream({
+      async start(controller) {
+        const send = (event: string, data: string) => {
+          controller.enqueue(encoder.encode(`event: ${event}\ndata: ${data}\n\n`));
+        };
+        let fullReply = "";
+        try {
+          let streamGen: AsyncGenerator<string, void, void> | null = null;
+          if (geminiKey) {
+            try { streamGen = geminiStream(history, geminiKey, geminiModel); }
+            catch (e) { send("error", `gemini_failed: ${(e as Error).message}`); controller.close(); return; }
+          } else if (openaiKey) {
+            try { streamGen = openaiStream(history, openaiKey); }
+            catch (e) { send("error", `openai_failed: ${(e as Error).message}`); controller.close(); return; }
+          } else {
+            send("error", "no_provider"); controller.close(); return;
+          }
+
+          if (!streamGen) { controller.close(); return; }
+
+          for await (const chunk of streamGen) {
+            fullReply += chunk;
+            send("token", JSON.stringify({ t: chunk }));
+          }
+          if (fullReply) {
+            cacheSet(ck, fullReply);
+            send("done", JSON.stringify({ reply: fullReply }));
+          } else {
+            send("error", "empty");
+          }
+        } catch (e: any) {
+          send("error", String(e?.message ?? e));
+        } finally {
+          controller.close();
+        }
+      },
+    });
+    return new Response(stream, {
+      headers: {
+        "Content-Type": "text/event-stream; charset=utf-8",
+        "Cache-Control": "no-cache, no-transform",
+        Connection: "keep-alive",
+        "X-Accel-Buffering": "no",
+      },
+    });
+  }
+
+  // ── NON-STREAMING MODE (backwards compatible) ──
+  if (geminiKey) {
+    try {
+      const reply = await geminiOnce(history, geminiKey, geminiModel);
+      if (reply) { cacheSet(ck, reply); return Response.json({ reply }); }
+    } catch (e) {
+      if (!openaiKey) return Response.json({ error: "gemini_failed", detail: String((e as Error).message) }, { status: 502 });
+    }
+  }
+  if (openaiKey) {
+    try {
+      const reply = await openaiOnce(history, openaiKey);
+      if (reply) { cacheSet(ck, reply); return Response.json({ reply }); }
+    } catch (e) {
+      return Response.json({ error: "openai_failed", detail: String((e as Error).message) }, { status: 502 });
+    }
+  }
+  return Response.json({ error: "no_key" }, { status: 503 });
 }

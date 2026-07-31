@@ -83,6 +83,8 @@ export default function AIAssistant() {
   const [followUp, setFollowUp] = useState<string[]>(FOLLOWUPS.default);
   const [speakingIdx, setSpeakingIdx] = useState<number | null>(null);
   const [activeVoiceName, setActiveVoiceName] = useState<string>("");
+  const [voicePanelOpen, setVoicePanelOpen] = useState(false);
+  const [pinnedVoice, setPinnedVoice] = useState<string>("");
   const scrollRef = useRef<HTMLDivElement>(null);
   const recogRef = useRef<any>(null);
   const speakRef = useRef<number | null>(null);
@@ -112,8 +114,45 @@ export default function AIAssistant() {
       // BMP symbol ranges: arrows, dingbats, variation selectors
       .replace(/[\u2600-\u27BF\u2190-\u21FF\u2B00-\u2BFF\uFE00-\uFE0F]/g, "")
       .replace(/[→←↑↓]/g, "")
+      .replace(/^[\s,.;:!?।]+/g, "")
       .replace(/\s+/g, " ")
       .trim();
+
+  // Split Bangla text into sentence-sized chunks for natural TTS pacing.
+  // Splits at danda (।), period, question/exclamation marks, then commas
+  // if still too long. Whitespace is collapsed within a sentence.
+  const chunkForTTS = (text: string, maxLen = 180): string[] => {
+    if (!text) return [];
+    // Normalize line breaks to single space
+    const normalized = text.replace(/\s+/g, " ").trim();
+    if (normalized.length <= maxLen) return [normalized];
+
+    const out: string[] = [];
+    let buf = "";
+
+    const flush = () => {
+      const t = buf.trim();
+      if (t) out.push(t);
+      buf = "";
+    };
+
+    // Walk character-by-character so we can split at Bangla danda (।) properly
+    for (let i = 0; i < normalized.length; i++) {
+      const ch = normalized[i];
+      buf += ch;
+      const isSentenceEnd = ch === "।" || ch === "." || ch === "?" || ch === "!" || ch === "\n";
+      const isClauseEnd = ch === "," || ch === ";" || ch === ":" || ch === "—";
+      if (buf.length >= maxLen && (isSentenceEnd || isClauseEnd)) {
+        flush();
+      } else if (buf.length >= maxLen && i === normalized.length - 1) {
+        flush();
+      } else if (isSentenceEnd) {
+        flush();
+      }
+    }
+    if (buf.trim()) out.push(buf.trim());
+    return out;
+  };
 
   // Detect whether a voice is female by name heuristic
   const isFemaleName = (name: string): boolean =>
@@ -124,6 +163,19 @@ export default function AIAssistant() {
   const pickVoice = useCallback((): { voice: SpeechSynthesisVoice | undefined; isFemale: boolean } => {
     const voices = voicesRef.current;
     if (!voices?.length) return { voice: undefined, isFemale: false };
+
+    // If user has manually pinned a voice, respect it (English mode only —
+    // Bangla mode uses Google Translate TTS regardless, since Web Speech bn voices
+    // are mostly male on most platforms)
+    if (en) {
+      try {
+        const pinned = typeof window !== "undefined" ? localStorage.getItem("shanti-voice-en") : null;
+        if (pinned) {
+          const found = voices.find((v) => v.voiceURI === pinned || v.name === pinned);
+          if (found) return { voice: found, isFemale: isFemaleName(found.name) };
+        }
+      } catch { /* ignore */ }
+    }
 
     const scoreVoice = (v: SpeechSynthesisVoice): number => {
       const name = (v.name || "").toLowerCase();
@@ -202,6 +254,8 @@ export default function AIAssistant() {
         if (voice?.name) setActiveVoiceName(voice.name);
       }
     };
+    // Load pinned voice from localStorage (English mode only)
+    try { const p = localStorage.getItem("shanti-voice-en"); if (p) setPinnedVoice(p); } catch { /* ignore */ }
     load();
     if (typeof window !== "undefined" && window.speechSynthesis) {
       window.speechSynthesis.addEventListener("voiceschanged", load);
@@ -214,6 +268,23 @@ export default function AIAssistant() {
       };
     }
   }, [en, pickVoice]);
+
+  // List of English voices (for the picker dropdown)
+  const englishVoices = voicesRef.current.filter((v) => (v.lang || "").toLowerCase().startsWith("en"));
+  const pinVoice = (uri: string) => {
+    try {
+      if (pinnedVoice === uri) {
+        localStorage.removeItem("shanti-voice-en");
+        setPinnedVoice("");
+      } else {
+        localStorage.setItem("shanti-voice-en", uri);
+        setPinnedVoice(uri);
+      }
+      // Re-resolve active voice name
+      const { voice } = pickVoice();
+      if (voice?.name) setActiveVoiceName(voice.name);
+    } catch { /* ignore */ }
+  };
 
   const localReply = (q: string): Msg => {
     const t = q.toLowerCase();
@@ -237,17 +308,110 @@ export default function AIAssistant() {
     // Quick shortcuts
     const sc = SHORTCUTS[q.toLowerCase()];
     if (sc) { setMsgs((m) => [...m, { from: "user", text: q, time: Date.now() }, { from: "bot", text: en ? `Taking you there… →` : `নিয়ে যাচ্ছি… →`, time: Date.now() }]); router.push(sc); return; }
-    setMsgs((m) => [...m, { from: "user", text: q, time: Date.now() }]);
-    setInput(""); setTyping(true);
-    let answer = ""; let cta: Msg["cta"];
+
+    // Snapshot the *current* msgs before adding the user message — the new user
+    // message gets pushed after, so the history we send is what existed plus the
+    // new question (same as before, just explicit).
+    const userMsg: Msg = { from: "user", text: q, time: Date.now() };
+    const botMsg: Msg = { from: "bot", text: "", time: Date.now() };
+    setMsgs((m) => [...m, userMsg, botMsg]);
+    setInput("");
+    setTyping(true);
+
+    const history = [...msgs, userMsg].slice(-10).map((m) => ({ role: m.from === "user" ? "user" : "assistant", content: m.text }));
+
+    // Try streaming first (SSE) so the user sees tokens as they arrive
+    let streamed = false;
     try {
-      const history = [...msgs, { from: "user", text: q }].slice(-10).map((m) => ({ role: m.from === "user" ? "user" : "assistant", content: m.text }));
-      const res = await fetch("/api/chat", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ messages: history }) });
-      const data = await res.json();
-      if (res.ok && data.reply) answer = data.reply; else { const fb = localReply(q); answer = fb.text; cta = fb.cta; }
-    } catch { const fb = localReply(q); answer = fb.text; cta = fb.cta; }
-    setTyping(false);
-    setMsgs((m) => [...m, { from: "bot", text: answer, cta, time: Date.now() }]);
+      const res = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "text/event-stream" },
+        body: JSON.stringify({ messages: history, stream: true }),
+      });
+      if (res.ok && res.body && res.headers.get("content-type")?.includes("text/event-stream")) {
+        streamed = true;
+        const reader = res.body.getReader();
+        const decoder = new TextDecoder();
+        let buf = "";
+        let acc = "";
+        // botMsg index = msgs.length + 1 (we just added user + bot)
+        // We need to find the bot message we just added and update it.
+        setTyping(false);
+        while (true) {
+          const { value, done } = await reader.read();
+          if (done) break;
+          buf += decoder.decode(value, { stream: true });
+          let idx;
+          while ((idx = buf.indexOf("\n\n")) !== -1) {
+            const event = buf.slice(0, idx);
+            buf = buf.slice(idx + 2);
+            const lines = event.split("\n");
+            const ev = lines.find((l) => l.startsWith("event:"))?.slice(6).trim();
+            const dataLine = lines.find((l) => l.startsWith("data:"))?.slice(5).trim();
+            if (!dataLine) continue;
+            if (ev === "token") {
+              try {
+                const { t } = JSON.parse(dataLine);
+                if (typeof t === "string") acc += t;
+              } catch { /* skip */ }
+            } else if (ev === "error") {
+              streamed = false; // fall through to local
+              break;
+            }
+          }
+          if (!streamed) break;
+          // Update the streaming bot message
+          setMsgs((cur) => {
+            const next = [...cur];
+            // Find the most recent bot message that's empty (the one we just appended)
+            for (let i = next.length - 1; i >= 0; i--) {
+              if (next[i].from === "bot" && next[i].text === "" && next[i].time === botMsg.time) {
+                next[i] = { ...next[i], text: acc };
+                break;
+              }
+            }
+            return next;
+          });
+        }
+        // After stream ends, ensure the bot message has the full accumulated text
+        if (streamed && acc) {
+          setMsgs((cur) => {
+            const next = [...cur];
+            for (let i = next.length - 1; i >= 0; i--) {
+              if (next[i].from === "bot" && next[i].time === botMsg.time) {
+                if (!next[i].text) next[i] = { ...next[i], text: acc };
+                break;
+              }
+            }
+            return next;
+          });
+          return;
+        }
+      }
+    } catch { /* fall through to non-streaming */ }
+
+    // Non-streaming fallback
+    if (!streamed) {
+      let answer = ""; let cta: Msg["cta"];
+      try {
+        const res = await fetch("/api/chat", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ messages: history }) });
+        const data = await res.json();
+        if (res.ok && data.reply) answer = data.reply; else { const fb = localReply(q); answer = fb.text; cta = fb.cta; }
+      } catch { const fb = localReply(q); answer = fb.text; cta = fb.cta; }
+      setTyping(false);
+      setMsgs((cur) => {
+        const next = [...cur];
+        for (let i = next.length - 1; i >= 0; i--) {
+          if (next[i].from === "bot" && next[i].time === botMsg.time) {
+            next[i] = { ...next[i], text: answer, cta };
+            break;
+          }
+        }
+        return next;
+      });
+    } else {
+      setTyping(false);
+    }
   };
 
   // Voice input
@@ -277,21 +441,9 @@ export default function AIAssistant() {
 
     // ── BANGLA MODE: Google Translate TTS (real female Bangla voice, works everywhere) ──
     if (!en) {
-      // Split text into ~200-char chunks at sentence boundaries for Google TTS
-      const chunks: string[] = [];
-      const maxLen = 200;
-      let remaining = cleaned;
-
-      while (remaining.length > 0) {
-        if (remaining.length <= maxLen) { chunks.push(remaining); break; }
-        let splitIdx = remaining.lastIndexOf("।", maxLen);
-        if (splitIdx === -1 || splitIdx < maxLen / 2) splitIdx = remaining.lastIndexOf(".", maxLen);
-        if (splitIdx === -1 || splitIdx < maxLen / 2) splitIdx = remaining.lastIndexOf(",", maxLen);
-        if (splitIdx === -1 || splitIdx < maxLen / 2) splitIdx = remaining.lastIndexOf(" ", maxLen);
-        if (splitIdx === -1) splitIdx = maxLen;
-        chunks.push(remaining.slice(0, splitIdx + 1).trim());
-        remaining = remaining.slice(splitIdx + 1).trim();
-      }
+      // Split text into sentence-sized chunks for Google TTS — splits at
+      // Bangla danda (।) and other sentence terminators for natural pacing.
+      const chunks = chunkForTTS(cleaned, 180);
 
       // Create Audio elements for each chunk
       const audioElements: HTMLAudioElement[] = [];
@@ -368,10 +520,48 @@ export default function AIAssistant() {
                 <p className="text-[10px] text-white/60">{en ? "AI Helper • Female Voice (bn-BD) • / for shortcuts" : "AI সহকারী • মহিলা ভয়েস (bn-BD) • / দিয়ে শর্টকাট"}</p>
               </div>
             </div>
-            <button onClick={clearChat} aria-label={en ? "New chat" : "নতুন চ্যাট"} className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/10 text-white transition hover:bg-white/20" title={en ? "Clear chat" : "নতুন চ্যাট"}>
-              <svg className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" /><path strokeLinecap="round" d="M3 3v5h5" /></svg>
-            </button>
+            <div className="flex items-center gap-1">
+              <button onClick={() => setVoicePanelOpen((v) => !v)} aria-label={en ? "Voice settings" : "ভয়েস সেটিংস"} className={`flex h-8 w-8 items-center justify-center rounded-lg text-white transition ${voicePanelOpen ? "bg-white/25" : "bg-white/10 hover:bg-white/20"}`} title={en ? `Voice: ${activeVoiceName || "auto"}` : `ভয়েস: ${activeVoiceName || "অটো"}`}>
+                <svg className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" /><path strokeLinecap="round" d="M19 10v2a7 7 0 0 1-14 0v-2M12 19v4M8 23h8" /></svg>
+              </button>
+              <button onClick={clearChat} aria-label={en ? "New chat" : "নতুন চ্যাট"} className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/10 text-white transition hover:bg-white/20" title={en ? "Clear chat" : "নতুন চ্যাট"}>
+                <svg className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" /><path strokeLinecap="round" d="M3 3v5h5" /></svg>
+              </button>
+            </div>
           </div>
+
+          {/* Voice picker panel (English mode only — Bangla uses Google TTS) */}
+          {voicePanelOpen && (
+            <div className="max-h-48 overflow-y-auto border-b border-zinc-100 bg-violet-50/60 px-3 py-2 text-xs">
+              <div className="mb-1.5 flex items-center justify-between">
+                <p className="font-bold text-violet-800">{en ? "🔊 Voice" : "🔊 ভয়েস"}</p>
+                <p className="text-[10px] text-zinc-500">{en ? "Bangla: Google female voice" : "বাংলা: Google মহিলা ভয়েস"}</p>
+              </div>
+              {en ? (
+                englishVoices.length === 0 ? (
+                  <p className="py-2 text-center text-zinc-400">{en ? "No voices loaded yet…" : "এখনো ভয়েস লোড হচ্ছে…"}</p>
+                ) : (
+                  <div className="space-y-0.5">
+                    {englishVoices.slice(0, 12).map((v) => {
+                      const isPinned = pinnedVoice === v.voiceURI || pinnedVoice === v.name;
+                      return (
+                        <button key={v.voiceURI} onClick={() => pinVoice(v.voiceURI)} className={`flex w-full items-center justify-between rounded-md px-2 py-1 text-left transition ${isPinned ? "bg-fuchsia-200 text-fuchsia-900" : "hover:bg-white text-zinc-700"}`}>
+                          <span className="truncate">{isPinned ? "✓ " : ""}{v.name}</span>
+                          <span className="ml-2 shrink-0 text-[9px] text-zinc-400">{v.lang}</span>
+                        </button>
+                      );
+                    })}
+                    {englishVoices.length > 12 && <p className="pt-1 text-center text-[10px] text-zinc-400">+{englishVoices.length - 12} more…</p>}
+                    {pinnedVoice && (
+                      <button onClick={() => pinVoice(pinnedVoice)} className="mt-1 w-full rounded-md bg-zinc-200 py-1 text-center text-[10px] text-zinc-600 hover:bg-zinc-300">{en ? "↺ Reset to auto" : "↺ অটোতে ফিরুন"}</button>
+                    )}
+                  </div>
+                )
+              ) : (
+                <p className="py-1.5 text-center text-zinc-500">{en ? "Voice selection works in English mode." : "বাংলা মোডে Google Translate-এর মহিলা ভয়েস ব্যবহৃত হয়।"}</p>
+              )}
+            </div>
+          )}
 
           {/* Messages */}
           <div ref={scrollRef} className="flex-1 space-y-2.5 overflow-y-auto bg-canvas/60 p-3">
