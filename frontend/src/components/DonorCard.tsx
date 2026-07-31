@@ -2,12 +2,14 @@
 
 import type { Donor } from "@/lib/types";
 import type { Lang } from "@/lib/i18n";
+import { getDonorStatus } from "@/lib/donation";
 import BloodGroupBadge from "./BloodGroupBadge";
 import Link from "next/link";
 
 export default function DonorCard({ donor, lang = "bn" }: { donor: Donor; lang?: Lang }) {
   const en = lang === "en";
   const initials = donor.full_name.trim().charAt(0).toUpperCase();
+  const status = getDonorStatus(donor.is_available, donor.last_donation_date, en);
 
   return (
     <div className="card-hover group flex h-full flex-col p-5">
@@ -47,12 +49,12 @@ export default function DonorCard({ donor, lang = "bn" }: { donor: Donor; lang?:
       </div>
 
       <div className="mt-4 flex items-center justify-between gap-3 border-t border-zinc-100 pt-4">
-        <span className={`inline-flex items-center gap-1.5 text-xs font-semibold ${donor.is_available ? "text-emerald-600" : "text-ink/40"}`}>
-          <span className={`h-2 w-2 rounded-full ${donor.is_available ? "bg-emerald-500 shadow-[0_0_0_3px_rgba(16,185,129,0.18)]" : "bg-zinc-300"}`} />
-          {donor.is_available ? (en ? "Available" : "রক্তদানে প্রস্তুত") : en ? "Unavailable" : "এই মুহূর্তে অনুপস্থিত"}
+        <span className={`inline-flex items-center gap-1.5 text-xs font-semibold ${status.color}`}>
+          <span className={`h-2 w-2 rounded-full ${status.dot}`} />
+          {status.label}
         </span>
         <div className="flex items-center gap-2">
-          <Link href={`/donor/${donor.id}`} className="btn-ghost !px-2 !py-2 text-xs" title={en ? "Verify QR" : "QR যাচায়া"}>QR</Link>
+          <Link href={`/donor/${donor.id}`} className="btn-ghost !px-2 !py-2 text-xs" title={en ? "Verify QR" : "QR যাচাই"}>QR</Link>
           <a href={`tel:${donor.phone}`} className="btn-primary !px-3 !py-2 text-xs"><PhoneIcon /> {en ? "Call" : "কল"}</a>
         </div>
       </div>
