@@ -51,6 +51,8 @@ export default function Footer({ settings, lang }: { settings: SiteSettings; lan
             <li><Link className="transition hover:text-white" href="/donors">{t("nav.donors", lang)}</Link></li>
             <li><Link className="transition hover:text-white" href="/request-blood">{t("nav.needBlood", lang)}</Link></li>
             <li><Link className="transition hover:text-white" href="/become-donor">{t("nav.becomeDonor", lang)}</Link></li>
+            <li><Link className="transition hover:text-white" href="/eligibility">{t("nav.eligibility", lang)}</Link></li>
+            <li><Link className="transition hover:text-white" href="/emergency">🚑 {t("nav.emergency", lang)}</Link></li>
             <li><Link className="transition hover:text-white" href="/donate">{t("nav.donate", lang)}</Link></li>
           </ul>
         </div>
