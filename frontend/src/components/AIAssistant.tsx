@@ -87,6 +87,7 @@ export default function AIAssistant() {
   const recogRef = useRef<any>(null);
   const speakRef = useRef<number | null>(null);
   const voicesRef = useRef<SpeechSynthesisVoice[]>([]);
+  const audioRefs = useRef<HTMLAudioElement[]>([]);
 
   const greet: Msg = {
     from: "bot",
@@ -101,7 +102,7 @@ export default function AIAssistant() {
   }, []);
   useEffect(() => { try { localStorage.setItem("shanti-chat", JSON.stringify(msgs.slice(-20))); } catch {} }, [msgs]);
   useEffect(() => { scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" }); }, [msgs, open, typing]);
-  useEffect(() => { if (!open) window.speechSynthesis?.cancel(); }, [open]);
+  useEffect(() => { if (!open) { window.speechSynthesis?.cancel(); audioRefs.current.forEach(a => { a.pause(); a.currentTime = 0; }); audioRefs.current = []; } }, [open]);
 
   // Strip emoji + symbols so TTS doesn't read them aloud; tidy spacing
   const cleanForSpeech = (text: string): string =>
@@ -260,45 +261,87 @@ export default function AIAssistant() {
     recog.start(); recogRef.current = recog;
   };
 
-  // Text-to-speech (using best Female Bengali voice, Bangladeshi bn-BD pronunciation priority)
+  // Text-to-speech — Google Translate TTS for Bangla (real female voice), Web Speech API for English
   const speak = (text: string, idx: number) => {
+    // Stop any ongoing speech/audio
     window.speechSynthesis?.cancel();
+    audioRefs.current.forEach(a => { a.pause(); a.currentTime = 0; });
+    audioRefs.current = [];
     if (speakRef.current === idx) { speakRef.current = null; setSpeakingIdx(null); return; }
+
     const cleaned = cleanForSpeech(text);
     if (!cleaned) return;
+
+    speakRef.current = idx;
+    setSpeakingIdx(idx);
+
+    // ── BANGLA MODE: Google Translate TTS (real female Bangla voice, works everywhere) ──
+    if (!en) {
+      // Split text into ~200-char chunks at sentence boundaries for Google TTS
+      const chunks: string[] = [];
+      const maxLen = 200;
+      let remaining = cleaned;
+
+      while (remaining.length > 0) {
+        if (remaining.length <= maxLen) { chunks.push(remaining); break; }
+        let splitIdx = remaining.lastIndexOf("।", maxLen);
+        if (splitIdx === -1 || splitIdx < maxLen / 2) splitIdx = remaining.lastIndexOf(".", maxLen);
+        if (splitIdx === -1 || splitIdx < maxLen / 2) splitIdx = remaining.lastIndexOf(",", maxLen);
+        if (splitIdx === -1 || splitIdx < maxLen / 2) splitIdx = remaining.lastIndexOf(" ", maxLen);
+        if (splitIdx === -1) splitIdx = maxLen;
+        chunks.push(remaining.slice(0, splitIdx + 1).trim());
+        remaining = remaining.slice(splitIdx + 1).trim();
+      }
+
+      // Create Audio elements for each chunk
+      const audioElements: HTMLAudioElement[] = [];
+      for (const chunk of chunks) {
+        const url = `https://translate.google.com/translate_tts?ie=UTF-8&tl=bn&client=tw-ob&q=${encodeURIComponent(chunk)}`;
+        audioElements.push(new Audio(url));
+      }
+      audioRefs.current = audioElements;
+
+      // Play chunks sequentially
+      let currentChunk = 0;
+      const playNext = () => {
+        if (speakRef.current !== idx) return; // stopped
+        if (currentChunk >= audioElements.length) {
+          speakRef.current = null;
+          setSpeakingIdx(null);
+          return;
+        }
+        const audio = audioElements[currentChunk];
+        audio.onended = () => { currentChunk++; playNext(); };
+        audio.onerror = () => { speakRef.current = null; setSpeakingIdx(null); };
+        audio.play().catch(() => { speakRef.current = null; setSpeakingIdx(null); });
+      };
+
+      console.log(`[Shanti AI TTS] Bangla mode → Google Translate TTS (female bn), ${chunks.length} chunk(s)`);
+      playNext();
+      return;
+    }
+
+    // ── ENGLISH MODE: Web Speech API (female voice available in most browsers) ──
     const u = new SpeechSynthesisUtterance(cleaned);
     const { voice, isFemale } = pickVoice();
     if (voice) {
       u.voice = voice;
-      u.lang = voice.lang || (en ? "en-US" : "bn-BD");
+      u.lang = voice.lang || "en-US";
       setActiveVoiceName(voice.name || "");
-      console.log(`[Shanti AI TTS] Auto-selected female voice: "${voice.name}" (${voice.lang || u.lang})`);
+      console.log(`[Shanti AI TTS] English → Auto-selected voice: "${voice.name}" (${voice.lang || u.lang})`);
     } else {
-      u.lang = en ? "en-US" : "bn-BD";
-      console.log(`[Shanti AI TTS] Using browser default voice for lang: ${u.lang}`);
+      u.lang = "en-US";
+      console.log(`[Shanti AI TTS] English → Using browser default voice`);
     }
-
-    const isBangla = !en;
-    if (isBangla && !isFemale) {
-      // If no female voice found in Bangla mode, boost pitch so it sounds feminine
-      u.pitch = 1.35;
-      u.rate = 0.92;
-    } else if (isBangla) {
-      u.pitch = 1.08;
-      u.rate = 0.92;
-    } else {
-      u.pitch = 1.04;
-      u.rate = 0.98;
-    }
-        u.volume = 1;
+    u.pitch = 1.04;
+    u.rate = 0.98;
+    u.volume = 1;
     u.onend = () => { speakRef.current = null; setSpeakingIdx(null); };
     u.onerror = () => { speakRef.current = null; setSpeakingIdx(null); };
-    speakRef.current = idx;
-    setSpeakingIdx(idx);
     window.speechSynthesis?.speak(u);
   };
 
-  const clearChat = () => { setMsgs([greet]); setFollowUp(FOLLOWUPS.default); localStorage.removeItem("shanti-chat"); window.speechSynthesis?.cancel(); setSpeakingIdx(null); };
+  const clearChat = () => { setMsgs([greet]); setFollowUp(FOLLOWUPS.default); localStorage.removeItem("shanti-chat"); window.speechSynthesis?.cancel(); audioRefs.current.forEach(a => { a.pause(); a.currentTime = 0; }); audioRefs.current = []; setSpeakingIdx(null); speakRef.current = null; };
   const SUGGESTIONS = en ? ["🩸 Need blood", "🔎 Find donor", "➕ Become donor", "🔊 Shanti's Voice", "📞 Contact", "📊 Impact"] : ["🩸 রক্ত লাগবে", "🔎 দাতা খুঁজুন", "➕ রক্তদাতা হব", "🔊 শান্তির ভয়েস", "📞 যোগাযোগ", "📊 অর্জন"];
 
   return (
