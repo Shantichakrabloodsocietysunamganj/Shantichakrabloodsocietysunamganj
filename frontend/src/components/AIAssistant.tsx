@@ -77,13 +77,15 @@ export default function AIAssistant() {
   const [typing, setTyping] = useState(false);
   const [listening, setListening] = useState(false);
   const [followUp, setFollowUp] = useState<string[]>(FOLLOWUPS.default);
+  const [speakingIdx, setSpeakingIdx] = useState<number | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const recogRef = useRef<any>(null);
   const speakRef = useRef<number | null>(null);
+  const voicesRef = useRef<SpeechSynthesisVoice[]>([]);
 
   const greet: Msg = {
     from: "bot",
-    text: en ? "Yes! 👋 I'm Shanti, your AI helper 🤖. Need blood, find a donor, or have a question? I'm here! Type / for shortcuts." : "হ্যাঁ জি! 👋 আমি শান্তি 🤖 — রক্ত লাগলে, দাতা খুঁজতে, বা যেকোনো প্রশ্নে সাহায্য করব। শর্টকাট: / দিয়ে শুরু করুন।",
+    text: en ? "Assalamu Alaikum! 👋 I'm Shanti 🤖, your AI helper. Need blood, find a donor, or have a question? I'm always here. Type / for shortcuts." : "আসসালামু আলাইকুম! 👋 আমি শান্তি 🤖 — আপনার AI সহকারী। রক্ত লাগলে, দাতা খুঁজতে, বা যেকোনো প্রশ্নে আমি সবসময় পাশে আছি। শর্টকাট: / দিয়ে শুরু করুন।",
     time: Date.now(),
   };
   const [msgs, setMsgs] = useState<Msg[]>([greet]);
@@ -96,10 +98,47 @@ export default function AIAssistant() {
   useEffect(() => { scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" }); }, [msgs, open, typing]);
   useEffect(() => { if (!open) window.speechSynthesis?.cancel(); }, [open]);
 
+  // Load available TTS voices (async on most browsers)
+  useEffect(() => {
+    const load = () => { const v = window.speechSynthesis?.getVoices?.() ?? []; if (v.length) voicesRef.current = v; };
+    load();
+    if (typeof window !== "undefined" && window.speechSynthesis) {
+      window.speechSynthesis.addEventListener("voiceschanged", load);
+      return () => window.speechSynthesis.removeEventListener("voiceschanged", load);
+    }
+  }, []);
+
+  // Strip emoji + symbols so TTS doesn't read them aloud; tidy spacing
+  const cleanForSpeech = (text: string): string =>
+    text
+      // Astral-plane chars (all emoji/pictographs) via UTF-16 surrogate pairs
+      .replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, "")
+      // BMP symbol ranges: arrows, dingbats, variation selectors
+      .replace(/[\u2600-\u27BF\u2190-\u21FF\u2B00-\u2BFF\uFE00-\uFE0F]/g, "")
+      .replace(/[→←↑↓]/g, "")
+      .replace(/\s+/g, " ")
+      .trim();
+
+  // Pick the best matching voice; prefer Bangla when in Bangla mode
+  const pickVoice = (): SpeechSynthesisVoice | undefined => {
+    const voices = voicesRef.current;
+    if (!voices?.length) return undefined;
+    const want = en ? ["en"] : ["bn"];
+    for (const prefix of want) {
+      const matches = voices.filter((v) => v.lang?.toLowerCase().startsWith(prefix));
+      if (matches.length) {
+        const natural = matches.find((v) => /natural|neural|google|wavenet|samantha|aria|jenny|female/i.test(v.name));
+        return natural ?? matches[0];
+      }
+    }
+    // Last resort: default English voice
+    return voices.find((v) => v.lang?.toLowerCase().startsWith("en")) ?? voices[0];
+  };
+
   const localReply = (q: string): Msg => {
     const t = q.toLowerCase();
     if (/^(hi|hello|hey|hii|hy|salam|salaam|assalam|namaskar|নমস্কার|হাই|সালাম|হ্যালো|হেলো|কেমন আছ)/.test(t))
-      return { from: "bot", text: en ? "Hello! 😊 Need blood, find a donor, or become one?" : "হ্যাঁ জি! 😊 বলুন — রক্ত লাগবে, দাতা খুঁজবেন, নাকি রক্তদাতা হবেন?", time: Date.now() };
+      return { from: "bot", text: en ? "Walaikum Assalam! 😊 How can I help? Need blood, find a donor, or become one?" : "ওয়ালাইকুম আসসালাম! 😊 বলুন — রক্ত লাগবে, দাতা খুঁজবেন, নাকি রক্তদাতা হবেন?", time: Date.now() };
     if (/(ধন্যবাদ|থ্যাংকস|thank|thnx|tnx|thanks)/.test(t))
       return { from: "bot", text: en ? "You're welcome! 🤍 Donate blood, save lives." : "আপনাকেও ধন্যবাদ! 🤍 রক্ত দিন, জীবন বাঁচান।", time: Date.now() };
     let best: { score: number; entry: Entry } | null = null;
@@ -145,15 +184,23 @@ export default function AIAssistant() {
   // Text-to-speech
   const speak = (text: string, idx: number) => {
     window.speechSynthesis?.cancel();
-    if (speakRef.current === idx) { speakRef.current = null; return; }
-    const u = new SpeechSynthesisUtterance(text.replace(/\n/g, " "));
-    u.lang = en ? "en-US" : "bn-BD"; u.rate = 0.95;
-    u.onend = () => { speakRef.current = null; };
+    if (speakRef.current === idx) { speakRef.current = null; setSpeakingIdx(null); return; }
+    const cleaned = cleanForSpeech(text);
+    if (!cleaned) return;
+    const u = new SpeechSynthesisUtterance(cleaned);
+    const voice = pickVoice();
+    if (voice) { u.voice = voice; u.lang = voice.lang; } else { u.lang = en ? "en-US" : "bn-BD"; }
+    u.rate = en ? 0.98 : 0.9;     // slightly slower, clearer for Bangla
+    u.pitch = 1.04;               // warm, friendly tone
+    u.volume = 1;
+    u.onend = () => { speakRef.current = null; setSpeakingIdx(null); };
+    u.onerror = () => { speakRef.current = null; setSpeakingIdx(null); };
     speakRef.current = idx;
+    setSpeakingIdx(idx);
     window.speechSynthesis?.speak(u);
   };
 
-  const clearChat = () => { setMsgs([greet]); setFollowUp(FOLLOWUPS.default); localStorage.removeItem("shanti-chat"); window.speechSynthesis?.cancel(); };
+  const clearChat = () => { setMsgs([greet]); setFollowUp(FOLLOWUPS.default); localStorage.removeItem("shanti-chat"); window.speechSynthesis?.cancel(); setSpeakingIdx(null); };
   const SUGGESTIONS = en ? ["🩸 Need blood", "🔎 Find donor", "➕ Become donor", "📞 Contact", "📊 Impact"] : ["🩸 রক্ত লাগবে", "🔎 দাতা খুঁজুন", "➕ রক্তদাতা হব", "📞 যোগাযোগ", "📊 অর্জন"];
 
   return (
@@ -196,8 +243,10 @@ export default function AIAssistant() {
                   )}
                   {/* TTS button on bot messages */}
                   {m.from === "bot" && m.text.length > 10 && (
-                    <button onClick={() => speak(m.text, i)} className="mt-1.5 flex items-center gap-1 text-[10px] font-medium text-violet-500 hover:text-violet-700">
-                      {speakRef.current === i ? "⏹ " + (en ? "Stop" : "থামুন") : "🔊 " + (en ? "Listen" : "শুনুন")}
+                    <button onClick={() => speak(m.text, i)} className={`mt-1.5 inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-[10px] font-semibold transition ${speakingIdx === i ? "animate-pulse bg-fuchsia-100 text-fuchsia-700" : "text-violet-500 hover:bg-violet-50 hover:text-violet-700"}`}>
+                      {speakingIdx === i
+                        ? (<><span className="flex items-end gap-0.5"><span className="block h-2.5 w-0.5 animate-pulse rounded-full bg-fuchsia-500" /><span className="block h-3.5 w-0.5 animate-pulse rounded-full bg-fuchsia-500" style={{ animationDelay: "0.15s" }} /><span className="block h-2 w-0.5 animate-pulse rounded-full bg-fuchsia-500" style={{ animationDelay: "0.3s" }} /></span> {en ? "Stop" : "থামুন"}</>)
+                        : "🔊 " + (en ? "Listen" : "শুনুন")}
                     </button>
                   )}
                 </div>
