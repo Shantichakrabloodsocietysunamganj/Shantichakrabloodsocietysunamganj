@@ -2,9 +2,46 @@
 
 import { useEffect, useRef } from "react";
 
-type Drop = { x: number; y: number; vx: number; vy: number; size: number; el: HTMLSpanElement | null };
+type Drop = {
+  x: number;
+  y: number;
+  vx: number;
+  vy: number;
+  size: number;
+  rot: number;
+  el: HTMLSpanElement | null;
+};
 
-// ভাসমান/পড়ন্ত রক্তের ফোঁটা — device tilt (gyroscope) অনুযায়ী gravity
+/** 3D glossy blood-drop SVG (radial gradient + specular highlight + rim light) */
+function dropSvg(size: number, uid: string): string {
+  const w = size;
+  const h = size * 1.4;
+  return `<svg width="${w}" height="${h}" viewBox="0 0 100 140" fill="none" aria-hidden="true" style="filter:drop-shadow(0 ${Math.max(2, size * 0.12)}px ${Math.max(4, size * 0.28)}px rgba(132,21,21,0.55))">
+  <defs>
+    <radialGradient id="bd3d-${uid}" cx="38%" cy="32%" r="75%">
+      <stop offset="0%" stop-color="#ff6b6b"/>
+      <stop offset="35%" stop-color="#ef4444"/>
+      <stop offset="75%" stop-color="#d62828"/>
+      <stop offset="100%" stop-color="#841515"/>
+    </radialGradient>
+    <radialGradient id="bdhi-${uid}" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="bdrim-${uid}" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <path d="M50,4 C50,4 92,58 92,94 A42,42 0 1 1 8,94 C8,58 50,4 50,4 Z" fill="url(#bd3d-${uid})" stroke="#a61e1e" stroke-width="1"/>
+  <path d="M50,10 C50,10 86,58 86,90 A38,38 0 0 1 70,58 C60,42 52,22 50,10 Z" fill="url(#bdrim-${uid})"/>
+  <ellipse cx="36" cy="78" rx="11" ry="20" fill="url(#bdhi-${uid})" transform="rotate(-18 36 78)"/>
+  <circle cx="42" cy="64" r="4" fill="#fff" opacity="0.65"/>
+  <path d="M50,128 A42,42 0 0 1 8,94 C8,80 22,96 40,110 C52,119 50,126 50,128 Z" fill="#630e0e" opacity="0.35"/>
+</svg>`;
+}
+
+// ভাসমান/পড়ন্ত 3D রক্তের ফোঁটা — device tilt (gyroscope) অনুযায়ী gravity
 export default function BloodDrops() {
   const containerRef = useRef<HTMLDivElement>(null);
   const dropsRef = useRef<Drop[]>([]);
@@ -25,27 +62,51 @@ export default function BloodDrops() {
       d.y = -20 - Math.random() * H() * 0.4;
       d.vx = (Math.random() - 0.5) * 0.6;
       d.vy = Math.random() * 0.6;
+      d.rot = (Math.random() - 0.5) * 18;
     };
     const COUNT = 9;
     const drops: Drop[] = Array.from({ length: COUNT }, () => {
-      const d: Drop = { x: 0, y: 0, vx: 0, vy: 0, size: 9 + Math.random() * 9, el: null };
+      const d: Drop = {
+        x: 0,
+        y: 0,
+        vx: 0,
+        vy: 0,
+        size: 10 + Math.random() * 12,
+        rot: 0,
+        el: null,
+      };
       make(d);
       return d;
     });
     dropsRef.current = drops;
 
-    // render elements
+    // render elements — 3D glossy SVG
     container.innerHTML = "";
-    drops.forEach((d) => {
+    drops.forEach((d, i) => {
       const span = document.createElement("span");
-      span.style.cssText = "position:absolute;top:0;left:0;will-change:transform;color:#e74b4b;opacity:.38;";
-      span.innerHTML = `<svg width="${d.size}" height="${d.size * 1.4}" viewBox="0 0 12 17" fill="currentColor"><path d="M6 0s6 7 6 11a6 6 0 0 1-12 0C0 7 6 0 6 0z"/></svg>`;
+      const opacity = 0.42 + Math.random() * 0.28;
+      span.style.cssText = [
+        "position:absolute",
+        "top:0",
+        "left:0",
+        "will-change:transform,opacity",
+        `opacity:${opacity.toFixed(2)}`,
+        "pointer-events:none",
+        "line-height:0",
+      ].join(";");
+      span.innerHTML = dropSvg(d.size, `d${i}`);
       container.appendChild(span);
       d.el = span;
     });
 
     if (reduce) {
       gravityRef.current = { x: 0, y: 0 };
+      // still paint once so reduced-motion users see the 3D drops
+      for (const d of drops) {
+        if (d.el) {
+          d.el.style.transform = `translate3d(${d.x.toFixed(1)}px,${d.y.toFixed(1)}px,0) rotate(${d.rot.toFixed(1)}deg)`;
+        }
+      }
       return;
     }
 
@@ -61,6 +122,9 @@ export default function BloodDrops() {
         d.vx *= 0.995;
         d.x += d.vx;
         d.y += d.vy;
+        // slight tilt toward velocity for 3D motion feel
+        d.rot += d.vx * 0.35;
+        d.rot *= 0.98;
         // off-screen → reset (gravity দিক অনুযায়ী)
         if (d.y > h + 30 || d.y < -60 || d.x > w + 30 || d.x < -30) {
           make(d);
@@ -70,7 +134,9 @@ export default function BloodDrops() {
           d.vy = 0;
           d.vx = 0;
         }
-        if (d.el) d.el.style.transform = `translate3d(${d.x.toFixed(1)}px,${d.y.toFixed(1)}px,0)`;
+        if (d.el) {
+          d.el.style.transform = `translate3d(${d.x.toFixed(1)}px,${d.y.toFixed(1)}px,0) rotate(${d.rot.toFixed(1)}deg)`;
+        }
       }
       rafRef.current = requestAnimationFrame(step);
     };
@@ -89,10 +155,14 @@ export default function BloodDrops() {
     };
 
     // iOS এ permission লাগে — প্রথম tap-এ request
-    const DOE = window.DeviceOrientationEvent as any;
+    const DOE = window.DeviceOrientationEvent as unknown as {
+      requestPermission?: () => Promise<string>;
+    };
     const onRequest = () => {
       if (DOE && typeof DOE.requestPermission === "function") {
-        DOE.requestPermission().then((p: string) => p === "granted" && tryOrient()).catch(() => {});
+        DOE.requestPermission()
+          .then((p: string) => p === "granted" && tryOrient())
+          .catch(() => {});
       } else {
         tryOrient();
       }
@@ -111,5 +181,11 @@ export default function BloodDrops() {
     };
   }, []);
 
-  return <div ref={containerRef} className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true" />;
+  return (
+    <div
+      ref={containerRef}
+      className="pointer-events-none absolute inset-0 overflow-hidden"
+      aria-hidden="true"
+    />
+  );
 }
