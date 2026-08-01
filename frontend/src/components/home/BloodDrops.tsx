@@ -9,13 +9,18 @@ type Drop = {
   vy: number;
   size: number;
   rot: number;
+  label: string;
   el: HTMLSpanElement | null;
 };
 
-/** 3D glossy blood-drop SVG (radial gradient + specular highlight + rim light) */
-function dropSvg(size: number, uid: string): string {
+/** ব্লাড গ্রুপ — বাংলাদেশে প্রাচুর্য অনুযায়ী সাজানো (B+ সবচেয়ে বেশি) */
+const GROUPS = ["B+", "O+", "A+", "AB+", "B-", "O-", "A-", "AB-"];
+
+/** 3D glossy blood-drop SVG (radial gradient + specular highlight + rim light + group label) */
+function dropSvg(size: number, uid: string, label: string): string {
   const w = size;
   const h = size * 1.4;
+  const fontSize = label.length > 2 ? 26 : 32;
   return `<svg width="${w}" height="${h}" viewBox="0 0 100 140" fill="none" aria-hidden="true" style="filter:drop-shadow(0 ${Math.max(2, size * 0.12)}px ${Math.max(4, size * 0.28)}px rgba(132,21,21,0.55))">
   <defs>
     <radialGradient id="bd3d-${uid}" cx="38%" cy="32%" r="75%">
@@ -38,6 +43,7 @@ function dropSvg(size: number, uid: string): string {
   <ellipse cx="36" cy="78" rx="11" ry="20" fill="url(#bdhi-${uid})" transform="rotate(-18 36 78)"/>
   <circle cx="42" cy="64" r="4" fill="#fff" opacity="0.65"/>
   <path d="M50,128 A42,42 0 0 1 8,94 C8,80 22,96 40,110 C52,119 50,126 50,128 Z" fill="#630e0e" opacity="0.35"/>
+  <text x="50" y="106" text-anchor="middle" font-size="${fontSize}" font-weight="700" fill="#ffffff" fill-opacity="0.92" stroke="#6d0f0f" stroke-opacity="0.5" stroke-width="3" paint-order="stroke" style="pointer-events:none">${label}</text>
 </svg>`;
 }
 
@@ -65,14 +71,16 @@ export default function BloodDrops() {
       d.rot = (Math.random() - 0.5) * 18;
     };
     const COUNT = 9;
-    const drops: Drop[] = Array.from({ length: COUNT }, () => {
+    const drops: Drop[] = Array.from({ length: COUNT }, (_, i) => {
       const d: Drop = {
         x: 0,
         y: 0,
         vx: 0,
         vy: 0,
-        size: 10 + Math.random() * 12,
+        // label দেখানোর জন্য ফোঁটা একটু বড় রাখা হয়েছে
+        size: 14 + Math.random() * 14,
         rot: 0,
+        label: GROUPS[i % GROUPS.length],
         el: null,
       };
       make(d);
@@ -94,7 +102,7 @@ export default function BloodDrops() {
         "pointer-events:none",
         "line-height:0",
       ].join(";");
-      span.innerHTML = dropSvg(d.size, `d${i}`);
+      span.innerHTML = dropSvg(d.size, `d${i}`, d.label);
       container.appendChild(span);
       d.el = span;
     });
