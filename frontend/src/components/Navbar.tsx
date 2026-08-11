@@ -40,10 +40,22 @@ export default function Navbar({
   const supabase = createClient();
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 8);
-    onScroll();
+    let frame = 0;
+    const update = () => {
+      frame = 0;
+      const next = window.scrollY > 8;
+      setScrolled((current) => (current === next ? current : next));
+    };
+    const onScroll = () => {
+      if (!frame) frame = requestAnimationFrame(update);
+    };
+
+    update();
     window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      cancelAnimationFrame(frame);
+    };
   }, []);
 
   const logout = async () => {
@@ -120,7 +132,7 @@ export default function Navbar({
       </nav>
 
       {open && (
-        <div className="border-t border-zinc-100 bg-white/95 backdrop-blur-xl xl:hidden dark:border-white/10 dark:bg-slate-950/90">
+        <div className="animate-panel-in origin-top border-t border-zinc-100 bg-white/95 backdrop-blur-xl xl:hidden dark:border-white/10 dark:bg-slate-950/90">
           <div className="container-page flex flex-col gap-1 py-3">
             <div className="mb-1 flex items-center justify-between px-1">
               <LanguageToggle lang={lang} />

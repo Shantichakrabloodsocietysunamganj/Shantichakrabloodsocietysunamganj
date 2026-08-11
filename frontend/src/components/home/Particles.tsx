@@ -30,13 +30,14 @@ export default function Particles() {
             height: p.s,
             opacity: 0.2,
             animation: `particleFloat ${p.d}s ease-in-out ${p.dl}s infinite`,
+            willChange: "transform, opacity",
           }}
         />
       ))}
       <style>{`
         @keyframes particleFloat {
-          0%,100% { transform: translate(0,0); opacity: 0.12; }
-          50% { transform: translate(8px,-18px); opacity: 0.45; }
+          0%,100% { transform: translate3d(0,0,0); opacity: 0.12; }
+          50% { transform: translate3d(8px,-18px,0); opacity: 0.45; }
         }
       `}</style>
     </div>

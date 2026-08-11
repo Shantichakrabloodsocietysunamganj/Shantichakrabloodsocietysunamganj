@@ -1,27 +1,47 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef } from "react";
 
-// পেজের উপরে স্ক্রল প্রগ্রেস বার
+// পেজের উপরে স্ক্রল প্রগ্রেস বার — compositor transform, React re-render ছাড়া
 export default function ScrollProgress() {
-  const [width, setWidth] = useState(0);
+  const barRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const onScroll = () => {
-      const h = document.documentElement;
-      const scrolled = h.scrollTop / (h.scrollHeight - h.clientHeight || 1);
-      setWidth(Math.min(scrolled * 100, 100));
+    let frame = 0;
+
+    const update = () => {
+      frame = 0;
+      const root = document.documentElement;
+      const maxScroll = Math.max(root.scrollHeight - root.clientHeight, 1);
+      const progress = Math.min(Math.max(window.scrollY / maxScroll, 0), 1);
+      if (barRef.current) barRef.current.style.transform = `scaleX(${progress})`;
     };
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+
+    const scheduleUpdate = () => {
+      if (!frame) frame = requestAnimationFrame(update);
+    };
+
+    const contentObserver = typeof ResizeObserver !== "undefined"
+      ? new ResizeObserver(scheduleUpdate)
+      : null;
+
+    update();
+    contentObserver?.observe(document.body);
+    window.addEventListener("scroll", scheduleUpdate, { passive: true });
+    window.addEventListener("resize", scheduleUpdate, { passive: true });
+    return () => {
+      contentObserver?.disconnect();
+      window.removeEventListener("scroll", scheduleUpdate);
+      window.removeEventListener("resize", scheduleUpdate);
+      cancelAnimationFrame(frame);
+    };
   }, []);
 
   return (
-    <div className="fixed inset-x-0 top-0 z-[60] h-1">
+    <div className="pointer-events-none fixed inset-x-0 top-0 z-[60] h-1" aria-hidden="true">
       <div
-        className="h-full bg-gradient-to-r from-brand-600 via-brand-500 to-blood-500 transition-[width] duration-150 ease-out"
-        style={{ width: `${width}%` }}
+        ref={barRef}
+        className="h-full origin-left scale-x-0 bg-gradient-to-r from-brand-600 via-brand-500 to-blood-500 will-change-transform"
       />
     </div>
   );

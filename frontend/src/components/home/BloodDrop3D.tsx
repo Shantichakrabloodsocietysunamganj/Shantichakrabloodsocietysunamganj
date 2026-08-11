@@ -9,7 +9,7 @@ export default function BloodDrop3D({ size = 160 }: { size?: number }) {
 
       <svg
         viewBox="0 0 100 140"
-        className="relative animate-float drop-shadow-[0_12px_30px_rgba(214,40,40,0.5)]"
+        className="motion-compositor relative animate-float drop-shadow-[0_12px_30px_rgba(214,40,40,0.5)]"
         width={size}
         height={size * 1.4}
         aria-hidden="true"

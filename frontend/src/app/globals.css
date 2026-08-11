@@ -8,6 +8,8 @@
   --grad-brand: linear-gradient(135deg, #093f7d 0%, #0b4f9c 38%, #256fc0 70%, #d62828 145%);
   --grad-blood: linear-gradient(135deg, #d62828 0%, #bf2020 55%, #841515 120%);
   --ring: 11 79 156;
+  --ease-smooth: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-ui: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 * {
@@ -16,14 +18,34 @@
 
 html {
   scroll-behavior: smooth;
+  scroll-padding-top: 5.5rem;
+  scrollbar-gutter: stable;
 }
 
 body {
+  min-height: 100%;
+  overflow-x: clip;
   background: var(--background);
   color: var(--foreground);
   font-feature-settings: "rlig" 1, "calt" 1;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+}
+
+/* Keep anchor targets clear of the sticky navigation. */
+:where([id]) {
+  scroll-margin-top: 5.5rem;
+}
+
+/* Momentum scrolling for the site's nested scroll regions. */
+:where(.overflow-auto, .overflow-y-auto, .overflow-x-auto) {
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+
+/* One consistent, natural curve for every Tailwind transition utility. */
+:where(.transition, .transition-all, .transition-colors, .transition-opacity, .transition-shadow, .transition-transform) {
+  transition-timing-function: var(--ease-ui);
 }
 
 ::selection {
@@ -151,7 +173,11 @@ body::before {
 
   /* Buttons */
   .btn {
-    @apply relative inline-flex select-none items-center justify-center gap-2 overflow-hidden rounded-xl px-5 py-3 text-sm font-semibold transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60;
+    @apply relative inline-flex select-none items-center justify-center gap-2 overflow-hidden rounded-xl px-5 py-3 text-sm font-semibold focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60;
+    transform: translateZ(0);
+    transition-property: color, background-color, background-image, border-color, box-shadow, opacity, transform;
+    transition-duration: 280ms;
+    transition-timing-function: var(--ease-ui);
   }
   /* ripple effect */
   .btn::after {
@@ -160,10 +186,10 @@ body::before {
     inset: 0;
     background: radial-gradient(circle at center, rgba(255, 255, 255, 0.35) 0%, transparent 55%);
     opacity: 0;
-    transform: scale(0);
-    transition: transform 0.6s, opacity 0.6s;
+    transform: translateZ(0) scale(0);
+    transition: transform 600ms var(--ease-smooth), opacity 500ms ease-out;
   }
-  .btn:active::after { opacity: 1; transform: scale(1.4); transition: opacity 0s, transform 0s; }
+  .btn:active::after { opacity: 1; transform: translateZ(0) scale(1.4); transition-duration: 0ms; }
   .btn-primary {
     @apply btn bg-brand-600 text-white shadow-sm hover:bg-brand-700 hover:shadow-glow focus-visible:ring-brand-500;
     background-image: linear-gradient(135deg, #0b4f9c 0%, #1d6fd0 100%);
@@ -193,7 +219,9 @@ body::before {
     @apply rounded-2xl border border-zinc-100 bg-white shadow-card;
   }
   .card-hover {
-    @apply card transition-all duration-300 hover:-translate-y-1 hover:shadow-card-hover;
+    @apply card hover:-translate-y-1 hover:shadow-card-hover;
+    transform: translateZ(0);
+    transition: transform 420ms var(--ease-ui), box-shadow 420ms var(--ease-ui), border-color 280ms ease-out;
   }
 
   /* Glassmorphism surface */
@@ -213,7 +241,8 @@ body::before {
 
   /* Form controls */
   .input {
-    @apply w-full rounded-xl border border-zinc-200 bg-white px-4 py-2.5 text-sm text-ink placeholder:text-zinc-400 transition focus:border-brand-500 focus:outline-none focus:ring-4 focus:ring-brand-100;
+    @apply w-full rounded-xl border border-zinc-200 bg-white px-4 py-2.5 text-sm text-ink placeholder:text-zinc-400 focus:border-brand-500 focus:outline-none focus:ring-4 focus:ring-brand-100;
+    transition: color 220ms ease-out, background-color 220ms ease-out, border-color 220ms ease-out, box-shadow 320ms var(--ease-ui);
   }
   .label {
     @apply mb-1.5 block text-sm font-medium text-ink/80;
@@ -261,22 +290,50 @@ body::before {
   }
   /* error shake */
   @keyframes shake {
-    0%, 100% { transform: translateX(0); }
-    20%, 60% { transform: translateX(-6px); }
-    40%, 80% { transform: translateX(6px); }
+    0%, 100% { transform: translate3d(0, 0, 0); }
+    20%, 60% { transform: translate3d(-6px, 0, 0); }
+    40%, 80% { transform: translate3d(6px, 0, 0); }
   }
   .animate-shake { animation: shake 0.4s ease-in-out; }
   /* pop / success checkmark */
   @keyframes pop {
-    0% { transform: scale(0); opacity: 0; }
-    60% { transform: scale(1.15); opacity: 1; }
-    100% { transform: scale(1); }
+    0% { transform: translateZ(0) scale(0); opacity: 0; }
+    60% { transform: translateZ(0) scale(1.15); opacity: 1; }
+    100% { transform: translateZ(0) scale(1); }
   }
-  .animate-pop { animation: pop 0.5s cubic-bezier(0.22,1,0.36,1) both; }
+  .animate-pop { animation: pop 0.5s var(--ease-smooth) both; }
   /* card hover zoom helper */
-  .hover-zoom img { transition: transform 0.6s cubic-bezier(0.22,1,0.36,1); }
-  .hover-zoom:hover img { transform: scale(1.08); }
+  .hover-zoom img {
+    transform: translateZ(0) scale(1);
+    transition: transform 700ms var(--ease-smooth);
+  }
+  .hover-zoom:hover img { transform: translateZ(0) scale(1.08); }
+  /* Elements with continuous transform animations stay on the compositor. */
+  .motion-compositor {
+    backface-visibility: hidden;
+    transform: translateZ(0);
+  }
   /* hide scrollbar but keep scroll */
   .no-scrollbar::-webkit-scrollbar { display: none; }
   .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+}
+
+/* Respect the operating-system motion preference everywhere, including
+   Tailwind utilities and component-local keyframes. */
+@media (prefers-reduced-motion: reduce) {
+  html:focus-within,
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    transition-delay: 0ms !important;
+  }
 }
