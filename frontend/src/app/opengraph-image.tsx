@@ -1,10 +1,21 @@
 import { ImageResponse } from "next/og";
+import { readFile } from "fs/promises";
+import path from "path";
 
 export const alt = "Shantichakra Blood Society — Donate Blood, Save Lives";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
-export default function OpenGraphImage() {
+export default async function OpenGraphImage() {
+  // Circular organisation logo (public/images/logo.png) embedded as a data URL.
+  let logoSrc: string | null = null;
+  try {
+    const buf = await readFile(path.join(process.cwd(), "public/images/logo.png"));
+    logoSrc = `data:image/png;base64,${buf.toString("base64")}`;
+  } catch {
+    logoSrc = null;
+  }
+
   return new ImageResponse(
     (
       <div
@@ -23,16 +34,31 @@ export default function OpenGraphImage() {
         }}
       >
         <div style={{ display: "flex", alignItems: "center" }}>
-          <div
-            style={{
-              width: "52px",
-              height: "52px",
-              borderRadius: "50%",
-              backgroundColor: "#d62828",
-              marginRight: "20px",
-              boxShadow: "0 0 0 6px rgba(214,40,40,0.22)",
-            }}
-          />
+          {logoSrc ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={logoSrc}
+              width="76"
+              height="76"
+              style={{
+                borderRadius: "50%",
+                marginRight: "20px",
+                boxShadow: "0 0 0 6px rgba(255,255,255,0.16)",
+                backgroundColor: "#ffffff",
+              }}
+            />
+          ) : (
+            <div
+              style={{
+                width: "52px",
+                height: "52px",
+                borderRadius: "50%",
+                backgroundColor: "#d62828",
+                marginRight: "20px",
+                boxShadow: "0 0 0 6px rgba(214,40,40,0.22)",
+              }}
+            />
+          )}
           <div
             style={{
               fontSize: "30px",
