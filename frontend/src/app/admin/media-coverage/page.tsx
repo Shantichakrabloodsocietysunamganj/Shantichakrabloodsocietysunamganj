@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { Newspaper, Shield, X } from "@/components/icons";
 
 export default function AdminMediaCoveragePage() {
   const supabase = createClient();
@@ -47,12 +48,12 @@ export default function AdminMediaCoveragePage() {
   }
 
   if (!ready) return <div className="container-page py-20 text-center text-ink/50">লোড হচ্ছে…</div>;
-  if (!authed) return <div className="container-page py-20 text-center"><p className="text-3xl">🛡️</p><p className="mt-2 font-medium text-ink">শুধু অ্যাডমিনদের জন্য।</p><Link href="/" className="btn-outline mt-4">হোমে ফিরুন</Link></div>;
+  if (!authed) return <div className="container-page py-20 text-center"><span className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-50 text-brand-600"><Shield className="h-7 w-7" /></span><p className="mt-2 font-medium text-ink">শুধু অ্যাডমিনদের জন্য।</p><Link href="/" className="btn-outline mt-4">হোমে ফিরুন</Link></div>;
 
   return (
     <div className="container-page py-10">
       <header className="mb-8 flex items-center justify-between">
-        <h1 className="font-display text-2xl font-extrabold tracking-tight text-ink">📰 মিডিয়া কভারেজ</h1>
+        <h1 className="flex items-center gap-2 font-display text-2xl font-extrabold tracking-tight text-ink"><Newspaper className="h-6 w-6 text-brand-600" />মিডিয়া কভারেজ</h1>
         <Link href="/admin" className="btn-outline">← ড্যাশবোর্ড</Link>
       </header>
 
@@ -68,7 +69,7 @@ export default function AdminMediaCoveragePage() {
         <div className="flex flex-wrap items-center gap-3">
           {form.thumbnail && <img src={form.thumbnail} alt="" className="h-12 w-12 rounded-lg object-cover" />}
           <label className="btn-outline cursor-pointer text-sm">
-            {form.thumbnail ? "✓ থাম্বনেইল" : "+ থাম্বনেইল"}
+            {form.thumbnail ? "থাম্বনেইল সেট" : "+ থাম্বনেইল"}
             <input type="file" accept="image/*" className="hidden" onChange={(e) => e.target.files?.[0] && uploadThumb(e.target.files[0])} />
           </label>
           <select className="input !w-auto text-sm" value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })}>
@@ -85,12 +86,12 @@ export default function AdminMediaCoveragePage() {
         {items.length === 0 && <p className="text-center text-sm text-ink/50">এখনো কোনো কভারেজ যোগ করা হয়নি।</p>}
         {items.map((m) => (
           <div key={m.id} className="card flex items-center gap-4 p-4">
-            {m.thumbnail ? <img src={m.thumbnail} alt="" className="h-14 w-14 rounded-lg object-cover" /> : <span className="flex h-14 w-14 items-center justify-center rounded-lg bg-brand-50 text-2xl">📰</span>}
+            {m.thumbnail ? <img src={m.thumbnail} alt="" className="h-14 w-14 rounded-lg object-cover" /> : <span className="flex h-14 w-14 items-center justify-center rounded-lg bg-brand-50 text-brand-600"><Newspaper className="h-6 w-6" /></span>}
             <div className="min-w-0 flex-1">
               <p className="truncate font-medium text-ink">{m.title}</p>
               <p className="text-xs text-ink/40">{m.source} {m.published_date ? `• ${new Date(m.published_date).toLocaleDateString("bn-BD")}` : ""}</p>
             </div>
-            <button onClick={() => remove(m.id)} className="btn-ghost !px-2 !py-1 text-xs text-blood-600">✕</button>
+            <button onClick={() => remove(m.id)} className="btn-ghost !px-2 !py-1 text-xs text-blood-600"><X className="h-3.5 w-3.5" /></button>
           </div>
         ))}
       </div>

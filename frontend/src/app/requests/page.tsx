@@ -8,6 +8,7 @@ import RequestCard from "@/components/RequestCard";
 import Reveal from "@/components/Reveal";
 import Link from "next/link";
 import { t, useLangClient } from "@/lib/i18n";
+import { AlertTriangle, Check } from "@/components/icons";
 
 export default function RequestsPage() {
   const supabase = createClient();
@@ -72,7 +73,7 @@ export default function RequestsPage() {
       <div className="mt-8">
         {error ? (
           <div className="card p-10 text-center text-zinc-500">
-            <p className="font-medium text-zinc-700">⚠️ {lang === "en" ? "Failed to load" : "তালিকা আনা যায়নি"}</p>
+            <p className="flex items-center justify-center gap-1.5 font-medium text-zinc-700"><AlertTriangle className="h-4 w-4 text-amber-500" />{lang === "en" ? "Failed to load" : "তালিকা আনা যায়নি"}</p>
             <p className="mt-1 text-xs">{error}</p>
           </div>
         ) : loading ? (
@@ -81,7 +82,7 @@ export default function RequestsPage() {
           </div>
         ) : requests.length === 0 ? (
           <div className="card p-12 text-center">
-            <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-emerald-50 text-2xl">✓</div>
+            <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-emerald-50 text-emerald-600"><Check className="h-7 w-7" /></div>
             <p className="font-medium text-zinc-800">{lang === "en" ? "No urgent requests right now" : "এই মুহূর্তে কোনো জরুরি অনুরোধ নেই"}</p>
             <p className="mt-1 text-sm text-zinc-500">{lang === "en" ? "Everyone is safe." : "সবাই নিরাপদে আছেন।"}</p>
           </div>

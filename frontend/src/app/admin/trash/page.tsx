@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import BloodGroupBadge from "@/components/BloodGroupBadge";
 import { logActivity } from "@/lib/activity";
+import { ClipboardList, Droplets, Shield, Trash2, Undo2 } from "@/components/icons";
 
 type TrashTab = "donors" | "requests";
 
@@ -64,7 +65,7 @@ export default function AdminTrashPage() {
   }
 
   if (!ready) return <div className="container-page py-20 text-center text-ink/50">লোড হচ্ছে…</div>;
-  if (!authed) return <div className="container-page py-20 text-center"><p className="text-3xl">🛡️</p><p className="mt-2 font-medium text-ink">শুধু অ্যাডমিনদের জন্য।</p><Link href="/" className="btn-outline mt-4">হোমে ফিরুন</Link></div>;
+  if (!authed) return <div className="container-page py-20 text-center"><span className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-50 text-brand-600"><Shield className="h-7 w-7" /></span><p className="mt-2 font-medium text-ink">শুধু অ্যাডমিনদের জন্য।</p><Link href="/" className="btn-outline mt-4">হোমে ফিরুন</Link></div>;
 
   const active = tab === "donors" ? donors : requests;
 
@@ -72,24 +73,24 @@ export default function AdminTrashPage() {
     <div className="container-page py-10">
       <header className="mb-8 flex items-center justify-between">
         <div>
-          <h1 className="font-display text-2xl font-extrabold tracking-tight text-ink">🗑️ ট্র্যাশ — মুছে ফেলা আইটেম</h1>
+          <h1 className="flex items-center gap-2 font-display text-2xl font-extrabold tracking-tight text-ink"><Trash2 className="h-6 w-6 text-brand-600" />ট্র্যাশ — মুছে ফেলা আইটেম</h1>
           <p className="text-sm text-ink/60">soft-delete করা আইটেম এখানে — restore বা স্থায়ীভাবে মুছুন।</p>
         </div>
         <Link href="/admin" className="btn-outline">← ড্যাশবোর্ড</Link>
       </header>
 
       <nav className="mb-6 flex gap-2">
-        <button onClick={() => setTab("donors")} className={`rounded-xl px-4 py-2 text-sm font-medium transition ${tab === "donors" ? "bg-brand-600 text-white" : "bg-white text-ink/70 ring-1 ring-zinc-200"}`}>
-          🩸 দাতা ({donors.length})
+        <button onClick={() => setTab("donors")} className={`flex items-center gap-1.5 rounded-xl px-4 py-2 text-sm font-medium transition ${tab === "donors" ? "bg-brand-600 text-white" : "bg-white text-ink/70 ring-1 ring-zinc-200"}`}>
+          <Droplets className="h-4 w-4" />দাতা ({donors.length})
         </button>
-        <button onClick={() => setTab("requests")} className={`rounded-xl px-4 py-2 text-sm font-medium transition ${tab === "requests" ? "bg-brand-600 text-white" : "bg-white text-ink/70 ring-1 ring-zinc-200"}`}>
-          📋 অনুরোধ ({requests.length})
+        <button onClick={() => setTab("requests")} className={`flex items-center gap-1.5 rounded-xl px-4 py-2 text-sm font-medium transition ${tab === "requests" ? "bg-brand-600 text-white" : "bg-white text-ink/70 ring-1 ring-zinc-200"}`}>
+          <ClipboardList className="h-4 w-4" />অনুরোধ ({requests.length})
         </button>
       </nav>
 
       {active.length === 0 ? (
         <div className="card p-12 text-center">
-          <p className="text-3xl">🗑️</p>
+          <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-zinc-100 text-zinc-400"><Trash2 className="h-6 w-6" /></span>
           <p className="mt-2 font-medium text-ink">ট্র্যাশ খালি</p>
           <p className="mt-1 text-sm text-ink/60">কোনো আইটেম soft-delete করা হয়নি।</p>
         </div>
@@ -105,8 +106,8 @@ export default function AdminTrashPage() {
                 </div>
               </div>
               <div className="flex gap-2">
-                <button onClick={() => restoreDonor(d.id, d.full_name)} disabled={busy} className="btn-outline !px-3 !py-1.5 text-xs text-success-700">↩️ Restore</button>
-                <button onClick={() => permDeleteDonor(d.id, d.full_name)} disabled={busy} className="btn-ghost !px-3 !py-1.5 text-xs text-blood-600">🗑️ Permanent</button>
+                <button onClick={() => restoreDonor(d.id, d.full_name)} disabled={busy} className="btn-outline !px-3 !py-1.5 text-xs text-success-700"><Undo2 className="mr-1 inline h-3.5 w-3.5" />Restore</button>
+                <button onClick={() => permDeleteDonor(d.id, d.full_name)} disabled={busy} className="btn-ghost !px-3 !py-1.5 text-xs text-blood-600"><Trash2 className="mr-1 inline h-3.5 w-3.5" />Permanent</button>
               </div>
             </div>
           ))}
@@ -120,8 +121,8 @@ export default function AdminTrashPage() {
                 </div>
               </div>
               <div className="flex gap-2">
-                <button onClick={() => restoreReq(r.id, r.patient_name)} disabled={busy} className="btn-outline !px-3 !py-1.5 text-xs text-success-700">↩️ Restore</button>
-                <button onClick={() => permDeleteReq(r.id, r.patient_name)} disabled={busy} className="btn-ghost !px-3 !py-1.5 text-xs text-blood-600">🗑️ Permanent</button>
+                <button onClick={() => restoreReq(r.id, r.patient_name)} disabled={busy} className="btn-outline !px-3 !py-1.5 text-xs text-success-700"><Undo2 className="mr-1 inline h-3.5 w-3.5" />Restore</button>
+                <button onClick={() => permDeleteReq(r.id, r.patient_name)} disabled={busy} className="btn-ghost !px-3 !py-1.5 text-xs text-blood-600"><Trash2 className="mr-1 inline h-3.5 w-3.5" />Permanent</button>
               </div>
             </div>
           ))}

@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { Camera, Check, FileText, ImageIcon, Phone, Settings, Shield, Tag, X } from "@/components/icons";
 
 export default function AdminSettingsPage() {
   const supabase = createClient();
@@ -103,7 +104,7 @@ export default function AdminSettingsPage() {
   if (!authed)
     return (
       <div className="container-page py-20 text-center">
-        <p className="text-3xl">🛡️</p>
+        <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-50 text-brand-600"><Shield className="h-7 w-7" /></span>
         <p className="mt-2 font-medium text-ink">এই পেজ শুধু অ্যাডমিনদের জন্য।</p>
         <Link href="/" className="btn-outline mt-4">হোমে ফিরুন</Link>
       </div>
@@ -113,7 +114,7 @@ export default function AdminSettingsPage() {
     <div className="container-page py-10">
       <header className="mb-8 flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="font-display text-2xl font-extrabold tracking-tight text-ink">⚙️ ওয়েবসাইট সেটিংস</h1>
+          <h1 className="flex items-center gap-2 font-display text-2xl font-extrabold tracking-tight text-ink"><Settings className="h-6 w-6 text-brand-600" />ওয়েবসাইট সেটিংস</h1>
           <p className="text-sm text-ink/60">এখান থেকে লোগো, যোগাযোগ ও গ্যালারি পরিবর্তন করুন।</p>
         </div>
         <div className="flex gap-2">
@@ -122,13 +123,13 @@ export default function AdminSettingsPage() {
       </header>
 
       {savedMsg && (
-        <div className="mb-6 rounded-xl bg-success-50 p-3 text-sm font-medium text-success-700">✓ সংরক্ষিত হয়েছে</div>
+        <div className="mb-6 flex items-center gap-1.5 rounded-xl bg-success-50 p-3 text-sm font-medium text-success-700"><Check className="h-4 w-4" />সংরক্ষিত হয়েছে</div>
       )}
 
       <div className="grid gap-6 lg:grid-cols-2">
         {/* Logo */}
         <section className="card p-6">
-          <h2 className="font-semibold text-ink">🏷️ লোগো</h2>
+          <h2 className="flex items-center gap-1.5 font-semibold text-ink"><Tag className="h-4 w-4 text-brand-600" />লোগো</h2>
           <p className="mt-1 text-sm text-ink/60">সাইটের সব জায়গায় দেখাবে।</p>
           <div className="mt-4 flex items-center gap-4">
             <div className="flex h-20 w-20 items-center justify-center overflow-hidden rounded-2xl bg-canvas ring-1 ring-zinc-200">
@@ -136,7 +137,7 @@ export default function AdminSettingsPage() {
                 // eslint-disable-next-line @next/next/no-img-element
                 <img src={logoUrl} alt="logo" className="h-full w-full object-contain p-1" />
               ) : (
-                <span className="text-2xl text-ink/30">🖼️</span>
+                <ImageIcon className="h-7 w-7 text-ink/30" />
               )}
             </div>
             <label className="btn-outline cursor-pointer">
@@ -148,7 +149,7 @@ export default function AdminSettingsPage() {
 
         {/* Contact info */}
         <section className="card p-6">
-          <h2 className="font-semibold text-ink">📞 যোগাযোগের তথ্য</h2>
+          <h2 className="flex items-center gap-1.5 font-semibold text-ink"><Phone className="h-4 w-4 text-brand-600" />যোগাযোগের তথ্য</h2>
           <p className="mt-1 text-sm text-ink/60">Footer-এ দেখাবে।</p>
           <form onSubmit={saveInfo} className="mt-4 space-y-3">
             <input className="input" placeholder="ফোন" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} />
@@ -163,7 +164,7 @@ export default function AdminSettingsPage() {
 
       {/* Website Content */}
       <section className="card mt-6 p-6">
-        <h2 className="font-semibold text-ink">📝 ওয়েবসাইট কন্টেন্ট</h2>
+        <h2 className="flex items-center gap-1.5 font-semibold text-ink"><FileText className="h-4 w-4 text-brand-600" />ওয়েবসাইট কন্টেন্ট</h2>
         <p className="mt-1 text-sm text-ink/60">হিরো ব্যাজ, মিশন ও ভিশন টেক্সট পরিবর্তন করুন।</p>
         <form onSubmit={saveInfo} className="mt-4 space-y-3">
           <div><label className="label">হিরো ব্যাজ (badge)</label><input className="input" placeholder="সিলেট বিভাগ জুড়ে..." value={form.hero_badge} onChange={(e) => setForm({ ...form, hero_badge: e.target.value })} /></div>
@@ -178,7 +179,7 @@ export default function AdminSettingsPage() {
       <section className="card mt-6 p-6">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h2 className="font-semibold text-ink">📸 গ্যালারি</h2>
+            <h2 className="flex items-center gap-1.5 font-semibold text-ink"><Camera className="h-4 w-4 text-brand-600" />গ্যালারি</h2>
             <p className="mt-1 text-sm text-ink/60">রক্তদান শিবির, কর্মসূচি ও কার্যক্রমের ছবি।</p>
           </div>
           <label className="btn-primary cursor-pointer">
@@ -199,7 +200,7 @@ export default function AdminSettingsPage() {
                   onClick={() => deleteImage(img.id)}
                   className="absolute right-1 top-1 flex h-7 w-7 items-center justify-center rounded-lg bg-black/60 text-white opacity-0 transition group-hover:opacity-100"
                   aria-label="মুছুন"
-                >✕</button>
+                ><X className="h-3.5 w-3.5" /></button>
               </div>
             ))}
           </div>

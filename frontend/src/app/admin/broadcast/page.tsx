@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { useToast } from "@/components/Toast";
+import { Bell, Shield } from "@/components/icons";
 
 export default function AdminBroadcastPage() {
   const supabase = createClient();
@@ -50,12 +51,12 @@ export default function AdminBroadcastPage() {
   }
 
   if (!ready) return <div className="container-page py-20 text-center text-ink/50">লোড হচ্ছে…</div>;
-  if (!authed) return <div className="container-page py-20 text-center"><p className="text-3xl">🛡️</p><p className="mt-2 font-medium text-ink">শুধু অ্যাডমিনদের জন্য।</p><Link href="/" className="btn-outline mt-4">হোমে ফিরুন</Link></div>;
+  if (!authed) return <div className="container-page py-20 text-center"><span className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-50 text-brand-600"><Shield className="h-7 w-7" /></span><p className="mt-2 font-medium text-ink">শুধু অ্যাডমিনদের জন্য।</p><Link href="/" className="btn-outline mt-4">হোমে ফিরুন</Link></div>;
 
   return (
     <div className="container-page py-10">
       <header className="mb-8 flex items-center justify-between">
-        <h1 className="font-display text-2xl font-extrabold tracking-tight text-ink">🔔 নোটিফিকেশন প্রেরণ</h1>
+        <h1 className="flex items-center gap-2 font-display text-2xl font-extrabold tracking-tight text-ink"><Bell className="h-6 w-6 text-brand-600" />নোটিফিকেশন প্রেরণ</h1>
         <Link href="/admin" className="btn-outline">← ড্যাশবোর্ড</Link>
       </header>
 

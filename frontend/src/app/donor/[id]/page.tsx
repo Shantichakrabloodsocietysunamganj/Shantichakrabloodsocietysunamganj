@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import BloodGroupBadge from "@/components/BloodGroupBadge";
 import { site } from "@/data/site";
 import { notFound } from "next/navigation";
+import { AlarmClock, BadgeCheck } from "@/components/icons";
 
 export const metadata: Metadata = { title: "রক্তদাতা যাচাই" };
 
@@ -71,7 +72,7 @@ export default async function DonorVerifyPage({ params }: { params: { id: string
 
             {/* যাচাই স্ট্যাটাস */}
             <div className={`mt-5 flex items-center gap-3 rounded-xl p-4 ${donor.is_verified ? "bg-success-50" : "bg-amber-50"}`}>
-              <span className="text-2xl">{donor.is_verified ? "✅" : "⏳"}</span>
+              {donor.is_verified ? <BadgeCheck className="h-7 w-7 text-emerald-600" /> : <AlarmClock className="h-7 w-7 text-amber-500" />}
               <div>
                 <p className={`font-semibold ${donor.is_verified ? "text-success-700" : "text-amber-700"}`}>
                   {donor.is_verified ? "যাচাইকৃত রক্তদাতা" : "যাচাই চলমান"}

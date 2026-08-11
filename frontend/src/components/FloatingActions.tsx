@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { site } from "@/data/site";
+import { Siren } from "@/components/icons";
 
 // ভাসমান sticky বোতাম — Emergency + Call + WhatsApp + Messenger (ডান নিচে)
 export default function FloatingActions() {
@@ -13,7 +14,7 @@ export default function FloatingActions() {
         aria-label="জরুরি রক্তের অনুরোধ"
         className="group flex h-12 w-12 items-center justify-center rounded-full bg-blood-600 text-white shadow-glow-red transition-transform hover:scale-110"
       >
-        <span className="text-xl">🚨</span>
+        <Siren className="h-5 w-5" />
         <span className="pointer-events-none absolute left-14 whitespace-nowrap rounded-lg bg-white px-2 py-1 text-[11px] font-bold text-blood-700 opacity-0 shadow transition-opacity group-hover:opacity-100 dark:bg-slate-800 dark:text-blood-300">জরুরি রক্ত</span>
       </Link>
       {/* Call */}

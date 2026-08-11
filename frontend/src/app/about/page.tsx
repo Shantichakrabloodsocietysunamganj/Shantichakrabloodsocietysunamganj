@@ -5,6 +5,8 @@ import { createClient } from "@/lib/supabase/server";
 import { site } from "@/data/site";
 import { t } from "@/lib/i18n";
 import { getLang } from "@/lib/i18n-server";
+import { DataIcon, Droplets, ImageIcon, MapPin, Newspaper, Sparkles } from "@/components/icons";
+import { Briefcase, Code2, Globe, GraduationCap, Target } from "lucide-react";
 
 export const metadata = { title: "আমাদের সম্পর্কে" };
 
@@ -50,12 +52,12 @@ export default async function AboutPage() {
       <section className="container-page py-16">
         <div className="grid gap-6 md:grid-cols-2">
           <Reveal><div className="card h-full p-8">
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-brand-50 text-2xl">🎯</div>
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-brand-50 text-brand-600"><Target className="h-6 w-6" /></div>
             <h2 className="mt-4 text-xl font-bold text-zinc-900">{t("about.mission", lang)}</h2>
             <p className="mt-2 leading-relaxed text-zinc-600">{site.mission}</p>
           </div></Reveal>
           <Reveal delay={120}><div className="card h-full p-8">
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-amber-50 text-2xl">🌟</div>
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-amber-50 text-amber-500"><Sparkles className="h-6 w-6" /></div>
             <h2 className="mt-4 text-xl font-bold text-zinc-900">{t("about.vision", lang)}</h2>
             <p className="mt-2 leading-relaxed text-zinc-600">{site.vision}</p>
           </div></Reveal>
@@ -69,7 +71,7 @@ export default async function AboutPage() {
             {VALUES.map((v, i) => (
               <Reveal key={v.title} delay={i * 80}>
                 <div className="card h-full p-6">
-                  <div className="text-3xl">{v.icon}</div>
+                  <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-brand-50 text-brand-600 ring-1 ring-brand-100"><DataIcon name={v.icon} className="h-5 w-5" /></span>
                   <h3 className="mt-3 font-semibold text-zinc-900">{v.title}</h3>
                   <p className="mt-1.5 text-sm leading-relaxed text-zinc-600">{v.desc}</p>
                 </div>
@@ -95,7 +97,7 @@ export default async function AboutPage() {
               <Reveal key={p.url} delay={i * 80}>
                 <a href={p.url} target="_blank" rel="noreferrer" className="card-hover flex h-full flex-col gap-2 p-5">
                   <div className="flex items-center justify-between">
-                    <span className="inline-flex items-center gap-1.5 rounded-full bg-brand-50 px-2.5 py-1 text-xs font-bold text-brand-600">📰 {p.source}</span>
+                    <span className="inline-flex items-center gap-1.5 rounded-full bg-brand-50 px-2.5 py-1 text-xs font-bold text-brand-600"><Newspaper className="h-3.5 w-3.5" />{p.source}</span>
                     <span className="text-xs text-ink/40">{p.date}</span>
                   </div>
                   <p className="font-display text-sm font-bold leading-snug text-ink">{p.title}</p>
@@ -116,7 +118,7 @@ export default async function AboutPage() {
           <Reveal>
             <div className="mx-auto max-w-2xl text-center">
               <span className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-4 py-1.5 text-xs font-bold text-brand-200 ring-1 ring-white/10">
-                💻 {lang === "en" ? "Website Developer" : "ওয়েবসাইট ডেভেলপার"}
+                <Code2 className="h-3.5 w-3.5" />{lang === "en" ? "Website Developer" : "ওয়েবসাইট ডেভেলপার"}
               </span>
               <h2 className="mt-4 font-display text-2xl font-extrabold tracking-tight text-white sm:text-3xl">
                 {lang === "en" ? "Designed & Developed by" : "ডিজাইন ও ডেভেলপ করেছেন"}
@@ -162,7 +164,7 @@ export default async function AboutPage() {
                     ))}
                   </div>
                   <a href="https://www.rahatahmed.site/en" target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 rounded-full bg-brand-500/15 px-3.5 py-1.5 text-xs font-bold text-brand-200 ring-1 ring-brand-400/25 transition hover:bg-brand-500/25">
-                    🌐 rahatahmed.site
+                    <Globe className="h-3.5 w-3.5" />rahatahmed.site
                   </a>
                 </div>
 
@@ -181,9 +183,9 @@ export default async function AboutPage() {
 
                   {/* Quick facts */}
                   <div className="mt-4 space-y-1.5 text-sm text-brand-100/70">
-                    <p>📍 {lang === "en" ? "Sunamganj, Sylhet, Bangladesh" : "সুনামগঞ্জ, সিলেট, বাংলাদেশ"}</p>
-                    <p>🎓 {lang === "en" ? "HSC 2nd Year (Science), Sunamganj Govt. College" : "এইচএসসি ২য় বর্ষ (বিজ্ঞান), সুনামগঞ্জ সরকারি কলেজ"}</p>
-                    <p>🩸 {lang === "en" ? "Blood Group: A+ — has donated blood 4 times" : "রক্তের গ্রুপ: A+ — ৪ বার রক্তদান করেছেন"}</p>
+                    <p className="flex items-center gap-1.5"><MapPin className="h-3.5 w-3.5 shrink-0" />{lang === "en" ? "Sunamganj, Sylhet, Bangladesh" : "সুনামগঞ্জ, সিলেট, বাংলাদেশ"}</p>
+                    <p className="flex items-center gap-1.5"><GraduationCap className="h-3.5 w-3.5 shrink-0" />{lang === "en" ? "HSC 2nd Year (Science), Sunamganj Govt. College" : "এইচএসসি ২য় বর্ষ (বিজ্ঞান), সুনামগঞ্জ সরকারি কলেজ"}</p>
+                    <p className="flex items-center gap-1.5"><Droplets className="h-3.5 w-3.5 shrink-0" />{lang === "en" ? "Blood Group: A+ — has donated blood 4 times" : "রক্তের গ্রুপ: A+ — ৪ বার রক্তদান করেছেন"}</p>
                   </div>
 
                   {/* Stats */}
@@ -209,13 +211,13 @@ export default async function AboutPage() {
                   {/* CTAs */}
                   <div className="mt-5 flex flex-wrap gap-2">
                     <a href="https://www.rahatahmed.site/en" target="_blank" rel="noreferrer" className="btn bg-white text-brand-700 hover:bg-brand-50">
-                      🌐 {lang === "en" ? "Visit Website" : "ওয়েবসাইট দেখুন"}
+                      <Globe className="h-4 w-4" />{lang === "en" ? "Visit Website" : "ওয়েবসাইট দেখুন"}
                     </a>
                     <a href="https://www.rahatahmed.site/en/order" target="_blank" rel="noreferrer" className="btn border border-white/25 text-white hover:bg-white/10">
-                      💼 {lang === "en" ? "Order a Website" : " ওয়েবসাইট অর্ডার করুন"}
+                      <Briefcase className="h-4 w-4" />{lang === "en" ? "Order a Website" : "ওয়েবসাইট অর্ডার করুন"}
                     </a>
                     <a href="https://www.rahatahmed.site/en/portfolio" target="_blank" rel="noreferrer" className="btn border border-white/25 text-white hover:bg-white/10">
-                      🖼️ {lang === "en" ? "Portfolio" : "পোর্টফোলিও"}
+                      <ImageIcon className="h-4 w-4" />{lang === "en" ? "Portfolio" : "পোর্টফোলিও"}
                     </a>
                   </div>
                 </div>
@@ -225,7 +227,7 @@ export default async function AboutPage() {
               <div className="relative border-t border-white/10 bg-gradient-to-r from-brand-700/50 via-brand-600/30 to-blood-700/50 px-6 py-5 sm:px-10">
                 <div className="flex flex-col items-center justify-between gap-3 text-center sm:flex-row sm:text-left">
                   <div className="flex items-center gap-3">
-                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white/10 text-lg ring-1 ring-white/10">💼</span>
+                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white/10 ring-1 ring-white/10"><Briefcase className="h-5 w-5 text-white" /></span>
                     <p className="text-sm font-medium text-white">
                       {lang === "en" ? "Need a website like this for your organization?" : "আপনার সংগঠনের জন্য এরকম ওয়েবসাইট দরকার?"}
                     </p>
@@ -278,12 +280,12 @@ function PeopleGroup({ title, people }: { title: string; people: { id: string; n
 }
 
 const VALUES = [
-  { icon: "🤝", title: "মানবিকতা", desc: "ধর্ম, বর্ণ বা পেশা ভেদে নয় — প্রতিটি জীবনের পাশে দাঁড়াই।" },
-  { icon: "⚡", title: "দ্রুততা", desc: "জরুরি মুহূর্তে সবচেয়ে কম সময়ে সঠিক দাতায় পৌঁছাই।" },
-  { icon: "🔒", title: "নিরাপত্তা", desc: "দাতা ও গ্রহীতার তথ্য সুরক্ষিত ও দায়িত্বশীলভাবে ব্যবহৃত হয়।" },
-  { icon: "💎", title: "স্বেচ্ছাসেবা", desc: "কোনো আর্থিক লেনদেশন নেই — পুরোপুরি স্বেচ্ছাসেবী নেটওয়ার্ক।" },
-  { icon: "📍", title: "স্থানীয়তা", desc: "সিলেট বিভাগের মানুষের জন্য, সিলেটের মানুষের দ্বারা।" },
-  { icon: "🔄", title: "নিরবচ্ছিন্নতা", desc: "২৪/৭ অনুরোধ গ্রহণ ও সমন্বয় — কখনো থামি না।" },
+  { icon: "handshake", title: "মানবিকতা", desc: "ধর্ম, বর্ণ বা পেশা ভেদে নয় — প্রতিটি জীবনের পাশে দাঁড়াই।" },
+  { icon: "zap", title: "দ্রুততা", desc: "জরুরি মুহূর্তে সবচেয়ে কম সময়ে সঠিক দাতায় পৌঁছাই।" },
+  { icon: "lock", title: "নিরাপত্তা", desc: "দাতা ও গ্রহীতার তথ্য সুরক্ষিত ও দায়িত্বশীলভাবে ব্যবহৃত হয়।" },
+  { icon: "gem", title: "স্বেচ্ছাসেবা", desc: "কোনো আর্থিক লেনদেশন নেই — পুরোপুরি স্বেচ্ছাসেবী নেটওয়ার্ক।" },
+  { icon: "map-pin", title: "স্থানীয়তা", desc: "সিলেট বিভাগের মানুষের জন্য, সিলেটের মানুষের দ্বারা।" },
+  { icon: "refresh", title: "নিরবচ্ছিন্নতা", desc: "২৪/৭ অনুরোধ গ্রহণ ও সমন্বয় — কখনো থামি না।" },
 ];
 
 // গণমাধ্যমে প্রকাশিত প্রতিবেদন (verified)

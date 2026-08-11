@@ -8,6 +8,7 @@ import BloodDrops from "./BloodDrops";
 import Particles from "./Particles";
 import BloodDrop3D from "./BloodDrop3D";
 import BangladeshMap from "./BangladeshMap";
+import { Search, UserPlus } from "@/components/icons";
 
 export default function Hero({
   donorCount,
@@ -65,10 +66,10 @@ export default function Hero({
           {/* CTA Buttons */}
           <div className="mt-7 flex flex-wrap gap-3">
             <Link href="/donors" className="btn-blood shadow-glow-red">
-              🔴 {t("hero.findDonors", lang)}
+              <Search className="mr-1.5 inline h-4 w-4" />{t("hero.findDonors", lang)}
             </Link>
             <Link href="/become-donor" className="btn border border-white/25 bg-white/5 text-white backdrop-blur-sm transition hover:bg-white/15">
-              ⚪ {en ? "Become a Donor" : t("nav.becomeDonor", lang)}
+              <UserPlus className="mr-1.5 inline h-4 w-4" />{en ? "Become a Donor" : t("nav.becomeDonor", lang)}
             </Link>
           </div>
 

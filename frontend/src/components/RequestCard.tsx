@@ -3,6 +3,7 @@ import type { BloodRequest } from "@/lib/types";
 import type { Lang } from "@/lib/i18n";
 import BloodGroupBadge from "./BloodGroupBadge";
 import WhatsAppShare from "./WhatsAppShare";
+import { Phone, X } from "@/components/icons";
 
 function relativeTime(iso: string, en: boolean) {
   const diff = Date.now() - new Date(iso).getTime();
@@ -79,7 +80,7 @@ export default function RequestCard({ req, lang = "bn" }: { req: BloodRequest; l
           <div className="flex items-center gap-2">
             <WhatsAppShare req={req} />
             <a href={`tel:${req.contact_phone}`} className="btn-primary !px-3 !py-2 text-xs">
-              📞 {req.contact_phone}
+              <Phone className="mr-1 inline h-3.5 w-3.5" />{req.contact_phone}
             </a>
           </div>
         </div>
@@ -101,7 +102,7 @@ export default function RequestCard({ req, lang = "bn" }: { req: BloodRequest; l
               </div>
             );
           })}
-          {req.status === "cancelled" && <span className="ml-2 shrink-0 text-[10px] font-bold text-blood-600">✕ {en ? "Cancelled" : "বাতিল"}</span>}
+          {req.status === "cancelled" && <span className="ml-2 inline-flex shrink-0 items-center gap-0.5 text-[10px] font-bold text-blood-600"><X className="h-3 w-3" />{en ? "Cancelled" : "বাতিল"}</span>}
         </div>
         <Link href={`/requests/${req.id}`} className="mt-2 block text-center text-xs font-bold text-brand-600 hover:underline">{en ? "View details →" : "বিস্তারিত দেখুন →"}</Link>
       </div>

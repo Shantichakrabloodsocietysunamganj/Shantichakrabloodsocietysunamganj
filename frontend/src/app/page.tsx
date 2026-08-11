@@ -17,6 +17,7 @@ import DonationSection from "@/components/home/DonationSection";
 import { createClient } from "@/lib/supabase/server";
 import { site } from "@/data/site";
 import { t } from "@/lib/i18n";
+import { Calendar, DataIcon, Droplets, Handshake, MapPin, Star } from "@/components/icons";
 import { getLang } from "@/lib/i18n-server";
 import { getSettings } from "@/lib/settings";
 import type { Donor } from "@/lib/types";
@@ -131,7 +132,7 @@ export default async function Home() {
             <div className="mt-6 grid gap-3 sm:grid-cols-2">
               {site.highlights.map((h) => (
                 <div key={h.title} className="flex items-start gap-3 rounded-xl bg-canvas p-4">
-                  <span className="text-2xl">{h.icon}</span>
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand-50 text-brand-600 ring-1 ring-brand-100"><DataIcon name={h.icon} className="h-5 w-5" /></span>
                   <div><p className="font-semibold text-ink">{h.title}</p><p className="text-sm text-ink/60">{h.desc}</p></div>
                 </div>
               ))}
@@ -155,7 +156,7 @@ export default async function Home() {
             </div>
           ) : ok && featuredDonors.length === 0 ? (
             <div className="card p-12 text-center">
-              <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-brand-50 text-2xl">🩸</div>
+              <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-brand-50 text-brand-600"><Droplets className="h-7 w-7" /></div>
               <p className="font-medium text-ink">{lang === "en" ? "No donors registered yet" : "এখনো কেউ নিবন্ধন করেননি"}</p>
               <p className="mt-1 text-sm text-ink/60">{lang === "en" ? "Be the first to join!" : "প্রথম রক্তদাতা হিসেবে যুক্ত হোন!"}</p>
               <Link href="/become-donor" className="btn-primary mt-5">{t("nav.becomeDonor", lang)}</Link>
@@ -181,7 +182,7 @@ export default async function Home() {
             {(testimonials.length > 0 ? testimonials : site.successStories).map((s: any, i: number) => (
               <Reveal key={s.id ?? i} delay={i * 100}>
                 <div className="h-full rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur">
-                  <div className="mb-3 text-amber-300">{"★".repeat(s.rating ?? 5)}</div>
+                  <div className="mb-3 flex gap-0.5 text-amber-300">{Array.from({ length: s.rating ?? 5 }).map((_, si) => <Star key={si} className="h-4 w-4 fill-amber-300" />)}</div>
                   <p className="text-sm leading-relaxed text-brand-100/90">“{s.message ?? s.text}”</p>
                   <div className="mt-4 flex items-center gap-3">
                     <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-blood-500 text-sm font-bold text-white">{(s.name ?? "?").charAt(0)}</span>
@@ -213,7 +214,7 @@ export default async function Home() {
             <div className="mt-5 flex flex-wrap items-center justify-center gap-x-8 gap-y-4">
               {partners.map((p: any, i: number) => (
                 <div key={i} className="flex items-center gap-2 text-lg font-bold text-ink/30">
-                  {p.logo_url ? <img src={p.logo_url} alt={p.name} className="h-8 w-8 object-contain opacity-60" /> : <span className="text-2xl">🤝</span>}
+                  {p.logo_url ? <img src={p.logo_url} alt={p.name} className="h-8 w-8 object-contain opacity-60" /> : <Handshake className="h-6 w-6 text-ink/30" />}
                   {p.name}
                 </div>
               ))}
@@ -274,10 +275,10 @@ function EventCard({ event, lang }: { event: any; lang: string }) {
       )}
       <div className="p-5">
         <span className="inline-flex items-center gap-1.5 rounded-full bg-brand-50 px-2.5 py-1 text-xs font-semibold text-brand-600">
-          📅 {new Date(event.event_date).toLocaleDateString("bn-BD", { day: "numeric", month: "short", year: "numeric" })}
+          <Calendar className="h-3.5 w-3.5" />{new Date(event.event_date).toLocaleDateString("bn-BD", { day: "numeric", month: "short", year: "numeric" })}
         </span>
         <h3 className="mt-3 font-display text-lg font-bold text-ink">{event.title}</h3>
-        {event.location && <p className="mt-1 flex items-center gap-1 text-sm text-ink/50">📍 {event.location}</p>}
+        {event.location && <p className="mt-1 flex items-center gap-1 text-sm text-ink/50"><MapPin className="h-3.5 w-3.5 shrink-0" />{event.location}</p>}
         {event.description && <p className="mt-2 line-clamp-2 text-sm text-ink/60">{event.description}</p>}
       </div>
     </div>

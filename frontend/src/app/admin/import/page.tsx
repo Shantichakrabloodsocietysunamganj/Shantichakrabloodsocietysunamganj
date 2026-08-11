@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { logActivity } from "@/lib/activity";
+import { Check, Inbox, Shield, X } from "@/components/icons";
 
 export default function AdminImportPage() {
   const supabase = createClient();
@@ -66,12 +67,12 @@ export default function AdminImportPage() {
   };
 
   if (!ready) return <div className="container-page py-20 text-center text-ink/50">লোড হচ্ছে…</div>;
-  if (!authed) return <div className="container-page py-20 text-center"><p className="text-3xl">🛡️</p><p className="mt-2 font-medium text-ink">শুধু অ্যাডমিনদের জন্য।</p><Link href="/" className="btn-outline mt-4">হোমে ফিরুন</Link></div>;
+  if (!authed) return <div className="container-page py-20 text-center"><span className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-50 text-brand-600"><Shield className="h-7 w-7" /></span><p className="mt-2 font-medium text-ink">শুধু অ্যাডমিনদের জন্য।</p><Link href="/" className="btn-outline mt-4">হোমে ফিরুন</Link></div>;
 
   return (
     <div className="container-page py-10">
       <header className="mb-8 flex items-center justify-between">
-        <h1 className="font-display text-2xl font-extrabold tracking-tight text-ink">📥 CSV Import — দাতা</h1>
+        <h1 className="flex items-center gap-2 font-display text-2xl font-extrabold tracking-tight text-ink"><Inbox className="h-6 w-6 text-brand-600" />CSV Import — দাতা</h1>
         <Link href="/admin" className="btn-outline">← ড্যাশবোর্ড</Link>
       </header>
 
@@ -93,8 +94,8 @@ export default function AdminImportPage() {
         <div className="mt-6 card p-6">
           <h3 className="font-bold text-ink">ফলাফল</h3>
           <div className="mt-3 flex gap-4">
-            <span className="rounded-lg bg-success-50 px-4 py-2 text-sm font-bold text-success-700">✓ সফল: {results.ok}</span>
-            {results.fail > 0 && <span className="rounded-lg bg-blood-50 px-4 py-2 text-sm font-bold text-blood-700">✕ ব্যর্থ: {results.fail}</span>}
+            <span className="inline-flex items-center gap-1 rounded-lg bg-success-50 px-4 py-2 text-sm font-bold text-success-700"><Check className="h-4 w-4" />সফল: {results.ok}</span>
+            {results.fail > 0 && <span className="inline-flex items-center gap-1 rounded-lg bg-blood-50 px-4 py-2 text-sm font-bold text-blood-700"><X className="h-4 w-4" />ব্যর্থ: {results.fail}</span>}
           </div>
           {results.errors.length > 0 && (
             <div className="mt-4 max-h-40 overflow-y-auto rounded-lg bg-zinc-50 p-3 text-xs text-blood-600">

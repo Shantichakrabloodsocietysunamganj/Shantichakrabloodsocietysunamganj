@@ -6,6 +6,7 @@ import CopyButton from "@/components/CopyButton";
 import Reveal from "@/components/Reveal";
 import { site } from "@/data/site";
 import { telHref } from "@/lib/format";
+import { CreditCard, DataIcon, Droplets, Heart, ShieldCheck } from "@/components/icons";
 
 export const metadata: Metadata = {
   title: "আর্থিক সহযোগিতা",
@@ -28,10 +29,10 @@ type DonationMethod = {
 };
 
 const supports = [
-  { icon: "🩸", title: "রক্তদান শিবির", desc: "শিবির আয়োজন, পিন-ব্যানার ও দাতাদের জন্য পুষ্টিকর খাবারের খরচ" },
-  { icon: "🧪", title: "ফ্রি গ্রুপ টেস্ট", desc: "মানুষের রক্তের গ্রুপ বিনামূল্যে নির্ধারণের কিট কেনা" },
-  { icon: "🚗", title: "জরুরি সংগ্রহ", desc: "হাওর অঞ্চলসহ দূরবর্তী এলাকায় দাতা সংগ্রহের যাতায়াত" },
-  { icon: "📢", title: "সচেতনতা", desc: "স্বেচ্ছায় রক্তদান নিয়ে প্রচারণা ও সচেতনতামূলক অনুষ্ঠান" },
+  { icon: "droplet", title: "রক্তদান শিবির", desc: "শিবির আয়োজন, পিন-ব্যানার ও দাতাদের জন্য পুষ্টিকর খাবারের খরচ" },
+  { icon: "flask", title: "ফ্রি গ্রুপ টেস্ট", desc: "মানুষের রক্তের গ্রুপ বিনামূল্যে নির্ধারণের কিট কেনা" },
+  { icon: "car", title: "জরুরি সংগ্রহ", desc: "হাওর অঞ্চলসহ দূরবর্তী এলাকায় দাতা সংগ্রহের যাতায়াত" },
+  { icon: "megaphone", title: "সচেতনতা", desc: "স্বেচ্ছায় রক্তদান নিয়ে প্রচারণা ও সচেতনতামূলক অনুষ্ঠান" },
 ];
 
 export default async function DonatePage() {
@@ -62,7 +63,7 @@ export default async function DonatePage() {
         {supports.map((s, i) => (
           <Reveal key={s.title} delay={i * 60}>
             <div className="card h-full p-5 text-center">
-              <span className="text-3xl">{s.icon}</span>
+              <span className="mx-auto flex h-11 w-11 items-center justify-center rounded-2xl bg-brand-50 text-brand-600 ring-1 ring-brand-100"><DataIcon name={s.icon} className="h-5 w-5" /></span>
               <p className="mt-2.5 font-semibold text-ink">{s.title}</p>
               <p className="mt-1.5 text-xs leading-relaxed text-ink/60">{s.desc}</p>
             </div>
@@ -72,7 +73,7 @@ export default async function DonatePage() {
 
       {/* অনুদানের মাধ্যম */}
       <div className="mt-14">
-        <h2 className="text-center font-display text-xl font-bold text-ink">💳 অনুদান পাঠানোর মাধ্যম</h2>
+        <h2 className="flex items-center justify-center gap-2 text-center font-display text-xl font-bold text-ink"><CreditCard className="h-5 w-5 text-brand-600" />অনুদান পাঠানোর মাধ্যম</h2>
 
         {methods.length > 0 ? (
           <div className="mx-auto mt-8 grid max-w-4xl gap-5 sm:grid-cols-2">
@@ -84,7 +85,7 @@ export default async function DonatePage() {
                       // eslint-disable-next-line @next/next/no-img-element
                       <img src={m.logo_url} alt={m.method_name} className="h-11 w-11 rounded-xl object-cover ring-1 ring-black/5" />
                     ) : (
-                      <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-brand-50 text-xl">💳</span>
+                      <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-brand-50 text-brand-600"><CreditCard className="h-5 w-5" /></span>
                     )}
                     <div>
                       <p className="font-display font-bold text-ink">{m.method_name}</p>
@@ -104,7 +105,7 @@ export default async function DonatePage() {
                   </div>
 
                   {m.instructions && (
-                    <p className="mt-3 text-sm leading-relaxed text-ink/60">📝 {m.instructions}</p>
+                    <p className="mt-3 text-sm leading-relaxed text-ink/60">{m.instructions}</p>
                   )}
 
                   {m.qr_url && (
@@ -119,7 +120,7 @@ export default async function DonatePage() {
           </div>
         ) : (
           <div className="card mx-auto mt-8 max-w-xl p-10 text-center">
-            <p className="text-3xl">💛</p>
+            <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-amber-50 text-amber-500"><Heart className="h-6 w-6 fill-amber-400" /></span>
             <p className="mt-2 font-semibold text-ink">অনুদানের মাধ্যম শীঘ্রই যুক্ত হচ্ছে</p>
             <p className="mt-1 text-sm text-ink/60">
               এখনই সহযোগিতা করতে চাইলে সরাসরি{" "}
@@ -135,13 +136,13 @@ export default async function DonatePage() {
       {/* স্বচ্ছতা + বিকল্প */}
       <div className="mx-auto mt-12 grid max-w-4xl gap-5 md:grid-cols-2">
         <div className="card p-6">
-          <p className="font-display font-bold text-ink">🔍 আমাদের অঙ্গীকার</p>
+          <p className="flex items-center gap-1.5 font-display font-bold text-ink"><ShieldCheck className="h-4 w-4 text-brand-600" />আমাদের অঙ্গীকার</p>
           <p className="mt-2 text-sm leading-relaxed text-ink/60">
             {site.name} সম্পূর্ণ স্বেচ্ছাসেবী ও অলাভজনক সংগঠন। আর্থিক সহযোগিতার প্রতিটি টাকা খরচ হয় শুধুমাত্র রক্তদান শিবির ও সচেতনতামূলক কার্যক্রমে। প্রতিষ্ঠানের আয়-ব্যয়ের হিসাব কমিটির কাছে সংরক্ষিত থাকে।
           </p>
         </div>
         <div className="card bg-gradient-to-br from-blood-500 to-blood-600 p-6 text-white">
-          <p className="font-display font-bold">🩸 সবচেয়ে বড় দান: আপনার রক্ত</p>
+          <p className="flex items-center gap-1.5 font-display font-bold"><Droplets className="h-4 w-4" />সবচেয়ে বড় দান: আপনার রক্ত</p>
           <p className="mt-2 text-sm leading-relaxed text-white/85">
             টাকার চেয়েও মূল্যবান হলো আপনার এক ব্যাগ রক্ত — যা বাঁচাতে পারে তিনটি প্রাণ।
           </p>

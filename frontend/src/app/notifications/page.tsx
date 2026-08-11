@@ -5,6 +5,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { GridSkeleton } from "@/components/ui/Skeleton";
+import { Bell } from "@/components/icons";
+import { BellOff } from "lucide-react";
 
 export default function NotificationsPage() {
   const supabase = createClient();
@@ -40,7 +42,7 @@ export default function NotificationsPage() {
     <div className="container-page py-10">
       <header className="mb-6 flex items-center justify-between">
         <div>
-          <h1 className="font-display text-2xl font-extrabold tracking-tight text-ink">🔔 বিজ্ঞপ্তি</h1>
+          <h1 className="flex items-center gap-2 font-display text-2xl font-extrabold tracking-tight text-ink"><Bell className="h-6 w-6 text-brand-600" />বিজ্ঞপ্তি</h1>
           <p className="text-sm text-ink/60">আপনার সাম্প্রতিক নোটিফিকেশন।</p>
         </div>
         {items.some((i) => !i.is_read) && (
@@ -50,7 +52,7 @@ export default function NotificationsPage() {
 
       {items.length === 0 ? (
         <div className="card p-12 text-center">
-          <p className="text-3xl">🔕</p>
+          <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-zinc-100 text-zinc-400"><BellOff className="h-6 w-6" /></span>
           <p className="mt-2 font-medium text-ink">কোনো নোটিফিকেশন নেই</p>
           <Link href="/" className="btn-outline mt-4">হোমে যান</Link>
         </div>

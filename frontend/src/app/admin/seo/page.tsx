@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { Check, CheckCircle2, Search, Shield, Zap } from "@/components/icons";
 
 export default function AdminSeoPage() {
   const supabase = createClient();
@@ -51,19 +52,19 @@ export default function AdminSeoPage() {
   }
 
   if (!ready) return <div className="container-page py-20 text-center text-ink/50">লোড হচ্ছে…</div>;
-  if (!authed) return <div className="container-page py-20 text-center"><p className="text-3xl">🛡️</p><p className="mt-2 font-medium text-ink">শুধু অ্যাডমিনদের জন্য।</p><Link href="/" className="btn-outline mt-4">হোমে ফিরুন</Link></div>;
+  if (!authed) return <div className="container-page py-20 text-center"><span className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-50 text-brand-600"><Shield className="h-7 w-7" /></span><p className="mt-2 font-medium text-ink">শুধু অ্যাডমিনদের জন্য।</p><Link href="/" className="btn-outline mt-4">হোমে ফিরুন</Link></div>;
 
   return (
     <div className="container-page py-10">
       <header className="mb-8 flex items-center justify-between">
         <div>
-          <h1 className="font-display text-2xl font-extrabold tracking-tight text-ink">🔍 SEO Settings</h1>
+          <h1 className="flex items-center gap-2 font-display text-2xl font-extrabold tracking-tight text-ink"><Search className="h-6 w-6 text-brand-600" />SEO Settings</h1>
           <p className="text-sm text-ink/60">Search engine optimization — meta tags, keywords, analytics।</p>
         </div>
         <Link href="/admin" className="btn-outline">← ড্যাশবোর্ড</Link>
       </header>
 
-      {saved && <div className="mb-6 rounded-xl bg-success-50 p-3 text-sm font-medium text-success-700">✓ সংরক্ষিত হয়েছে</div>}
+      {saved && <div className="mb-6 flex items-center rounded-xl bg-success-50 p-3 text-sm font-medium text-success-700"><Check className="mr-1.5 inline h-4 w-4" />সংরক্ষিত হয়েছে</div>}
 
       <form onSubmit={save} className="card p-6 space-y-4">
         <div>
@@ -85,7 +86,7 @@ export default function AdminSeoPage() {
           <div className="flex items-center gap-4">
             {ogImage && <img src={ogImage} alt="OG" className="h-16 w-16 rounded-lg object-cover" />}
             <label className="btn-outline cursor-pointer">
-              {uploading ? "আপলোড…" : (ogImage ? "✓ সেট" : "+ ছবি")}
+              {uploading ? "আপলোড…" : (ogImage ? "সেট" : "+ ছবি")}
               <input type="file" accept="image/*" className="hidden" onChange={(e) => e.target.files?.[0] && uploadOg(e.target.files[0])} />
             </label>
           </div>
@@ -100,13 +101,13 @@ export default function AdminSeoPage() {
       </form>
 
       <div className="mt-6 card p-5">
-        <h3 className="mb-2 font-semibold text-ink">📌 স্বয়ংক্রিয় SEO (আগে থেকেই সক্রিয়)</h3>
+        <h3 className="mb-2 flex items-center gap-1.5 font-semibold text-ink"><Zap className="h-4 w-4 text-brand-600" />স্বয়ংক্রিয় SEO (আগে থেকেই সক্রিয়)</h3>
         <ul className="space-y-1 text-sm text-ink/60">
-          <li>✅ robots.txt — <a href="/robots.txt" className="text-brand-600">/robots.txt</a></li>
-          <li>✅ sitemap.xml — <a href="/sitemap.xml" className="text-brand-600">/sitemap.xml</a></li>
-          <li>✅ Canonical URL</li>
-          <li>✅ Open Graph + Twitter Card tags</li>
-          <li>✅ Bengali locale (bn_BD)</li>
+          <li><CheckCircle2 className="mr-1 inline h-3.5 w-3.5 text-emerald-600" />robots.txt — <a href="/robots.txt" className="text-brand-600">/robots.txt</a></li>
+          <li><CheckCircle2 className="mr-1 inline h-3.5 w-3.5 text-emerald-600" />sitemap.xml — <a href="/sitemap.xml" className="text-brand-600">/sitemap.xml</a></li>
+          <li><CheckCircle2 className="mr-1 inline h-3.5 w-3.5 text-emerald-600" />Canonical URL</li>
+          <li><CheckCircle2 className="mr-1 inline h-3.5 w-3.5 text-emerald-600" />Open Graph + Twitter Card tags</li>
+          <li><CheckCircle2 className="mr-1 inline h-3.5 w-3.5 text-emerald-600" />Bengali locale (bn_BD)</li>
         </ul>
       </div>
     </div>

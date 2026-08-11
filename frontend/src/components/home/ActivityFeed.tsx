@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import type { Lang } from "@/lib/i18n";
 import Reveal from "@/components/Reveal";
+import { Droplets, HandHeart, Siren } from "@/components/icons";
 
 type Item = { icon: string; text: string; at: number; group: string };
 
@@ -33,13 +34,13 @@ export default function ActivityFeed({ lang }: { lang: Lang }) {
       ]);
       const list: Item[] = [];
       (reqs.data ?? []).forEach((r: any) =>
-        list.push({ icon: "🆘", group: "request", at: new Date(r.created_at).getTime(), text: en ? `Blood request: ${r.patient_name} (${r.blood_group}) — ${r.upazila}` : `রক্তের অনুরোধ: ${r.patient_name} (${r.blood_group}) — ${r.upazila}` }),
+        list.push({ icon: "request", group: "request", at: new Date(r.created_at).getTime(), text: en ? `Blood request: ${r.patient_name} (${r.blood_group}) — ${r.upazila}` : `রক্তের অনুরোধ: ${r.patient_name} (${r.blood_group}) — ${r.upazila}` }),
       );
       (donors.data ?? []).forEach((d: any) =>
-        list.push({ icon: "🩸", group: "donor", at: new Date(d.created_at).getTime(), text: en ? `New donor: ${d.full_name} (${d.blood_group})` : `নতুন দাতা: ${d.full_name} (${d.blood_group})` }),
+        list.push({ icon: "donor", group: "donor", at: new Date(d.created_at).getTime(), text: en ? `New donor: ${d.full_name} (${d.blood_group})` : `নতুন দাতা: ${d.full_name} (${d.blood_group})` }),
       );
       (vols.data ?? []).forEach((v: any) =>
-        list.push({ icon: "🙋", group: "volunteer", at: new Date(v.created_at).getTime(), text: en ? `Volunteer joined: ${v.full_name}${v.upazila ? " — " + v.upazila : ""}` : `স্বেচ্ছাসেবক যোগ দিয়েছেন: ${v.full_name}${v.upazila ? " — " + v.upazila : ""}` }),
+        list.push({ icon: "volunteer", group: "volunteer", at: new Date(v.created_at).getTime(), text: en ? `Volunteer joined: ${v.full_name}${v.upazila ? " — " + v.upazila : ""}` : `স্বেচ্ছাসেবক যোগ দিয়েছেন: ${v.full_name}${v.upazila ? " — " + v.upazila : ""}` }),
       );
       list.sort((a, b) => b.at - a.at);
       setItems(list.slice(0, 8));
@@ -78,7 +79,9 @@ export default function ActivityFeed({ lang }: { lang: Lang }) {
           ) : (
             items.map((it, i) => (
               <div key={i} className="flex items-center gap-3 rounded-xl border border-zinc-100 bg-white px-4 py-2.5 dark:border-white/5 dark:bg-white/5">
-                <span className="text-lg">{it.icon}</span>
+                <span className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg ${it.icon === "request" ? "bg-blood-50 text-blood-600" : it.icon === "donor" ? "bg-brand-50 text-brand-600" : "bg-sky-50 text-sky-600"}`}>
+                  {it.icon === "request" ? <Siren className="h-3.5 w-3.5" /> : it.icon === "donor" ? <Droplets className="h-3.5 w-3.5" /> : <HandHeart className="h-3.5 w-3.5" />}
+                </span>
                 <p className="min-w-0 flex-1 truncate text-sm text-ink/80">{it.text}</p>
                 <span className="shrink-0 text-[11px] text-ink/40">{rel(it.at, en)}</span>
               </div>

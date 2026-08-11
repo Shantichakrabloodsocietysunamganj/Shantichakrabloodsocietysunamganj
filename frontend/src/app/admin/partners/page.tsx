@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { Handshake, Shield, X } from "@/components/icons";
 
 export default function AdminPartnersPage() {
   const supabase = createClient();
@@ -47,12 +48,12 @@ export default function AdminPartnersPage() {
   async function remove(id: string) { await supabase.from("partners").delete().eq("id", id); load(); }
 
   if (!ready) return <div className="container-page py-20 text-center text-ink/50">লোড হচ্ছে…</div>;
-  if (!authed) return <div className="container-page py-20 text-center"><p className="text-3xl">🛡️</p><p className="mt-2 font-medium text-ink">শুধু অ্যাডমিনদের জন্য।</p><Link href="/" className="btn-outline mt-4">হোমে ফিরুন</Link></div>;
+  if (!authed) return <div className="container-page py-20 text-center"><span className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-50 text-brand-600"><Shield className="h-7 w-7" /></span><p className="mt-2 font-medium text-ink">শুধু অ্যাডমিনদের জন্য।</p><Link href="/" className="btn-outline mt-4">হোমে ফিরুন</Link></div>;
 
   return (
     <div className="container-page py-10">
       <header className="mb-8 flex items-center justify-between">
-        <h1 className="font-display text-2xl font-extrabold tracking-tight text-ink">🤝 পার্টনার ও সহযোগী</h1>
+        <h1 className="flex items-center gap-2 font-display text-2xl font-extrabold tracking-tight text-ink"><Handshake className="h-6 w-6 text-brand-600" />পার্টনার ও সহযোগী</h1>
         <Link href="/admin" className="btn-outline">← ড্যাশবোর্ড</Link>
       </header>
 
@@ -66,7 +67,7 @@ export default function AdminPartnersPage() {
           <div className="flex items-center gap-3">
             {logoUrl && <img src={logoUrl} alt="logo" className="h-10 w-10 rounded-lg object-contain" />}
             <label className="btn-outline cursor-pointer">
-              {uploading ? "আপলোড…" : (logoUrl ? "✓ লোগো" : "+ লোগো")}
+              {uploading ? "আপলোড…" : (logoUrl ? "লোগো সেট" : "+ লোগো")}
               <input type="file" accept="image/*" className="hidden" onChange={(e) => e.target.files?.[0] && uploadLogo(e.target.files[0])} />
             </label>
             <button className="btn-primary">যোগ করুন</button>
@@ -86,7 +87,7 @@ export default function AdminPartnersPage() {
                 <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-brand-50 text-xl font-bold text-brand-600">{p.name.charAt(0)}</span>
               )}
               <p className="text-sm font-medium text-ink">{p.name}</p>
-              <button onClick={() => remove(p.id)} className="absolute right-1 top-1 hidden h-6 w-6 items-center justify-center rounded-lg bg-black/50 text-white group-hover:flex">✕</button>
+              <button onClick={() => remove(p.id)} className="absolute right-1 top-1 hidden h-6 w-6 items-center justify-center rounded-lg bg-black/50 text-white group-hover:flex"><X className="h-3.5 w-3.5" /></button>
             </div>
           ))}
         </div>

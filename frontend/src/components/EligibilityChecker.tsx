@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import Link from "next/link";
 import { bn, bnDate } from "@/lib/format";
 import { scrollToPageTop } from "@/lib/motion";
+import { AlarmClock, AlertTriangle, Droplets, Heart, Lock, PartyPopper, RotateCcw, Search, Stethoscope } from "@/components/icons";
 
 /* ----------------------------------------------------------
    রক্তদান যোগ্যতা যাচাই — সাধারণ চিকিৎসা নির্দেশিকা অনুযায়ী
@@ -165,21 +166,21 @@ export default function EligibilityChecker() {
             `শেষ রক্তদানের পর ${gender === "নারী" ? "৪ মাস (১২০ দিন)" : "৩ মাস (৯০ দিন)"} না হওয়া পর্যন্ত পুনরায় রক্তদান নিরাপদ নয়।`
           );
         } else {
-          notes.push("শেষ রক্তদানের নিরাপদ ব্যবধান পূর্ণ হয়েছে। ✓");
+          notes.push("শেষ রক্তদানের নিরাপদ ব্যবধান পূর্ণ হয়েছে।");
         }
       }
     }
 
     const title =
       status === "eligible"
-        ? "🎉 অভিনন্দন! আপনি রক্তদানের যোগ্য"
+        ? "অভিনন্দন! আপনি রক্তদানের যোগ্য"
         : status === "wait"
         ? eligibleFrom
-          ? "⏳ একটু অপেক্ষা করুন — তারিখ ঠিক আছে"
-          : "⏳ এই মুহূর্তে একটু অপেক্ষা করুন"
+          ? "একটু অপেক্ষা করুন — তারিখ ঠিক আছে"
+          : "এই মুহূর্তে একটু অপেক্ষা করুন"
         : status === "doctor"
-        ? "👨‍⚕️ আগে চিকিৎসকের পরামর্শ নিন"
-        : "💛 এখন সম্ভব নয়, তবে আপনার ইচ্ছাটাই অনুপ্রেরণা";
+        ? "আগে চিকিৎসকের পরামর্শ নিন"
+        : "এখন সম্ভব নয়, তবে আপনার ইচ্ছাটাই অনুপ্রেরণা";
 
     setVerdict({
       status,
@@ -209,9 +210,16 @@ export default function EligibilityChecker() {
       doctor: "border-blue-200 bg-blue-50",
       ineligible: "border-zinc-200 bg-zinc-50",
     } as const;
+    const vIcons = {
+      eligible: <PartyPopper className="h-9 w-9 text-emerald-600" />,
+      wait: <AlarmClock className="h-9 w-9 text-amber-500" />,
+      doctor: <Stethoscope className="h-9 w-9 text-blue-600" />,
+      ineligible: <Heart className="h-9 w-9 text-amber-500" />,
+    } as const;
     return (
       <div className="mx-auto max-w-2xl">
         <div className={`card border-2 p-8 text-center ${styles[verdict.status]}`}>
+          <span className="mx-auto mb-3 flex h-16 w-16 items-center justify-center rounded-full bg-white shadow-sm ring-1 ring-black/5">{vIcons[verdict.status]}</span>
           <h2 className="font-display text-2xl font-extrabold text-ink">{verdict.title}</h2>
 
           {verdict.eligibleFrom && (
@@ -222,7 +230,7 @@ export default function EligibilityChecker() {
               </p>
               {verdict.daysLeft !== undefined && (
                 <p className="mt-1 text-sm font-semibold text-blood-600">
-                  আর মাত্র {bn(verdict.daysLeft)} দিন বাকি ⏳
+                  আর মাত্র {bn(verdict.daysLeft)} দিন বাকি
                 </p>
               )}
             </div>
@@ -243,7 +251,7 @@ export default function EligibilityChecker() {
             <ul className="mx-auto mt-3 max-w-md space-y-2 text-left">
               {verdict.notes.map((n, i) => (
                 <li key={i} className="flex gap-2 rounded-xl bg-white/70 p-3 text-sm leading-relaxed text-ink/80 ring-1 ring-black/5">
-                  <span className="shrink-0">ℹ️</span>
+                  <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0 text-sky-600" />
                   <span>{n}</span>
                 </li>
               ))}
@@ -252,7 +260,7 @@ export default function EligibilityChecker() {
 
           {verdict.status === "eligible" && (
             <div className="mx-auto mt-6 max-w-md rounded-xl bg-white/70 p-4 text-left text-sm leading-relaxed text-ink ring-1 ring-black/5">
-              <p className="font-semibold">🩸 রক্তদানের আগে মনে রাখুন:</p>
+              <p className="flex items-center gap-1.5 font-semibold"><Droplets className="h-4 w-4 text-blood-600" />রক্তদানের আগে মনে রাখুন:</p>
               <ul className="mt-1.5 list-disc space-y-1 pl-5 text-ink/80">
                 <li>আগের রাতে পর্যাপ্ত ঘুম ও হালকা বেলা খাবার খান</li>
                 <li>পর্যাপ্ত পানি পান করুন, খালি পেটে যাবেন না</li>
@@ -271,12 +279,12 @@ export default function EligibilityChecker() {
             {verdict.status === "wait" && verdict.eligibleFrom && (
               <Link href="/become-donor" className="btn-primary">এখনই নিবন্ধন করে রাখুন →</Link>
             )}
-            <button onClick={reset} className="btn-outline">↻ আবার যাচাই করুন</button>
+            <button onClick={reset} className="btn-outline"><RotateCcw className="mr-1.5 inline h-4 w-4" />আবার যাচাই করুন</button>
           </div>
         </div>
 
         <p className="mt-5 text-center text-xs leading-relaxed text-ink/50">
-          ⚠️ এই যাচাই সাধারণ নির্দেশিকার ভিত্তিতে তৈরি — চূড়ান্ত সিদ্ধান্ত রক্তদান কেন্দ্রের চিকিৎসক/টেকনিশিয়ান নেবেন।
+          <AlertTriangle className="mr-1 inline h-3.5 w-3.5 text-amber-500" />এই যাচাই সাধারণ নির্দেশিকার ভিত্তিতে তৈরি — চূড়ান্ত সিদ্ধান্ত রক্তদান কেন্দ্রের চিকিৎসক/টেকনিশিয়ান নেবেন।
         </p>
       </div>
     );
@@ -320,7 +328,7 @@ export default function EligibilityChecker() {
           <SectionLabel num="২" title="আগে রক্ত দিয়েছেন?" />
           <div className="mt-4 flex flex-wrap gap-2">
             <ChoiceBtn active={donatedBefore === "no"} onClick={() => { setDonatedBefore("no"); setLastDate(""); }}>
-              না, এটাই প্রথম 😊
+              না, এটাই প্রথম
             </ChoiceBtn>
             <ChoiceBtn active={donatedBefore === "yes"} onClick={() => setDonatedBefore("yes")}>
               হ্যাঁ, দিয়েছি
@@ -359,12 +367,12 @@ export default function EligibilityChecker() {
           disabled={!formComplete}
           className="btn-primary w-full disabled:cursor-not-allowed disabled:opacity-40"
         >
-          {formComplete ? "🔍 ফলাফল দেখুন" : "👆 সবগুলো প্রশ্নের উত্তর দিন"}
+          {formComplete ? (<><Search className="mr-1.5 inline h-4 w-4" />ফলাফল দেখুন</>) : "সবগুলো প্রশ্নের উত্তর দিন"}
         </button>
       </div>
 
       <p className="mt-4 text-center text-xs leading-relaxed text-ink/50">
-        🔒 আপনার কোনো তথ্য সার্ভারে পাঠানো হয় না — হিসাবটা আপনার ব্রাউজারেই হয়।
+        <Lock className="mr-1 inline h-3.5 w-3.5" />আপনার কোনো তথ্য সার্ভারে পাঠানো হয় না — হিসাবটা আপনার ব্রাউজারেই হয়।
       </p>
     </div>
   );

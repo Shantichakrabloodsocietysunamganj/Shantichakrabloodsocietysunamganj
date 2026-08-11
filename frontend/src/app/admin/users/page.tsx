@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { BadgeCheck, Check, Shield, Users } from "@/components/icons";
 
 export default function AdminUsersPage() {
   const supabase = createClient();
@@ -41,20 +42,20 @@ export default function AdminUsersPage() {
   }
 
   const ROLES = [
-    { value: "user", label: "User", icon: "👤" },
-    { value: "donor", label: "Donor", icon: "🩸" },
-    { value: "moderator", label: "Moderator", icon: "🔹" },
-    { value: "admin", label: "Admin", icon: "🛡️" },
+    { value: "user", label: "User" },
+    { value: "donor", label: "Donor" },
+    { value: "moderator", label: "Moderator" },
+    { value: "admin", label: "Admin" },
   ];
 
   if (!ready) return <div className="container-page py-20 text-center text-ink/50">লোড হচ্ছে…</div>;
-  if (!authed) return <div className="container-page py-20 text-center"><p className="text-3xl">🛡️</p><p className="mt-2 font-medium text-ink">শুধু অ্যাডমিনদের জন্য।</p><Link href="/" className="btn-outline mt-4">হোমে ফিরুন</Link></div>;
+  if (!authed) return <div className="container-page py-20 text-center"><span className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-50 text-brand-600"><Shield className="h-7 w-7" /></span><p className="mt-2 font-medium text-ink">শুধু অ্যাডমিনদের জন্য।</p><Link href="/" className="btn-outline mt-4">হোমে ফিরুন</Link></div>;
 
   return (
     <div className="container-page py-10">
       <header className="mb-8 flex items-center justify-between">
         <div>
-          <h1 className="font-display text-2xl font-extrabold tracking-tight text-ink">👥 User & Role Management</h1>
+          <h1 className="flex items-center gap-2 font-display text-2xl font-extrabold tracking-tight text-ink"><Users className="h-6 w-6 text-brand-600" />User & Role Management</h1>
           <p className="text-sm text-ink/60">সব নিবন্ধিত ইউজার ও তাদের role পরিচালনা করুন।</p>
         </div>
         <Link href="/admin" className="btn-outline">← ড্যাশবোর্ড</Link>
@@ -74,7 +75,7 @@ export default function AdminUsersPage() {
                 {(u.full_name ?? "?").charAt(0)}
               </span>
               <div>
-                <p className="font-medium text-ink">{u.full_name ?? "Unknown"} {u.is_verified && <span className="text-success-600">✓</span>}</p>
+                <p className="font-medium text-ink">{u.full_name ?? "Unknown"} {u.is_verified && <BadgeCheck className="ml-1 inline h-3.5 w-3.5 text-success-600" />}</p>
                 <p className="text-xs text-ink/40">{u.phone ?? "no phone"} • joined {new Date(u.created_at).toLocaleDateString("bn-BD")}</p>
               </div>
             </div>
@@ -85,7 +86,7 @@ export default function AdminUsersPage() {
                 disabled={busy}
                 className={`btn-ghost !px-2 !py-1.5 text-xs ${u.is_verified ? "text-success-700" : "text-ink/40"}`}
               >
-                {u.is_verified ? "✓ Verified" : "Unverified"}
+                {u.is_verified ? (<><Check className="mr-1 inline h-3.5 w-3.5" />Verified</>) : "Unverified"}
               </button>
               {/* Role selector */}
               <select
@@ -94,7 +95,7 @@ export default function AdminUsersPage() {
                 disabled={busy}
                 className="input !w-auto !py-1.5 text-xs"
               >
-                {ROLES.map((r) => <option key={r.value} value={r.value}>{r.icon} {r.label}</option>)}
+                {ROLES.map((r) => <option key={r.value} value={r.value}>{r.label}</option>)}
               </select>
             </div>
           </div>

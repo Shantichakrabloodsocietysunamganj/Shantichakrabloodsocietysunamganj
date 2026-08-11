@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { CreditCard, Shield, X } from "@/components/icons";
 
 export default function AdminDonationMethodsPage() {
   const supabase = createClient();
@@ -48,12 +49,12 @@ export default function AdminDonationMethodsPage() {
   }
 
   if (!ready) return <div className="container-page py-20 text-center text-ink/50">লোড হচ্ছে…</div>;
-  if (!authed) return <div className="container-page py-20 text-center"><p className="text-3xl">🛡️</p><p className="mt-2 font-medium text-ink">শুধু অ্যাডমিনদের জন্য।</p><Link href="/" className="btn-outline mt-4">হোমে ফিরুন</Link></div>;
+  if (!authed) return <div className="container-page py-20 text-center"><span className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-50 text-brand-600"><Shield className="h-7 w-7" /></span><p className="mt-2 font-medium text-ink">শুধু অ্যাডমিনদের জন্য।</p><Link href="/" className="btn-outline mt-4">হোমে ফিরুন</Link></div>;
 
   return (
     <div className="container-page py-10">
       <header className="mb-8 flex items-center justify-between">
-        <h1 className="font-display text-2xl font-extrabold tracking-tight text-ink">💳 ডোনেশন মেথড</h1>
+        <h1 className="flex items-center gap-2 font-display text-2xl font-extrabold tracking-tight text-ink"><CreditCard className="h-6 w-6 text-brand-600" />ডোনেশন মেথড</h1>
         <Link href="/admin" className="btn-outline">← ড্যাশবোর্ড</Link>
       </header>
 
@@ -67,9 +68,9 @@ export default function AdminDonationMethodsPage() {
         </div>
         <div className="flex flex-wrap items-center gap-3">
           {form.logo_url && <img src={form.logo_url} alt="" className="h-10 w-10 rounded-lg object-cover" />}
-          <label className="btn-outline cursor-pointer text-sm">{form.logo_url ? "✓ লোগো" : "+ লোগো"}<input type="file" accept="image/*" className="hidden" onChange={(e) => e.target.files?.[0] && uploadImg(e.target.files[0], "logo_url")} /></label>
+          <label className="btn-outline cursor-pointer text-sm">{form.logo_url ? "লোগো সেট" : "+ লোগো"}<input type="file" accept="image/*" className="hidden" onChange={(e) => e.target.files?.[0] && uploadImg(e.target.files[0], "logo_url")} /></label>
           {form.qr_url && <img src={form.qr_url} alt="" className="h-12 w-12 rounded object-contain" />}
-          <label className="btn-outline cursor-pointer text-sm">{form.qr_url ? "✓ QR" : "+ QR কোড"}<input type="file" accept="image/*" className="hidden" onChange={(e) => e.target.files?.[0] && uploadImg(e.target.files[0], "qr_url")} /></label>
+          <label className="btn-outline cursor-pointer text-sm">{form.qr_url ? "QR সেট" : "+ QR কোড"}<input type="file" accept="image/*" className="hidden" onChange={(e) => e.target.files?.[0] && uploadImg(e.target.files[0], "qr_url")} /></label>
           <label className="flex items-center gap-2 text-sm font-medium text-ink"><input type="checkbox" checked={form.is_active} onChange={(e) => setForm({ ...form, is_active: e.target.checked })} />সক্রিয়</label>
           <button disabled={saving} className="btn-primary">{saving ? "যোগ হচ্ছে…" : "যোগ করুন"}</button>
         </div>
@@ -84,7 +85,7 @@ export default function AdminDonationMethodsPage() {
               <p className="text-xs text-ink/40">{m.account_number} {m.account_type ? `• ${m.account_type}` : ""}</p>
             </div>
             <button onClick={() => toggle(m.id, !m.is_active)} className="btn-ghost !px-2 !py-1 text-xs">{m.is_active ? "বন্ধ করুন" : "চালু করুন"}</button>
-            <button onClick={() => remove(m.id)} className="btn-ghost !px-2 !py-1 text-xs text-blood-600">✕</button>
+            <button onClick={() => remove(m.id)} className="btn-ghost !px-2 !py-1 text-xs text-blood-600"><X className="h-3.5 w-3.5" /></button>
           </div>
         ))}
       </div>

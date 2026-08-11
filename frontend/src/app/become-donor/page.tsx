@@ -8,6 +8,7 @@ import { BLOOD_GROUPS, DISTRICTS, upazilasOf, GENDERS } from "@/data/constants";
 import { useLangClient, t } from "@/lib/i18n";
 import { getEligibility } from "@/lib/donation";
 import { scrollToPageTop } from "@/lib/motion";
+import { AlertTriangle, Camera, Check } from "@/components/icons";
 
 const schema = z.object({
   full_name: z.string().min(2),
@@ -81,8 +82,8 @@ export default function BecomeDonorPage() {
   if (done) {
     return (
       <div className="container-page py-20"><div className="mx-auto max-w-md card p-10 text-center">
-        <div className="mx-auto mb-4 flex h-16 w-16 animate-pop items-center justify-center rounded-full bg-emerald-50 text-3xl">✓</div>
-        <h1 className="text-2xl font-bold text-zinc-900">{en ? "Thank you, hero! 🙏" : "ধন্যবাদ, নায়ক! 🙏"}</h1>
+        <div className="mx-auto mb-4 flex h-16 w-16 animate-pop items-center justify-center rounded-full bg-emerald-50 text-emerald-600"><Check className="h-8 w-8" /></div>
+        <h1 className="text-2xl font-bold text-zinc-900">{en ? "Thank you, hero!" : "ধন্যবাদ, নায়ক!"}</h1>
         <p className="mt-2 text-zinc-600">{en ? "Welcome to Shantichakra Blood Society. Your information has been saved — you're now live on the donor list." : "আপনাকে শান্তিচক্র ব্লাড সোসাইটিতে স্বাগতম। আপনার তথ্য সংরক্ষিত হয়েছে — এখন থেকে আপনি দাতা তালিকায় দৃশ্যমান।"}</p>
         <div className="mt-6 flex flex-col gap-3"><Link href="/donors" className="btn-primary">{en ? "View Donors" : "রক্তদাতা তালিকা দেখুন"}</Link><Link href="/" className="btn-ghost">{en ? "Home" : "হোমে ফিরুন"}</Link></div>
       </div></div>
@@ -98,10 +99,10 @@ export default function BecomeDonorPage() {
         <p className="mx-auto mt-4 max-w-xl text-ink/60">{en ? "Join the Sylhet blood donation network. Every registration is a potential life saved." : "আপনার তথ্য দিন এবং সিলেট বিভাগের রক্তদান নেটওয়ার্কে যুক্ত হোন। প্রতিটি নিবন্ধন একটি সম্ভাব্য জীবন রক্ষা।"}</p>
       </header>
       <form onSubmit={submit} className="mt-8 card p-6 sm:p-8">
-        {serverError && <div className="mb-5 rounded-xl bg-brand-50 p-3 text-sm font-medium text-brand-700">⚠️ {serverError}</div>}
+        {serverError && <div className="mb-5 flex items-center gap-1.5 rounded-xl bg-brand-50 p-3 text-sm font-medium text-brand-700"><AlertTriangle className="h-4 w-4 shrink-0" />{serverError}</div>}
         <div className="mb-6 flex items-center gap-5">
           <div className="flex h-20 w-20 items-center justify-center overflow-hidden rounded-2xl bg-zinc-100 ring-1 ring-zinc-200">
-            {photoPreview ? <img src={photoPreview} alt="preview" className="h-full w-full object-cover" /> : <span className="text-2xl text-zinc-400">📷</span>}
+            {photoPreview ? <img src={photoPreview} alt="preview" className="h-full w-full object-cover" /> : <Camera className="h-7 w-7 text-zinc-400" />}
           </div>
           <div>
             <label className="label">{en ? "Photo (optional)" : "ছবি (ঐচ্ছিক)"}</label>
@@ -118,7 +119,7 @@ export default function BecomeDonorPage() {
           <Field label={en ? "Age (18–60)" : "বয়স (১৮–৬০)"} error={errors.age ? (en ? "18–60" : "১৮-৬০") : undefined}><input type="number" min={18} max={60} className="input" value={form.age} onChange={(e) => set("age", e.target.value)} /></Field>
           <Field label={en ? "Gender" : "লিঙ্গ"}><select className="input" value={form.gender} onChange={(e) => set("gender", e.target.value)}><option value="">{en ? "Select" : "নির্বাচন"}</option>{GENDERS.map((g) => <option key={g} value={g}>{g}</option>)}</select></Field>
           <Field label={en ? "Area" : "এলাকা"}><input className="input" value={form.area} onChange={(e) => set("area", e.target.value)} /></Field>
-          <Field label={en ? "Last Donation Date" : "সর্বশেষ রক্তদান"}><input type="date" className="input" value={form.last_donation_date} onChange={(e) => { const d = e.target.value; set("last_donation_date", d); const el = getEligibility(d || null); set("is_available", el.eligible); }} />{form.last_donation_date && (() => { const el = getEligibility(form.last_donation_date); return <p className={`mt-1 text-xs font-medium ${el.eligible ? "text-emerald-600" : "text-amber-600"}`}>{el.eligible ? (en ? "✓ Eligible to donate now." : "✓ আপনি এখন রক্তদানে প্রস্তুত।") : (en ? `⏳ ${el.daysRemaining} days remaining (eligible ${el.nextEligibleText}).` : `⏳ আর ${el.daysRemaining.toLocaleString("bn-BD")} দিন বাকি (${el.nextEligibleText})।`)}</p>; })()}</Field>
+          <Field label={en ? "Last Donation Date" : "সর্বশেষ রক্তদান"}><input type="date" className="input" value={form.last_donation_date} onChange={(e) => { const d = e.target.value; set("last_donation_date", d); const el = getEligibility(d || null); set("is_available", el.eligible); }} />{form.last_donation_date && (() => { const el = getEligibility(form.last_donation_date); return <p className={`mt-1 text-xs font-medium ${el.eligible ? "text-emerald-600" : "text-amber-600"}`}>{el.eligible ? (en ? "Eligible to donate now." : "আপনি এখন রক্তদানে প্রস্তুত।") : (en ? `${el.daysRemaining} days remaining (eligible ${el.nextEligibleText}).` : `আর ${el.daysRemaining.toLocaleString("bn-BD")} দিন বাকি (${el.nextEligibleText})।`)}</p>; })()}</Field>
         </div>
         <div className="mt-5"><Field label={en ? "Additional Info (optional)" : "অতিরিক্ত তথ্য (ঐচ্ছিক)"}><textarea className="input min-h-24" value={form.notes} onChange={(e) => set("notes", e.target.value)} /></Field></div>
         <label className="mt-4 flex items-start gap-3 rounded-xl bg-emerald-50 p-4"><input type="checkbox" checked={form.is_available} onChange={(e) => set("is_available", e.target.checked)} className="mt-0.5 h-4 w-4 rounded border-zinc-300 text-brand-600 focus:ring-brand-500" /><span className="text-sm font-medium text-emerald-800">{en ? "I am currently available to donate blood." : "আমি বর্তমানে রক্তদানে প্রস্তুত আছি।"}</span></label>

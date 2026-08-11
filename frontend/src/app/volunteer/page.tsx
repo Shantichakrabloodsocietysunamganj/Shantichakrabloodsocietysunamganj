@@ -5,6 +5,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { SYLHET_DISTRICTS } from "@/data/constants";
 import { useToast } from "@/components/Toast";
+import { Check } from "@/components/icons";
 
 // সিলেট বিভাগের সব উপজেলা (শুধু সুনামগঞ্জ নয়)
 const ALL_UPAZILAS = SYLHET_DISTRICTS.flatMap((d) => [...d.upazilas]);
@@ -34,8 +35,8 @@ export default function VolunteerPage() {
     return (
       <div className="container-page py-20">
         <div className="mx-auto max-w-md card p-10 text-center">
-          <div className="mx-auto mb-4 flex h-16 w-16 animate-pop items-center justify-center rounded-full bg-success-50 text-3xl">✓</div>
-          <h1 className="font-display text-2xl font-extrabold tracking-tight text-ink">ধন্যবাদ! 🙌</h1>
+          <div className="mx-auto mb-4 flex h-16 w-16 animate-pop items-center justify-center rounded-full bg-success-50 text-emerald-600"><Check className="h-8 w-8" /></div>
+          <h1 className="font-display text-2xl font-extrabold tracking-tight text-ink">ধন্যবাদ!</h1>
           <p className="mt-2 text-ink/60">আপনার স্বেচ্ছাসেবক আবেদন গৃহীত হয়েছে। অ্যাডমিন অনুমোদন করলে যোগাযোগ করা হবে।</p>
           <Link href="/" className="btn-primary mt-6">হোমে ফিরুন</Link>
         </div>

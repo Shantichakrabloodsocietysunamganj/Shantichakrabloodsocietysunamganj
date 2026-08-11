@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { ImageIcon, Shield, X } from "@/components/icons";
 
 type Item = { id: string; url: string; source: string; label: string };
 const CATS = ["all", "gallery", "donor", "blog", "event", "committee"] as const;
@@ -68,13 +69,13 @@ export default function AdminMediaPage() {
   const filtered = cat === "all" ? items : items.filter((x) => x.source === cat);
 
   if (!ready) return <div className="container-page py-20 text-center text-ink/50">লোড হচ্ছে…</div>;
-  if (!authed) return <div className="container-page py-20 text-center"><p className="text-3xl">🛡️</p><p className="mt-2 font-medium text-ink">শুধু অ্যাডমিনদের জন্য।</p><Link href="/" className="btn-outline mt-4">হোমে ফিরুন</Link></div>;
+  if (!authed) return <div className="container-page py-20 text-center"><span className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-50 text-brand-600"><Shield className="h-7 w-7" /></span><p className="mt-2 font-medium text-ink">শুধু অ্যাডমিনদের জন্য।</p><Link href="/" className="btn-outline mt-4">হোমে ফিরুন</Link></div>;
 
   return (
     <div className="container-page py-10">
       <header className="mb-6 flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="font-display text-2xl font-extrabold tracking-tight text-ink">🖼️ মিডিয়া লাইব্রেরি</h1>
+          <h1 className="flex items-center gap-2 font-display text-2xl font-extrabold tracking-tight text-ink"><ImageIcon className="h-6 w-6 text-brand-600" />মিডিয়া লাইব্রেরি</h1>
           <p className="text-sm text-ink/60">সাইটে ব্যবহৃত সব ছবি — {items.length} টি।</p>
         </div>
         <Link href="/admin" className="btn-outline">← ড্যাশবোর্ড</Link>
@@ -101,7 +102,7 @@ export default function AdminMediaPage() {
                 onClick={() => remove(it)}
                 className="absolute right-1 top-1 flex h-7 w-7 items-center justify-center rounded-lg bg-black/60 text-white opacity-0 transition group-hover:opacity-100"
                 aria-label="মুছুন"
-              >✕</button>
+              ><X className="h-3.5 w-3.5" /></button>
             </div>
           ))}
         </div>

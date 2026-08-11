@@ -1,3 +1,4 @@
+import { AlertTriangle, Check } from "@/components/icons";
 export function AuthShell({
   title,
   subtitle,
@@ -31,12 +32,12 @@ export function AuthShell({
 
 export function AuthError({ text }: { text: string }) {
   return (
-    <div className="rounded-xl bg-blood-50 p-3 text-sm font-medium text-blood-700">⚠️ {text}</div>
+    <div className="flex items-center gap-1.5 rounded-xl bg-blood-50 p-3 text-sm font-medium text-blood-700"><AlertTriangle className="h-4 w-4 shrink-0" />{text}</div>
   );
 }
 
 export function AuthSuccess({ text }: { text: string }) {
   return (
-    <div className="rounded-xl bg-success-50 p-3 text-sm font-medium text-success-700">✓ {text}</div>
+    <div className="flex items-center gap-1.5 rounded-xl bg-success-50 p-3 text-sm font-medium text-success-700"><Check className="h-4 w-4 shrink-0" />{text}</div>
   );
 }

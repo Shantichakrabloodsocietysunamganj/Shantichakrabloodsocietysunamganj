@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import SectionHeading from "@/components/ui/SectionHeading";
 import Reveal from "@/components/Reveal";
 import { getLang } from "@/lib/i18n-server";
+import { Calendar, MapPin } from "@/components/icons";
 
 export const metadata: Metadata = { title: "ইভেন্ট ও কর্মসূচি" };
 
@@ -52,7 +53,7 @@ export default async function EventsPage() {
 
       {events.length === 0 && (
         <div className="card mt-10 p-12 text-center">
-          <p className="text-3xl">📅</p>
+          <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-brand-50 text-brand-600"><Calendar className="h-6 w-6" /></span>
           <p className="mt-2 font-medium text-ink">{en ? "No events yet" : "এখনো কোনো কর্মসূচি নেই"}</p>
           <p className="mt-1 text-sm text-ink/60">{en ? "New events will appear here." : "নতুন কর্মসূচি এখানে প্রকাশ করা হবে।"}</p>
         </div>
@@ -70,10 +71,10 @@ function EventCard({ e, en, past }: { e: any; en: boolean; past?: boolean }) {
       )}
       <div className="p-5">
         <span className="inline-flex items-center gap-1.5 rounded-full bg-brand-50 px-2.5 py-1 text-xs font-semibold text-brand-600 dark:bg-white/5">
-          📅 {fmt(e.event_date, en)}
+          <Calendar className="h-3.5 w-3.5" />{fmt(e.event_date, en)}
         </span>
         <h3 className="mt-3 font-display text-lg font-bold text-ink">{e.title}</h3>
-        {e.location && <p className="mt-1 flex items-center gap-1 text-sm text-ink/50">📍 {e.location}</p>}
+        {e.location && <p className="mt-1 flex items-center gap-1 text-sm text-ink/50"><MapPin className="h-3.5 w-3.5 shrink-0" />{e.location}</p>}
         {e.description && <p className="mt-2 line-clamp-2 text-sm text-ink/60">{e.description}</p>}
       </div>
     </div>

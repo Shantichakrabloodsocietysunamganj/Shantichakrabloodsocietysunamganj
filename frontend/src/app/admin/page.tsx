@@ -11,8 +11,37 @@ import type { BloodRequest, Donor } from "@/lib/types";
 import { exportCSV } from "@/lib/csv";
 import { logActivity } from "@/lib/activity";
 import DonutChart from "@/components/DonutChart";
+import {
+  AlarmClock, BadgeCheck, BarChart3, Bell, Calendar, Check, ClipboardList, CreditCard,
+  Download, Droplets, FileText, HandHeart, Handshake, HelpCircle, ImageIcon, Inbox,
+  Mail, MessageCircle, Newspaper, Phone, Search, Settings, Shield, ShieldCheck, Trash2,
+  Users, X, type LucideIcon,
+} from "@/components/icons";
 
 type Tab = "overview" | "requests" | "donors" | "contacts";
+
+// অ্যাডমিন কুইক-লিংক — আইকন + টোন
+const quickLinks: { href: string; icon: LucideIcon; label: string; tone: string }[] = [
+  { href: "/admin/settings", icon: Settings, label: "ওয়েবসাইট সেটিংস", tone: "bg-zinc-100 text-zinc-600" },
+  { href: "/admin/events", icon: Calendar, label: "ইভেন্ট", tone: "bg-brand-50 text-brand-600" },
+  { href: "/admin/blog", icon: FileText, label: "ব্লগ", tone: "bg-amber-50 text-amber-600" },
+  { href: "/admin/testimonials", icon: MessageCircle, label: "Testimonials", tone: "bg-violet-50 text-violet-600" },
+  { href: "/admin/committee", icon: Users, label: "কমিটি", tone: "bg-sky-50 text-sky-600" },
+  { href: "/admin/volunteers", icon: HandHeart, label: "স্বেচ্ছাসেবক", tone: "bg-emerald-50 text-emerald-600" },
+  { href: "/admin/broadcast", icon: Bell, label: "নোটিফিকেশন প্রেরণ", tone: "bg-blood-50 text-blood-600" },
+  { href: "/admin/reports", icon: BarChart3, label: "রিপোর্ট (PDF/CSV)", tone: "bg-indigo-50 text-indigo-600" },
+  { href: "/admin/activity", icon: ClipboardList, label: "অ্যাক্টিভিটি লগ", tone: "bg-zinc-100 text-zinc-600" },
+  { href: "/admin/donations", icon: Droplets, label: "রক্তদান রেকর্ড", tone: "bg-blood-50 text-blood-600" },
+  { href: "/admin/media-coverage", icon: Newspaper, label: "মিডিয়া কভারেজ", tone: "bg-cyan-50 text-cyan-700" },
+  { href: "/admin/donation-methods", icon: CreditCard, label: "ডোনেশন মেথড", tone: "bg-pink-50 text-pink-600" },
+  { href: "/admin/media", icon: ImageIcon, label: "মিডিয়া লাইব্রেরি", tone: "bg-fuchsia-50 text-fuchsia-600" },
+  { href: "/admin/faq", icon: HelpCircle, label: "FAQ", tone: "bg-teal-50 text-teal-600" },
+  { href: "/admin/partners", icon: Handshake, label: "পার্টনার", tone: "bg-orange-50 text-orange-600" },
+  { href: "/admin/import", icon: Inbox, label: "CSV Import", tone: "bg-lime-50 text-lime-700" },
+  { href: "/admin/trash", icon: Trash2, label: "ট্র্যাশ", tone: "bg-zinc-100 text-zinc-500" },
+  { href: "/admin/users", icon: Users, label: "User & Roles", tone: "bg-violet-50 text-violet-600" },
+  { href: "/admin/seo", icon: Search, label: "SEO Settings", tone: "bg-blue-50 text-blue-600" },
+];
 
 export default function AdminPage() {
   const supabase = createClient();
@@ -119,7 +148,7 @@ export default function AdminPage() {
   if (!authed)
     return (
       <div className="container-page py-20 text-center">
-        <p className="text-3xl">🛡️</p>
+        <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-50 text-brand-600"><Shield className="h-7 w-7" /></span>
         <p className="mt-2 font-medium text-ink">এই পেজ শুধু অ্যাডমিনদের জন্য।</p>
         <Link href="/" className="btn-outline mt-4">হোমে ফিরুন</Link>
       </div>
@@ -129,20 +158,25 @@ export default function AdminPage() {
     <div className="container-page py-10">
       <header className="mb-8 flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="font-display text-2xl font-extrabold tracking-tight text-ink">{role === "admin" ? "🛡️ অ্যাডমিন ড্যাশবোর্ড" : "🔹 মডারেটর ড্যাশবোর্ড"}</h1>
+          <h1 className="flex items-center gap-2 font-display text-2xl font-extrabold tracking-tight text-ink"><ShieldCheck className="h-6 w-6 text-brand-600" />{role === "admin" ? "অ্যাডমিন ড্যাশবোর্ড" : "মডারেটর ড্যাশবোর্ড"}</h1>
           <p className="text-sm text-ink/60">সমিতির সম্পূর্ণ ব্যবস্থাপনা এক জায়গায়।</p>
         </div>
         <div className="flex gap-2">
           <Link href="/" className="btn-outline">হোমে যান</Link>
-          {role === "admin" && <Link href="/admin/settings" className="btn-primary">⚙️ সেটিংস</Link>}
+          {role === "admin" && <Link href="/admin/settings" className="btn-primary"><Settings className="mr-1.5 inline h-4 w-4" />সেটিংস</Link>}
         </div>
       </header>
 
       <nav className="mb-6 flex flex-wrap gap-2">
-        {(["overview", "requests", "donors", "contacts"] as Tab[]).map((t) => (
-          <button key={t} onClick={() => setTab(t)}
-            className={`rounded-xl px-4 py-2 text-sm font-medium transition ${tab === t ? "bg-brand-600 text-white" : "bg-white text-ink/70 ring-1 ring-zinc-200 hover:bg-brand-50"}`}>
-            {t === "overview" ? "📊 ওভারভিউ" : t === "requests" ? `📋 অনুরোধ (${requests.length})` : t === "donors" ? `🩸 দাতা (${donors.length})` : `✉️ বার্তা (${contacts.length})`}
+        {([
+          { id: "overview" as Tab, icon: BarChart3, label: "ওভারভিউ" },
+          { id: "requests" as Tab, icon: ClipboardList, label: `অনুরোধ (${requests.length})` },
+          { id: "donors" as Tab, icon: Droplets, label: `দাতা (${donors.length})` },
+          { id: "contacts" as Tab, icon: Mail, label: `বার্তা (${contacts.length})` },
+        ]).map((t) => (
+          <button key={t.id} onClick={() => setTab(t.id)}
+            className={`flex items-center gap-1.5 rounded-xl px-4 py-2 text-sm font-medium transition ${tab === t.id ? "bg-brand-600 text-white" : "bg-white text-ink/70 ring-1 ring-zinc-200 hover:bg-brand-50"}`}>
+            <t.icon className="h-4 w-4" />{t.label}
           </button>
         ))}
       </nav>
@@ -150,34 +184,21 @@ export default function AdminPage() {
       {tab === "overview" && (
         <>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            <StatCard icon="🩸" label="মোট রক্তদাতা" value={stats.donors} color="bg-brand-50 text-brand-600" />
-            <StatCard icon="📋" label="মোট অনুরোধ" value={stats.requests} color="bg-amber-50 text-amber-600" />
-            <StatCard icon="⏳" label="চলমান অনুরোধ" value={stats.pending} color="bg-blood-50 text-blood-600" />
-            <StatCard icon="✅" label="সম্পন্ন" value={stats.completed} color="bg-success-50 text-success-700" />
-            <StatCard icon="✉️" label="যোগাযোগ বার্তা" value={stats.contacts} color="bg-violet-50 text-violet-600" />
-            <StatCard icon="🙋" label="স্বেচ্ছাসেবক" value={stats.volunteers} color="bg-sky-50 text-sky-600" />
+            <StatCard icon={Droplets} label="মোট রক্তদাতা" value={stats.donors} color="bg-brand-50 text-brand-600" />
+            <StatCard icon={ClipboardList} label="মোট অনুরোধ" value={stats.requests} color="bg-amber-50 text-amber-600" />
+            <StatCard icon={AlarmClock} label="চলমান অনুরোধ" value={stats.pending} color="bg-blood-50 text-blood-600" />
+            <StatCard icon={BadgeCheck} label="সম্পন্ন" value={stats.completed} color="bg-success-50 text-success-700" />
+            <StatCard icon={Mail} label="যোগাযোগ বার্তা" value={stats.contacts} color="bg-violet-50 text-violet-600" />
+            <StatCard icon={HandHeart} label="স্বেচ্ছাসেবক" value={stats.volunteers} color="bg-sky-50 text-sky-600" />
           </div>
 
           <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-            <Link href="/admin/settings" className="card-hover flex items-center gap-3 p-4 text-sm font-medium text-ink"><span className="text-xl">⚙️</span> ওয়েবসাইট সেটিংস</Link>
-            <Link href="/admin/events" className="card-hover flex items-center gap-3 p-4 text-sm font-medium text-ink"><span className="text-xl">📅</span> ইভেন্ট</Link>
-            <Link href="/admin/blog" className="card-hover flex items-center gap-3 p-4 text-sm font-medium text-ink"><span className="text-xl">📝</span> ব্লগ</Link>
-            <Link href="/admin/testimonials" className="card-hover flex items-center gap-3 p-4 text-sm font-medium text-ink"><span className="text-xl">💬</span> Testimonials</Link>
-            <Link href="/admin/committee" className="card-hover flex items-center gap-3 p-4 text-sm font-medium text-ink"><span className="text-xl">👥</span> কমিটি</Link>
-            <Link href="/admin/volunteers" className="card-hover flex items-center gap-3 p-4 text-sm font-medium text-ink"><span className="text-xl">🙋</span> স্বেচ্ছাসেবক</Link>
-            <Link href="/admin/broadcast" className="card-hover flex items-center gap-3 p-4 text-sm font-medium text-ink"><span className="text-xl">🔔</span> নোটিফিকেশন প্রেরণ</Link>
-            <Link href="/admin/reports" className="card-hover flex items-center gap-3 p-4 text-sm font-medium text-ink"><span className="text-xl">📊</span> রিপোর্ট (PDF/CSV)</Link>
-            <Link href="/admin/activity" className="card-hover flex items-center gap-3 p-4 text-sm font-medium text-ink"><span className="text-xl">📋</span> অ্যাক্টিভিটি লগ</Link>
-            <Link href="/admin/donations" className="card-hover flex items-center gap-3 p-4 text-sm font-medium text-ink"><span className="text-xl">🩸</span> রক্তদান রেকর্ড</Link>
-            <Link href="/admin/media-coverage" className="card-hover flex items-center gap-3 p-4 text-sm font-medium text-ink"><span className="text-xl">📰</span> মিডিয়া কভারেজ</Link>
-            <Link href="/admin/donation-methods" className="card-hover flex items-center gap-3 p-4 text-sm font-medium text-ink"><span className="text-xl">💳</span> ডোনেশন মেথড</Link>
-            <Link href="/admin/media" className="card-hover flex items-center gap-3 p-4 text-sm font-medium text-ink"><span className="text-xl">🖼️</span> মিডিয়া লাইব্রেরি</Link>
-            <Link href="/admin/faq" className="card-hover flex items-center gap-3 p-4 text-sm font-medium text-ink"><span className="text-xl">❓</span> FAQ</Link>
-            <Link href="/admin/partners" className="card-hover flex items-center gap-3 p-4 text-sm font-medium text-ink"><span className="text-xl">🤝</span> পার্টনার</Link>
-            <Link href="/admin/import" className="card-hover flex items-center gap-3 p-4 text-sm font-medium text-ink"><span className="text-xl">📥</span> CSV Import</Link>
-            <Link href="/admin/trash" className="card-hover flex items-center gap-3 p-4 text-sm font-medium text-ink"><span className="text-xl">🗑️</span> ট্র্যাশ</Link>
-            <Link href="/admin/users" className="card-hover flex items-center gap-3 p-4 text-sm font-medium text-ink"><span className="text-xl">👥</span> User & Roles</Link>
-            <Link href="/admin/seo" className="card-hover flex items-center gap-3 p-4 text-sm font-medium text-ink"><span className="text-xl">🔍</span> SEO Settings</Link>
+            {quickLinks.map((q) => (
+              <Link key={q.href} href={q.href} className="card-hover flex items-center gap-3 p-4 text-sm font-medium text-ink">
+                <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${q.tone}`}><q.icon className="h-4 w-4" /></span>
+                {q.label}
+              </Link>
+            ))}
           </div>
 
           <div className="card mt-6 p-6">
@@ -195,15 +216,15 @@ export default function AdminPage() {
       {tab === "requests" && (
         <div className="space-y-3">
           <div className="flex justify-end gap-2">
-            <button onClick={() => exportCSV("blood-requests.csv", requests)} className="btn-outline !py-2 text-xs">⬇️ CSV ডাউনলোড</button>
+            <button onClick={() => exportCSV("blood-requests.csv", requests)} className="btn-outline !py-2 text-xs"><Download className="mr-1 inline h-3.5 w-3.5" />CSV ডাউনলোড</button>
           </div>
           {/* Bulk action bar */}
           {selectedReqs.size > 0 && (
             <div className="flex items-center justify-between rounded-xl bg-brand-50 p-3">
               <span className="text-sm font-medium text-brand-700">{selectedReqs.size} টি নির্বাচিত</span>
               <div className="flex gap-2">
-                <button onClick={bulkApproveReqs} disabled={bulkBusy} className="btn-outline !py-1.5 text-xs text-success-700">✓ Bulk Approve</button>
-                <button onClick={bulkDeleteReqs} disabled={bulkBusy} className="btn-ghost !py-1.5 text-xs text-blood-600">🗑️ Bulk Delete</button>
+                <button onClick={bulkApproveReqs} disabled={bulkBusy} className="btn-outline !py-1.5 text-xs text-success-700"><Check className="mr-1 inline h-3.5 w-3.5" />Bulk Approve</button>
+                <button onClick={bulkDeleteReqs} disabled={bulkBusy} className="btn-ghost !py-1.5 text-xs text-blood-600"><Trash2 className="mr-1 inline h-3.5 w-3.5" />Bulk Delete</button>
               </div>
             </div>
           )}
@@ -222,7 +243,7 @@ export default function AdminPage() {
                       <BloodGroupBadge group={r.blood_group} />
                       <div>
                         <p className="font-semibold text-ink">{r.patient_name}</p>
-                        <p className="text-sm text-ink/60">{r.hospital}, {r.upazila} • {r.units_needed} ইউনিট • 📞 {r.contact_phone}</p>
+                        <p className="flex items-center gap-1 text-sm text-ink/60">{r.hospital}, {r.upazila} • {r.units_needed} ইউনিট • <Phone className="inline h-3 w-3" />{r.contact_phone}</p>
                       </div>
                     </div>
                     <StatusBadge status={(r as any).status ?? "pending"} />
@@ -241,11 +262,11 @@ export default function AdminPage() {
           {selectedDonors.size > 0 && (
             <div className="flex items-center justify-between border-b border-zinc-100 bg-brand-50 p-3">
               <span className="text-sm font-medium text-brand-700">{selectedDonors.size} জন নির্বাচিত</span>
-              <button onClick={bulkDeleteDonors} disabled={bulkBusy} className="btn-ghost !py-1.5 text-xs text-blood-600">🗑️ Bulk Delete</button>
+              <button onClick={bulkDeleteDonors} disabled={bulkBusy} className="btn-ghost !py-1.5 text-xs text-blood-600"><Trash2 className="mr-1 inline h-3.5 w-3.5" />Bulk Delete</button>
             </div>
           )}
           <div className="flex justify-end border-b border-zinc-100 p-3">
-            <button onClick={() => exportCSV("donors.csv", donors)} className="btn-outline !py-1.5 text-xs">⬇️ CSV ডাউনলোড</button>
+            <button onClick={() => exportCSV("donors.csv", donors)} className="btn-outline !py-1.5 text-xs"><Download className="mr-1 inline h-3.5 w-3.5" />CSV ডাউনলোড</button>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
@@ -259,7 +280,7 @@ export default function AdminPage() {
                 {donors.map((d) => (
                   <tr key={d.id} className={selectedDonors.has(d.id) ? "bg-brand-50/50" : ""}>
                     <td className="p-3"><input type="checkbox" checked={selectedDonors.has(d.id)} onChange={() => toggleDonor(d.id)} className="h-4 w-4 rounded border-zinc-300 text-brand-600" /></td>
-                    <td className="p-3 font-medium text-ink">{d.full_name}{d.is_verified && <span title="verified"> ✓</span>}{!d.approved && <span className="ml-1 rounded bg-amber-100 px-1.5 py-0.5 text-[10px] font-semibold text-amber-700">⏳ অপেক্ষমাণ</span>}</td>
+                    <td className="p-3 font-medium text-ink">{d.full_name}{d.is_verified && <BadgeCheck className="ml-1 inline h-3.5 w-3.5 text-sky-600" />}{!d.approved && <span className="ml-1 inline-flex items-center gap-0.5 rounded bg-amber-100 px-1.5 py-0.5 text-[10px] font-semibold text-amber-700"><AlarmClock className="h-2.5 w-2.5" />অপেক্ষমাণ</span>}</td>
                     <td className="p-3"><span className="font-semibold">{d.blood_group}</span></td>
                     <td className="p-3 text-ink/60">{d.upazila}</td>
                     <td className="p-3 text-ink/60">{d.phone}</td>
@@ -279,7 +300,7 @@ export default function AdminPage() {
             <div key={c.id} className="card p-5">
               <div className="flex justify-between gap-3">
                 <div><p className="font-semibold text-ink">{c.name}</p><p className="text-xs text-ink/50">{c.email} • {c.phone}</p></div>
-                <button onClick={() => deleteContact(c.id)} className="btn-ghost !px-2 !py-1 text-xs text-blood-600">✕</button>
+                <button onClick={() => deleteContact(c.id)} className="btn-ghost !px-2 !py-1 text-xs text-blood-600" aria-label="মুছুন"><X className="h-3.5 w-3.5" /></button>
               </div>
               <p className="mt-2 text-sm text-ink/70">{c.message}</p>
             </div>
@@ -290,8 +311,8 @@ export default function AdminPage() {
   );
 }
 
-function StatCard({ icon, label, value, color }: { icon: string; label: string; value: number; color: string }) {
-  return <div className="card p-5"><div className={`flex h-11 w-11 items-center justify-center rounded-xl text-xl ${color}`}>{icon}</div><p className="mt-3 text-3xl font-extrabold text-ink">{value.toLocaleString("bn-BD")}</p><p className="text-sm text-ink/60">{label}</p></div>;
+function StatCard({ icon: Icon, label, value, color }: { icon: LucideIcon; label: string; value: number; color: string }) {
+  return <div className="card p-5"><div className={`flex h-11 w-11 items-center justify-center rounded-xl ${color}`}><Icon className="h-5 w-5" /></div><p className="mt-3 text-3xl font-extrabold text-ink">{value.toLocaleString("bn-BD")}</p><p className="text-sm text-ink/60">{label}</p></div>;
 }
 function Empty({ text }: { text: string }) { return <div className="card p-10 text-center text-ink/50">{text}</div>; }
 
@@ -321,9 +342,9 @@ function DonorActions({ donor, onChanged }: { donor: Donor; onChanged: () => voi
   return (
     <div className="flex items-center justify-end gap-1">
       <button onClick={toggleApproved} className={donor.approved ? "btn-ghost !px-2 !py-1 text-xs text-success-700" : "btn-primary !px-2 !py-1 text-xs"}>
-        {donor.approved ? "✓ অনুমোদিত" : "অনুমোদন করুন"}
+        {donor.approved ? (<><Check className="mr-1 inline h-3.5 w-3.5" />অনুমোদিত</>) : "অনুমোদন করুন"}
       </button>
-      <button onClick={remove} className="btn-ghost !px-2 !py-1 text-xs text-blood-600">✕</button>
+      <button onClick={remove} className="btn-ghost !px-2 !py-1 text-xs text-blood-600" aria-label="মুছুন"><X className="h-3.5 w-3.5" /></button>
     </div>
   );
 }

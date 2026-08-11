@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { Calendar, MapPin, Shield, X } from "@/components/icons";
 
 export default function AdminEventsPage() {
   const supabase = createClient();
@@ -36,12 +37,12 @@ export default function AdminEventsPage() {
   async function remove(id: string) { await supabase.from("events").delete().eq("id", id); load(); }
 
   if (!ready) return <div className="container-page py-20 text-center text-ink/50">লোড হচ্ছে…</div>;
-  if (!authed) return <div className="container-page py-20 text-center"><p className="text-3xl">🛡️</p><p className="mt-2 font-medium text-ink">শুধু অ্যাডমিনদের জন্য।</p><Link href="/" className="btn-outline mt-4">হোমে ফিরুন</Link></div>;
+  if (!authed) return <div className="container-page py-20 text-center"><span className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-50 text-brand-600"><Shield className="h-7 w-7" /></span><p className="mt-2 font-medium text-ink">শুধু অ্যাডমিনদের জন্য।</p><Link href="/" className="btn-outline mt-4">হোমে ফিরুন</Link></div>;
 
   return (
     <div className="container-page py-10">
       <header className="mb-8 flex items-center justify-between">
-        <h1 className="font-display text-2xl font-extrabold tracking-tight text-ink">📅 ইভেন্ট ব্যবস্থাপনা</h1>
+        <h1 className="flex items-center gap-2 font-display text-2xl font-extrabold tracking-tight text-ink"><Calendar className="h-6 w-6 text-brand-600" />ইভেন্ট ব্যবস্থাপনা</h1>
         <Link href="/admin" className="btn-outline">← ড্যাশবোর্ড</Link>
       </header>
 
@@ -67,9 +68,9 @@ export default function AdminEventsPage() {
               <div>
                 <p className="text-sm font-bold text-brand-600">{new Date(e.event_date).toLocaleDateString("bn-BD", { day: "numeric", month: "short", year: "numeric" })}</p>
                 <h3 className="font-semibold text-ink">{e.title}</h3>
-                {e.location && <p className="text-xs text-ink/60">📍 {e.location}</p>}
+                {e.location && <p className="flex items-center gap-1 text-xs text-ink/60"><MapPin className="h-3 w-3" />{e.location}</p>}
               </div>
-              <button onClick={() => remove(e.id)} className="btn-ghost !px-2 !py-1 text-xs text-blood-600">✕</button>
+              <button onClick={() => remove(e.id)} className="btn-ghost !px-2 !py-1 text-xs text-blood-600"><X className="h-3.5 w-3.5" /></button>
             </div>
           </div>
         ))}

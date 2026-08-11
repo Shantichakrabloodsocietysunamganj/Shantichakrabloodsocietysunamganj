@@ -36,7 +36,7 @@ export const DICT: Record<string, { bn: string; en: string }> = {
   "hero.desc": { bn: "জরুরি মুহূর্তে সঠিক রক্তদাতা খুঁজে পাওয়া কঠিন। শান্তিচক্র ব্লাড সোসাইটি সিলেট বিভাগের নিবন্ধিত রক্তদাতাদের এক ছাদে এনে রক্তের অভাবে যেন কেউ প্রাণ হারায় না — তা নিশ্চিত করছে।", en: "Finding the right donor in an emergency is hard. Shantichakra Blood Society unites registered donors across Sylhet so no one loses a life for lack of blood." },
   "hero.selectGroup": { bn: "রক্তের গ্রুপ বেছে নিন", en: "Select blood group" },
   "hero.findDonors": { bn: "রক্তদাতা খুঁজুন", en: "Find Donors" },
-  "hero.emergency": { bn: "🚨 জরুরি রক্তের অনুরোধ", en: "🚨 Emergency Blood Request" },
+  "hero.emergency": { bn: "জরুরি রক্তের অনুরোধ", en: "Emergency Blood Request" },
   "hero.join": { bn: "রক্তদাতা হিসেবে যুক্ত হোন →", en: "Join as a Donor →" },
   "hero.donors": { bn: "নিবন্ধিত দাতা", en: "Registered Donors" },
   "hero.requests": { bn: "চলমান অনুরোধ", en: "Active Requests" },
@@ -103,7 +103,7 @@ export const DICT: Record<string, { bn: string; en: string }> = {
   "donors.allUpazilas": { bn: "সব উপজেলা", en: "All Upazilas" },
   "donors.search": { bn: "নাম / এলাকা / ফোন", en: "Name / Area / Phone" },
   "donors.available": { bn: "শুধু প্রস্তুত দাতা", en: "Available Only" },
-  "donors.verified": { bn: "শুধু ভেরিফায়েড ✓ দাতা", en: "Verified ✓ Only" },
+  "donors.verified": { bn: "শুধু ভেরিফায়েড দাতা", en: "Verified Only" },
   "donors.clearFilters": { bn: "ফিল্টার মুছুন", en: "Clear Filters" },
 
   // Requests page

@@ -5,6 +5,8 @@ import { createClient } from "@/lib/supabase/client";
 import { site } from "@/data/site";
 import { z } from "zod";
 import { t, useLangClient } from "@/lib/i18n";
+import { type LucideIcon } from "@/components/icons";
+import { AlertTriangle, Check, FacebookIcon, Mail, MapPin, Phone } from "@/components/icons";
 
 const schema = z.object({
   name: z.string().min(2, "min"),
@@ -64,11 +66,11 @@ export default function ContactPage() {
 
       <div className="mx-auto mt-10 grid max-w-4xl gap-8 lg:grid-cols-5">
         <div className="space-y-4 lg:col-span-2">
-          <InfoCard icon="📞" title={en ? "Phone" : "ফোন"} value={site.phone} />
-          <InfoCard icon="✉️" title={en ? "Email" : "ইমেইল"} value={site.email} />
-          <InfoCard icon="📍" title={en ? "Address" : "ঠিকানা"} value={site.address} />
+          <InfoCard icon={Phone} title={en ? "Phone" : "ফোন"} value={site.phone} />
+          <InfoCard icon={Mail} title={en ? "Email" : "ইমেইল"} value={site.email} />
+          <InfoCard icon={MapPin} title={en ? "Address" : "ঠিকানা"} value={site.address} />
           <a href={site.facebook} target="_blank" rel="noreferrer" className="card flex items-center gap-4 p-5 transition hover:border-brand-200 hover:bg-brand-50">
-            <span className="text-2xl">📘</span>
+            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#1877F2]/10 text-[#1877F2]"><FacebookIcon className="h-5 w-5" /></span>
             <div><p className="font-medium text-ink">Facebook</p><p className="text-sm text-brand-600">{en ? "Visit our page →" : "আমাদের পেজে লাইক দিন →"}</p></div>
           </a>
         </div>
@@ -76,13 +78,13 @@ export default function ContactPage() {
         <div className="lg:col-span-3">
           {done ? (
             <div className="card p-10 text-center">
-              <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-emerald-50 text-3xl">✓</div>
+              <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-emerald-50 text-emerald-600"><Check className="h-7 w-7" /></div>
               <h2 className="text-xl font-bold text-ink">{en ? "Thank you!" : "ধন্যবাদ!"}</h2>
               <p className="mt-1 text-ink/60">{en ? "Your message has been received." : "আপনার বার্তা পেয়েছি। শীঘ্রই যোগাযোগ করব।"}</p>
             </div>
           ) : (
             <form onSubmit={submit} className="card p-6 sm:p-8">
-              {serverError && (<div className="mb-5 rounded-xl bg-brand-50 p-3 text-sm font-medium text-brand-700">⚠️ {serverError}</div>)}
+              {serverError && (<div className="mb-5 flex items-center gap-1.5 rounded-xl bg-brand-50 p-3 text-sm font-medium text-brand-700"><AlertTriangle className="h-4 w-4 shrink-0" />{serverError}</div>)}
               <div className="grid gap-5 sm:grid-cols-2">
                 <div>
                   <label className="label">{en ? "Name *" : "নাম *"}</label>
@@ -113,10 +115,10 @@ export default function ContactPage() {
   );
 }
 
-function InfoCard({ icon, title, value }: { icon: string; title: string; value: string }) {
+function InfoCard({ icon: Icon, title, value }: { icon: LucideIcon; title: string; value: string }) {
   return (
     <div className="card flex items-start gap-4 p-5">
-      <span className="text-2xl">{icon}</span>
+      <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-brand-50 text-brand-600 ring-1 ring-brand-100"><Icon className="h-5 w-5" /></span>
       <div><p className="text-sm font-medium text-ink/50">{title}</p><p className="font-semibold text-ink">{value}</p></div>
     </div>
   );

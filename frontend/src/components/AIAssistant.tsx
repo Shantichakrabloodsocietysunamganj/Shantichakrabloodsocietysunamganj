@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { Bot, Volume2 } from "@/components/icons";
 
 type Msg = { from: "bot" | "user"; text: string; cta?: { label: string; href: string }; time: number };
 type Entry = { keys: string[]; bn: string; en: string; cta?: { bn: string; en: string; href: string }; followUp?: string[] };
@@ -18,23 +19,23 @@ const SHORTCUTS: Record<string, string> = {
 };
 
 const FOLLOWUPS: Record<string, string[]> = {
-  request: ["🔎 দাতা খুঁজুন", "📞 যোগাযোগ", "🩸 রক্তদাতা হব"],
-  donor: ["🩸 রক্তদাতা হব", "📞 যোগাযোগ", "📊 আমাদের অর্জন"],
-  become: ["📞 যোগাযোগ", "🔎 দাতা খুঁজুন", "📊 আমাদের অর্জন"],
-  contact: ["🩸 রক্তদাতা হব", "🔎 দাতা খুঁজুন", "🚨 রক্ত লাগবে"],
-  about: ["📊 আমাদের অর্জন", "🔊 শান্তির ভয়েস", "📰 মিডিয়া", "📅 কর্মসূচি"],
-  donate: ["📞 যোগাযোগ", "🙋 স্বেচ্ছাসেবক", "📊 আমাদের অর্জন"],
-  default: ["🩸 রক্ত লাগবে", "🔎 দাতা খুঁজুন", "🩸 রক্তদাতা হব", "🔊 শান্তির ভয়েস", "📞 যোগাযোগ", "📊 আমাদের অর্জন"],
+  request: ["দাতা খুঁজুন", "যোগাযোগ", "রক্তদাতা হব"],
+  donor: ["রক্তদাতা হব", "যোগাযোগ", "আমাদের অর্জন"],
+  become: ["যোগাযোগ", "দাতা খুঁজুন", "আমাদের অর্জন"],
+  contact: ["রক্তদাতা হব", "দাতা খুঁজুন", "রক্ত লাগবে"],
+  about: ["আমাদের অর্জন", "শান্তির ভয়েস", "মিডিয়া", "কর্মসূচি"],
+  donate: ["যোগাযোগ", "স্বেচ্ছাসেবক", "আমাদের অর্জন"],
+  default: ["রক্ত লাগবে", "দাতা খুঁজুন", "রক্তদাতা হব", "শান্তির ভয়েস", "যোগাযোগ", "আমাদের অর্জন"],
 };
 
 const KB: Entry[] = [
   { keys: ["ভয়েস", "voice", "কথা বলো", "শব্দ", "মহিলা ভয়েস", "নবনীতা", "তনিশা", "উচ্চারণ", "audio", "শুনব", "মেয়েদের ভয়েস", "শান্তির ভয়েস", "shanti's voice"],
-    bn: "🔊 আমার ভয়েস শুনতে যেকোনো মেসেজের নিচে 'শুনুন' বাটনে চাপ দিন। আমি বাংলাদেশি উচ্চারণে (bn-BD) Microsoft নবনীতা / তনিশা টাইপ সেরা মহিলা ভয়েসে কথা বলি!",
-    en: "🔊 To listen to my voice, click the 'Listen' button under any message. I speak in a natural female Bangladeshi Bengali voice!",
+    bn: "আমার ভয়েস শুনতে যেকোনো মেসেজের নিচে 'শুনুন' বাটনে চাপ দিন। আমি বাংলাদেশি উচ্চারণে (bn-BD) Microsoft নবনীতা / তনিশা টাইপ সেরা মহিলা ভয়েসে কথা বলি!",
+    en: "To listen to my voice, click the 'Listen' button under any message. I speak in a natural female Bangladeshi Bengali voice!",
     followUp: ["about"] },
   { keys: ["রক্ত লাগ", "রকত লাগ", "জরুরি", "রক্ত দরকার", "blood", "need", "emergency", "urgent", "প্রয়োজন", "মুমূর্ষু"],
-    bn: "🚨 জরুরি রক্ত? দ্রুত করুন:\n১) কল: 01626224878\n২) /request-blood-এ অনুরোধ পোস্ট করুন\n৩) /donors-এ দাতা খুঁজে কল করুন\n২৪/৭ আমরা পাশে আছি।",
-    en: "🚨 Urgent blood?\n1) Call: 01626224878\n2) Post on /request-blood\n3) Search /donors and call\nWe are here 24/7.",
+    bn: "জরুরি রক্ত? দ্রুত করুন:\n১) কল: 01626224878\n২) /request-blood-এ অনুরোধ পোস্ট করুন\n৩) /donors-এ দাতা খুঁজে কল করুন\n২৪/৭ আমরা পাশে আছি।",
+    en: "Urgent blood?\n1) Call: 01626224878\n2) Post on /request-blood\n3) Search /donors and call\nWe are here 24/7.",
     cta: { bn: "রক্তের অনুরোধ →", en: "Request blood →", href: "/request-blood" }, followUp: ["request"] },
   { keys: ["দাতা খুঁজ", "দাতা লাগ", "সার্চ", "find donor", "search", "where"],
     bn: "গ্রুপ + জেলা + উপজেলা দিয়ে প্রস্তুত দাতা খুঁজুন। সরাসরি কল/WhatsApp করা যায়। দাতা কার্ডে ৯০-দিন eligibility স্বয়ংক্রিয়ভাবে দেখায়।",
@@ -45,7 +46,7 @@ const KB: Entry[] = [
     en: "Fill /become-donor form — name, phone, group, area. Free. Live immediately. Auto-eligible after 90 days.",
     cta: { bn: "রক্তদাতা হোন →", en: "Become a donor →", href: "/become-donor" }, followUp: ["become"] },
   { keys: ["যোগাযোগ", "ফোন", "নম্বর", "মেইল", "contact", "phone", "email", "call"],
-    bn: "📞 01626224878\n✉️ shantichakrabloodsociety@gmail.com\nসভাপতি: আবু সালেহ | সাঃসঃ: রাহাত আহমেদ",
+    bn: "ফোন: 01626224878\nইমেইল: shantichakrabloodsociety@gmail.com\nসভাপতি: আবু সালেহ | সাঃসঃ: রাহাত আহমেদ",
     en: "Phone: 01626224878\nEmail: shantichakrabloodsociety@gmail.com",
     cta: { bn: "যোগাযোগ →", en: "Contact →", href: "/contact" }, followUp: ["contact"] },
   { keys: ["টাকা", "দান", "ডোনেশন", "সাহায্য করব", "donate", "support", "contribute"],
@@ -93,7 +94,7 @@ export default function AIAssistant() {
 
   const greet: Msg = {
     from: "bot",
-    text: en ? "Assalamu Alaikum! 👋 I'm Shanti 🤖, your AI helper. Need blood, find a donor, or have a question? I'm always here. Type / for shortcuts." : "আসসালামু আলাইকুম! 👋 আমি শান্তি 🤖 — আপনার AI সহকারী। রক্ত লাগলে, দাতা খুঁজতে, বা যেকোনো প্রশ্নে আমি সবসময় পাশে আছি। শর্টকাট: / দিয়ে শুরু করুন।",
+    text: en ? "Assalamu Alaikum! I'm Shanti, your AI helper. Need blood, find a donor, or have a question? I'm always here. Type / for shortcuts." : "আসসালামু আলাইকুম! আমি শান্তি — আপনার AI সহকারী। রক্ত লাগলে, দাতা খুঁজতে, বা যেকোনো প্রশ্নে আমি সবসময় পাশে আছি। শর্টকাট: / দিয়ে শুরু করুন।",
     time: Date.now(),
   };
   const [msgs, setMsgs] = useState<Msg[]>([greet]);
@@ -297,9 +298,9 @@ export default function AIAssistant() {
   const localReply = (q: string): Msg => {
     const t = q.toLowerCase();
     if (/^(hi|hello|hey|hii|hy|salam|salaam|assalam|namaskar|নমস্কার|হাই|সালাম|হ্যালো|হেলো|কেমন আছ)/.test(t))
-      return { from: "bot", text: en ? "Walaikum Assalam! 😊 How can I help? Need blood, find a donor, or become one?" : "ওয়ালাইকুম আসসালাম! 😊 বলুন — রক্ত লাগবে, দাতা খুঁজবেন, নাকি রক্তদাতা হবেন?", time: Date.now() };
+      return { from: "bot", text: en ? "Walaikum Assalam! How can I help? Need blood, find a donor, or become one?" : "ওয়ালাইকুম আসসালাম! বলুন — রক্ত লাগবে, দাতা খুঁজবেন, নাকি রক্তদাতা হবেন?", time: Date.now() };
     if (/(ধন্যবাদ|থ্যাংকস|thank|thnx|tnx|thanks)/.test(t))
-      return { from: "bot", text: en ? "You're welcome! 🤍 Donate blood, save lives." : "আপনাকেও ধন্যবাদ! 🤍 রক্ত দিন, জীবন বাঁচান।", time: Date.now() };
+      return { from: "bot", text: en ? "You're welcome! Donate blood, save lives." : "আপনাকেও ধন্যবাদ! রক্ত দিন, জীবন বাঁচান।", time: Date.now() };
     let best: { score: number; entry: Entry } | null = null;
     for (const entry of KB) { const score = entry.keys.reduce((s, k) => (t.includes(k.toLowerCase()) ? s + 1 : s), 0); if (score > 0 && (!best || score > best.score)) best = { score, entry }; }
     const e = best?.entry;
@@ -502,7 +503,7 @@ export default function AIAssistant() {
   };
 
   const clearChat = () => { setMsgs([greet]); setFollowUp(FOLLOWUPS.default); localStorage.removeItem("shanti-chat"); window.speechSynthesis?.cancel(); audioRefs.current.forEach(a => { a.pause(); a.currentTime = 0; }); audioRefs.current = []; setSpeakingIdx(null); speakRef.current = null; };
-  const SUGGESTIONS = en ? ["🩸 Need blood", "🔎 Find donor", "➕ Become donor", "🔊 Shanti's Voice", "📞 Contact", "📊 Impact"] : ["🩸 রক্ত লাগবে", "🔎 দাতা খুঁজুন", "➕ রক্তদাতা হব", "🔊 শান্তির ভয়েস", "📞 যোগাযোগ", "📊 অর্জন"];
+  const SUGGESTIONS = en ? ["Need blood", "Find donor", "Become donor", "Shanti's Voice", "Contact", "Impact"] : ["রক্ত লাগবে", "দাতা খুঁজুন", "রক্তদাতা হব", "শান্তির ভয়েস", "যোগাযোগ", "অর্জন"];
 
   return (
     <>
@@ -522,7 +523,7 @@ export default function AIAssistant() {
           {/* Header */}
           <div className="flex items-center justify-between bg-gradient-to-r from-violet-700 via-fuchsia-700 to-brand-700 px-4 py-3 text-white">
             <div className="flex items-center gap-3">
-              <span className="flex h-9 w-9 items-center justify-center rounded-full bg-white/15">🤖</span>
+              <span className="flex h-9 w-9 items-center justify-center rounded-full bg-white/15"><Bot className="h-5 w-5" /></span>
               <div>
                 <p className="text-sm font-bold leading-tight">{en ? "Shanti" : "শান্তি"}</p>
                 <p className="text-[10px] text-white/60">{en ? "AI Helper • Female Voice (bn-BD) • / for shortcuts" : "AI সহকারী • মহিলা ভয়েস (bn-BD) • / দিয়ে শর্টকাট"}</p>
@@ -542,7 +543,7 @@ export default function AIAssistant() {
           {voicePanelOpen && (
             <div className="max-h-48 origin-top animate-panel-in overflow-y-auto border-b border-zinc-100 bg-violet-50/60 px-3 py-2 text-xs">
               <div className="mb-1.5 flex items-center justify-between">
-                <p className="font-bold text-violet-800">{en ? "🔊 Voice" : "🔊 ভয়েস"}</p>
+                <p className="flex items-center gap-1 font-bold text-violet-800"><Volume2 className="h-3.5 w-3.5" />{en ? "Voice" : "ভয়েস"}</p>
                 <p className="text-[10px] text-zinc-500">{en ? "Bangla: Google female voice" : "বাংলা: Google মহিলা ভয়েস"}</p>
               </div>
               {en ? (
@@ -554,14 +555,14 @@ export default function AIAssistant() {
                       const isPinned = pinnedVoice === v.voiceURI || pinnedVoice === v.name;
                       return (
                         <button key={v.voiceURI} onClick={() => pinVoice(v.voiceURI)} className={`flex w-full items-center justify-between rounded-md px-2 py-1 text-left transition ${isPinned ? "bg-fuchsia-200 text-fuchsia-900" : "hover:bg-white text-zinc-700"}`}>
-                          <span className="truncate">{isPinned ? "✓ " : ""}{v.name}</span>
+                          <span className="truncate">{isPinned ? "• " : ""}{v.name}</span>
                           <span className="ml-2 shrink-0 text-[9px] text-zinc-400">{v.lang}</span>
                         </button>
                       );
                     })}
                     {englishVoices.length > 12 && <p className="pt-1 text-center text-[10px] text-zinc-400">+{englishVoices.length - 12} more…</p>}
                     {pinnedVoice && (
-                      <button onClick={() => pinVoice(pinnedVoice)} className="mt-1 w-full rounded-md bg-zinc-200 py-1 text-center text-[10px] text-zinc-600 hover:bg-zinc-300">{en ? "↺ Reset to auto" : "↺ অটোতে ফিরুন"}</button>
+                      <button onClick={() => pinVoice(pinnedVoice)} className="mt-1 w-full rounded-md bg-zinc-200 py-1 text-center text-[10px] text-zinc-600 hover:bg-zinc-300">{en ? "Reset to auto" : "অটোতে ফিরুন"}</button>
                     )}
                   </div>
                 )
@@ -589,7 +590,7 @@ export default function AIAssistant() {
                     >
                       {speakingIdx === i
                         ? (<><span className="flex items-end gap-0.5"><span className="block h-2.5 w-0.5 animate-pulse rounded-full bg-fuchsia-500" /><span className="block h-3.5 w-0.5 animate-pulse rounded-full bg-fuchsia-500" style={{ animationDelay: "0.15s" }} /><span className="block h-2 w-0.5 animate-pulse rounded-full bg-fuchsia-500" style={{ animationDelay: "0.3s" }} /></span> {en ? "Stop" : "থামুন"}</>)
-                        : "🔊 " + (en ? "Listen" : "শুনুন")}
+                        : (<><Volume2 className="h-3 w-3" />{en ? "Listen" : "শুনুন"}</>)}
                     </button>
                   )}
                 </div>
@@ -608,7 +609,7 @@ export default function AIAssistant() {
           {/* Follow-up suggestions */}
           <div className="flex flex-wrap gap-1.5 border-t border-zinc-100 bg-white px-2.5 pt-2">
             {(msgs.length <= 1 ? SUGGESTIONS : followUp).map((s) => (
-              <button key={s} onClick={() => send(s.replace(/^[^\s]+\s/, ""))} className="rounded-full bg-violet-50 px-2.5 py-1 text-[11px] font-medium text-violet-700 hover:bg-violet-100">{s}</button>
+              <button key={s} onClick={() => send(s)} className="rounded-full bg-violet-50 px-2.5 py-1 text-[11px] font-medium text-violet-700 hover:bg-violet-100">{s}</button>
             ))}
           </div>
 

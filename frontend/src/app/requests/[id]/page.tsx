@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import BloodGroupBadge from "@/components/BloodGroupBadge";
 import { notFound } from "next/navigation";
 import { site } from "@/data/site";
+import { Check, FacebookIcon, Phone, Siren, WhatsAppIcon, X } from "@/components/icons";
 
 export const metadata: Metadata = { title: "রক্তের অনুরোধ" };
 
@@ -42,7 +43,7 @@ export default async function RequestDetailPage({ params }: { params: { id: stri
           <div className="flex items-center justify-between bg-gradient-to-r from-brand-600 to-brand-500 px-6 py-4 text-white">
             <span className="inline-flex items-center gap-2 text-sm font-bold">
               {urgent && <span className="relative flex h-2.5 w-2.5"><span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-white opacity-75" /><span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-white" /></span>}
-              {urgent ? "🚨 জরুরি" : "রক্তের অনুরোধ"}
+              {urgent ? (<><Siren className="h-4 w-4" />জরুরি</>) : "রক্তের অনুরোধ"}
             </span>
             <StatusPill status={status} />
           </div>
@@ -87,19 +88,19 @@ export default async function RequestDetailPage({ params }: { params: { id: stri
                 const done = status !== "cancelled" && cur >= i;
                 return (
                   <div key={s.key} className="flex flex-1 flex-col items-center gap-1.5">
-                    <span className={`flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold ${done ? "bg-brand-600 text-white" : "bg-zinc-200 text-zinc-400"}`}>{done ? "✓" : i + 1}</span>
+                    <span className={`flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold ${done ? "bg-brand-600 text-white" : "bg-zinc-200 text-zinc-400"}`}>{done ? <Check className="h-3.5 w-3.5" /> : i + 1}</span>
                     <span className={`text-[11px] font-medium ${done ? "text-brand-600" : "text-ink/30"}`}>{s.label}</span>
                   </div>
                 );
               })}
-              {status === "cancelled" && <span className="ml-3 text-sm font-bold text-blood-600">✕ বাতিল</span>}
+              {status === "cancelled" && <span className="ml-3 inline-flex items-center gap-1 text-sm font-bold text-blood-600"><X className="h-4 w-4" />বাতিল</span>}
             </div>
 
             {/* CTAs */}
             <div className="mt-6 flex flex-wrap gap-3 border-t border-zinc-100 pt-5">
-              <a href={`tel:${(req as any).contact_phone}`} className="btn-primary">📞 কল করুন</a>
-              <a href={waUrl} target="_blank" rel="noreferrer" className="btn bg-[#25D366] text-white hover:opacity-90">💬 WhatsApp শেয়ার</a>
-              <a href={fbUrl} target="_blank" rel="noreferrer" className="btn bg-[#0084FF] text-white hover:opacity-90">📘 Facebook শেয়ার</a>
+              <a href={`tel:${(req as any).contact_phone}`} className="btn-primary"><Phone className="mr-1.5 inline h-4 w-4" />কল করুন</a>
+              <a href={waUrl} target="_blank" rel="noreferrer" className="btn bg-[#25D366] text-white hover:opacity-90"><WhatsAppIcon className="mr-1.5 inline h-4 w-4" />WhatsApp শেয়ার</a>
+              <a href={fbUrl} target="_blank" rel="noreferrer" className="btn bg-[#0084FF] text-white hover:opacity-90"><FacebookIcon className="mr-1.5 inline h-4 w-4" />Facebook শেয়ার</a>
             </div>
           </div>
         </div>

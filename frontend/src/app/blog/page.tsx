@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import SectionHeading from "@/components/ui/SectionHeading";
+import { FileText } from "@/components/icons";
 
 export const metadata: Metadata = { title: "ব্লগ ও খবর" };
 
@@ -24,7 +25,7 @@ export default async function BlogPage() {
           <p className="text-center text-sm text-ink/50">ব্লগ লোড করা যায়নি।</p>
         ) : posts.length === 0 ? (
           <div className="card p-12 text-center">
-            <p className="text-3xl">📝</p>
+            <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-brand-50 text-brand-600"><FileText className="h-6 w-6" /></span>
             <p className="mt-2 font-medium text-ink">এখনো কোনো পোস্ট নেই</p>
             <p className="mt-1 text-sm text-ink/60">শীঘ্রই নতুন খবর যোগ হবে।</p>
             <Link href="/" className="btn-outline mt-4">হোমে যান</Link>

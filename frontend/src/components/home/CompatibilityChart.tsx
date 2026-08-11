@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { BLOOD_GROUPS, BLOOD_COMPATIBILITY } from "@/data/constants";
 import type { Lang } from "@/lib/i18n";
+import { ArrowRight } from "@/components/icons";
+import { ArrowLeft } from "lucide-react";
 
 export default function CompatibilityChart({ lang = "bn" }: { lang?: Lang }) {
   const en = lang === "en";
@@ -35,7 +37,7 @@ export default function CompatibilityChart({ lang = "bn" }: { lang?: Lang }) {
       <div className="grid gap-4 p-5 pt-0 sm:grid-cols-2">
         <div className="rounded-2xl bg-success-50 p-5">
           <div className="flex items-center gap-2 text-success-700">
-            <span>➡️</span>
+            <ArrowRight className="h-4 w-4" />
             <h4 className="font-semibold">{en ? "Can donate to" : "এই গ্রুপ যাদেরকে দিতে পারে"}</h4>
           </div>
           <div className="mt-3 flex flex-wrap gap-2">
@@ -49,7 +51,7 @@ export default function CompatibilityChart({ lang = "bn" }: { lang?: Lang }) {
 
         <div className="rounded-2xl bg-brand-50 p-5">
           <div className="flex items-center gap-2 text-brand-700">
-            <span>⬅️</span>
+            <ArrowLeft className="h-4 w-4" />
             <h4 className="font-semibold">{en ? "Can receive from" : "এই গ্রুপ যাদের কাছ থেকে নিতে পারে"}</h4>
           </div>
           <div className="mt-3 flex flex-wrap gap-2">

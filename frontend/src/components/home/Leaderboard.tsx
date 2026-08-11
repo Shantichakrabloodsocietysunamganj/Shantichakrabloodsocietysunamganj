@@ -5,6 +5,8 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import BloodGroupBadge from "@/components/BloodGroupBadge";
 import type { Lang } from "@/lib/i18n";
+import { tierMeta, type TierKey } from "@/components/icons";
+import { TierBadge } from "@/components/icons";
 
 type Row = { id: string; full_name: string; blood_group: string; photo_url: string | null; units: number };
 
@@ -14,7 +16,7 @@ export default function Leaderboard({ lang }: { lang: Lang }) {
   const [items, setItems] = useState<Row[]>([]);
   const [loading, setLoading] = useState(true);
   const en = lang === "en";
-  const medals = ["🥇", "🥈", "🥉"];
+  const medals: TierKey[] = ["gold", "silver", "bronze"];
 
   useEffect(() => {
     (async () => {
@@ -65,7 +67,7 @@ export default function Leaderboard({ lang }: { lang: Lang }) {
       {items.map((d, i) => (
         <Link key={d.id} href={`/donor/${d.id}`} className="card-hover flex items-center gap-3 p-3">
           <span className="flex h-8 w-8 shrink-0 items-center justify-center font-display text-lg font-extrabold">
-            {i < 3 ? medals[i] : <span className="text-sm text-ink/40">{i + 1}</span>}
+            {i < 3 ? <TierBadge tier={medals[i]} className={`h-6 w-6 ${tierMeta[medals[i]].text}`} /> : <span className="text-sm text-ink/40">{i + 1}</span>}
           </span>
           {d.photo_url ? (
             // eslint-disable-next-line @next/next/no-img-element

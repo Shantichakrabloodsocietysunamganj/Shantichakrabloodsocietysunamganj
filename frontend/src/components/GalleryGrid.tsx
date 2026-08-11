@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { Search } from "@/components/icons";
 
 type Img = { id: string; image_url: string; title?: string | null };
 
@@ -42,7 +43,7 @@ export default function GalleryGrid({ images }: { images: Img[] }) {
             />
             {img.title && <figcaption className="p-3 text-sm font-medium text-ink">{img.title}</figcaption>}
             <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-black/0 opacity-0 transition-all duration-300 group-hover:bg-black/20 group-hover:opacity-100">
-              <span className="rounded-full bg-white/90 px-3 py-1.5 text-xs font-bold text-ink">🔍 দেখুন</span>
+              <span className="inline-flex items-center gap-1 rounded-full bg-white/90 px-3 py-1.5 text-xs font-bold text-ink"><Search className="h-3.5 w-3.5" />দেখুন</span>
             </div>
           </figure>
         ))}

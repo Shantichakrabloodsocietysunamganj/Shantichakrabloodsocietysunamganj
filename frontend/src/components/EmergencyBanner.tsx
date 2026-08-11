@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { Siren } from "@/components/icons";
 
 // জরুরি রক্তের অনুরোধ থাকলে উপরে পালসিং ব্যানার দেখায়
 export default function EmergencyBanner() {
@@ -37,7 +38,7 @@ export default function EmergencyBanner() {
         <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-white opacity-75" />
         <span className="relative inline-flex h-2 w-2 rounded-full bg-white" />
       </span>
-      🚨 {count} টি জরুরি রক্তের অনুরোধ অপেক্ষমাণ — দেখুন →
+      <Siren className="h-3.5 w-3.5" />{count} টি জরুরি রক্তের অনুরোধ অপেক্ষমাণ — দেখুন →
     </a>
   );
 }

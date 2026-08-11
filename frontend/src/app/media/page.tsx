@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import SectionHeading from "@/components/ui/SectionHeading";
 import Reveal from "@/components/Reveal";
 import { getLang } from "@/lib/i18n-server";
+import { Newspaper } from "@/components/icons";
 
 export const metadata: Metadata = { title: "মিডিয়া কভারেজ" };
 
@@ -47,7 +48,7 @@ export default async function MediaPage() {
                   // eslint-disable-next-line @next/next/no-img-element
                   <img src={m.thumbnail} alt={m.title} className="h-full w-full object-cover" loading="lazy" />
                 ) : (
-                  <div className="flex h-full items-center justify-center text-4xl">📰</div>
+                  <div className="flex h-full items-center justify-center text-brand-400"><Newspaper className="h-10 w-10" /></div>
                 )}
                 <span className="absolute left-3 top-3 rounded-full bg-white/90 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-brand-700">{m.source}</span>
               </div>

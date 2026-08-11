@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { Shield, Users, X } from "@/components/icons";
 
 export default function AdminCommitteePage() {
   const supabase = createClient();
@@ -48,7 +49,7 @@ export default function AdminCommitteePage() {
   async function remove(id: string) { await supabase.from("committee_members").delete().eq("id", id); load(); }
 
   if (!ready) return <div className="container-page py-20 text-center text-ink/50">লোড হচ্ছে…</div>;
-  if (!authed) return <div className="container-page py-20 text-center"><p className="text-3xl">🛡️</p><p className="mt-2 font-medium text-ink">শুধু অ্যাডমিনদের জন্য।</p><Link href="/" className="btn-outline mt-4">হোমে ফিরুন</Link></div>;
+  if (!authed) return <div className="container-page py-20 text-center"><span className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-50 text-brand-600"><Shield className="h-7 w-7" /></span><p className="mt-2 font-medium text-ink">শুধু অ্যাডমিনদের জন্য।</p><Link href="/" className="btn-outline mt-4">হোমে ফিরুন</Link></div>;
 
   const categories = ["founder", "advisor", "member"];
   const labels: Record<string, string> = { founder: "প্রতিষ্ঠাতা", advisor: "উপদেষ্টা", member: "কার্যনির্বাহী সদস্য" };
@@ -56,7 +57,7 @@ export default function AdminCommitteePage() {
   return (
     <div className="container-page py-10">
       <header className="mb-8 flex items-center justify-between">
-        <h1 className="font-display text-2xl font-extrabold tracking-tight text-ink">👥 কমিটি ব্যবস্থাপনা</h1>
+        <h1 className="flex items-center gap-2 font-display text-2xl font-extrabold tracking-tight text-ink"><Users className="h-6 w-6 text-brand-600" />কমিটি ব্যবস্থাপনা</h1>
         <Link href="/admin" className="btn-outline">← ড্যাশবোর্ড</Link>
       </header>
 
@@ -76,7 +77,7 @@ export default function AdminCommitteePage() {
             <img src={photoUrl} alt="preview" className="h-12 w-12 rounded-full object-cover" />
           )}
           <label className="btn-outline cursor-pointer">
-            {uploading ? "আপলোড…" : (photoUrl ? "✓ ছবি সেট" : "+ ছবি")}
+            {uploading ? "আপলোড…" : (photoUrl ? "ছবি সেট" : "+ ছবি")}
             <input type="file" accept="image/*" className="hidden" onChange={(e) => e.target.files?.[0] && uploadPhoto(e.target.files[0])} />
           </label>
           <button className="btn-primary">যোগ করুন</button>
@@ -102,7 +103,7 @@ export default function AdminCommitteePage() {
                     <p className="font-semibold text-ink">{m.name}</p>
                     <p className="text-xs text-brand-600">{m.role}</p>
                   </div>
-                  <button onClick={() => remove(m.id)} className="btn-ghost !px-2 !py-1 text-xs text-blood-600">✕</button>
+                  <button onClick={() => remove(m.id)} className="btn-ghost !px-2 !py-1 text-xs text-blood-600"><X className="h-3.5 w-3.5" /></button>
                 </div>
               ))}
             </div>

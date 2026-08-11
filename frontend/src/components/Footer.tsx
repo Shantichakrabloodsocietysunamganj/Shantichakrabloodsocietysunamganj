@@ -2,6 +2,8 @@ import Link from "next/link";
 import { site } from "@/data/site";
 import type { SiteSettings } from "@/lib/settings";
 import { t, type Lang } from "@/lib/i18n";
+import { Ambulance, Mail, MapPin, Phone } from "@/components/icons";
+import { Code2 } from "lucide-react";
 
 export default function Footer({ settings, lang }: { settings: SiteSettings; lang: Lang }) {
   const phone = settings.phone || site.phone;
@@ -46,7 +48,7 @@ export default function Footer({ settings, lang }: { settings: SiteSettings; lan
             <li><Link className="transition hover:text-white" href="/request-blood">{t("nav.needBlood", lang)}</Link></li>
             <li><Link className="transition hover:text-white" href="/become-donor">{t("nav.becomeDonor", lang)}</Link></li>
             <li><Link className="transition hover:text-white" href="/eligibility">{t("nav.eligibility", lang)}</Link></li>
-            <li><Link className="transition hover:text-white" href="/emergency">🚑 {t("nav.emergency", lang)}</Link></li>
+            <li><Link className="inline-flex items-center gap-1.5 transition hover:text-white" href="/emergency"><Ambulance className="h-3.5 w-3.5 text-blood-400" />{t("nav.emergency", lang)}</Link></li>
             <li><Link className="transition hover:text-white" href="/donate">{t("nav.donate", lang)}</Link></li>
           </ul>
         </div>
@@ -67,9 +69,9 @@ export default function Footer({ settings, lang }: { settings: SiteSettings; lan
         <div>
           <h4 className="text-sm font-semibold text-white">{t("footer.contact", lang)}</h4>
           <ul className="mt-4 space-y-2.5 text-sm text-slate-400">
-            <li className="flex gap-2">📍 <span>{address}</span></li>
-            <li className="flex gap-2">📞 <span>{phone}</span></li>
-            <li className="flex gap-2">✉️ <span className="break-all">{email}</span></li>
+            <li className="flex gap-2"><MapPin className="mt-0.5 h-4 w-4 shrink-0 text-slate-500" /><span>{address}</span></li>
+            <li className="flex gap-2"><Phone className="mt-0.5 h-4 w-4 shrink-0 text-slate-500" /><span>{phone}</span></li>
+            <li className="flex gap-2"><Mail className="mt-0.5 h-4 w-4 shrink-0 text-slate-500" /><span className="break-all">{email}</span></li>
           </ul>
           <a href={facebook} target="_blank" rel="noreferrer" className="mt-4 inline-flex items-center gap-1.5 rounded-lg bg-white/5 px-3 py-2 text-sm font-medium text-white ring-1 ring-white/10 transition hover:bg-white/10">
             {t("footer.join", lang)}
@@ -81,8 +83,8 @@ export default function Footer({ settings, lang }: { settings: SiteSettings; lan
         <div className="container-page flex flex-col items-center justify-between gap-3 py-5 text-xs text-slate-500 sm:flex-row">
           <p>© {new Date().getFullYear()} {site.name}। {t("footer.rights", lang)}</p>
           <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1">
-            <a href="https://www.rahatahmed.site/en" target="_blank" rel="noreferrer" className="font-semibold text-white hover:underline">
-              💻 Developed by Rahat Ahmed
+            <a href="https://www.rahatahmed.site/en" target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 font-semibold text-white hover:underline">
+              <Code2 className="h-3.5 w-3.5" />Developed by Rahat Ahmed
             </a>
             <span className="hidden sm:inline">•</span>
             <a href="https://www.rahatahmed.site/en/order" target="_blank" rel="noreferrer" className="hover:text-white hover:underline">

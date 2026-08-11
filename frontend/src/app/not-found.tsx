@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Droplets } from "@/components/icons";
 
 export default function NotFound() {
   return (
@@ -8,7 +9,7 @@ export default function NotFound() {
         <p className="font-display text-[7rem] font-extrabold leading-none tracking-tighter">
           <span className="bg-gradient-to-br from-brand-600 to-blood-600 bg-clip-text text-transparent">৪০৪</span>
         </p>
-        <div className="mx-auto -mt-2 flex h-16 w-16 items-center justify-center rounded-3xl bg-gradient-to-br from-brand-600 to-blood-700 text-3xl text-white shadow-glow">🩸</div>
+        <div className="mx-auto -mt-2 flex h-16 w-16 items-center justify-center rounded-3xl bg-gradient-to-br from-brand-600 to-blood-700 text-white shadow-glow"><Droplets className="h-8 w-8" /></div>
         <h1 className="mt-6 font-display text-2xl font-extrabold tracking-tight text-ink">পেজ পাওয়া যায়নি</h1>
         <p className="mx-auto mt-2 max-w-md text-ink/60">আপনি যে পেজটি খুঁজছেন সেটি এখানে নেই। হয়তো সরে গেছে বা আর নেই।</p>
         <div className="mt-6 flex flex-wrap justify-center gap-3">

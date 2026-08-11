@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { site } from "@/data/site";
+import { Printer } from "@/components/icons";
 
 export default function CertificatePage() {
   const supabase = createClient();
@@ -43,7 +44,7 @@ export default function CertificatePage() {
     <div className="container-page py-10">
       <div className="mb-4 flex justify-end print:hidden">
         <Link href="/dashboard" className="btn-outline !py-2 text-xs">← ড্যাশবোর্ড</Link>
-        <button onClick={() => window.print()} className="btn-primary ml-2 !py-2 text-xs">🖨️ সার্টিফিকেট ডাউনলোড/প্রিন্ট</button>
+        <button onClick={() => window.print()} className="btn-primary ml-2 !py-2 text-xs"><Printer className="mr-1.5 inline h-4 w-4" />সার্টিফিকেট ডাউনলোড/প্রিন্ট</button>
       </div>
 
       <div className="mx-auto max-w-3xl">

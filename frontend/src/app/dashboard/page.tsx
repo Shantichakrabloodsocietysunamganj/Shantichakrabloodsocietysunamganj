@@ -10,13 +10,14 @@ import { GridSkeleton } from "@/components/ui/Skeleton";
 import { upazilasOf } from "@/data/constants";
 import { bn, bnDate } from "@/lib/format";
 import type { Donor, BloodRequest } from "@/lib/types";
+import { AlarmClock, CheckCircle2, ClipboardList, Droplets, Heart, Medal, ShieldCheck, Siren, TierBadge, tierMeta, User, X, type TierKey } from "@/components/icons";
 
-// রক্তদানের সংখ্যা অনুযায়ী ব্যাজ
-function badgeOf(count: number): { icon: string; name: string; next: string | null } | null {
-  if (count >= 10) return { icon: "💎", name: "জীবনরক্ষা যোদ্ধা", next: null };
-  if (count >= 6) return { icon: "🥇", name: "প্রবীণ রক্তযোদ্ধা", next: `💎 পরবর্তী ব্যাজে আর ${bn(10 - count)} বার` };
-  if (count >= 3) return { icon: "🥈", name: "নিয়মিত রক্তযোদ্ধা", next: `🥇 পরবর্তী ব্যাজে আর ${bn(6 - count)} বার` };
-  if (count >= 1) return { icon: "🥉", name: "নব্য রক্তযোদ্ধা", next: `🥈 পরবর্তী ব্যাজে আর ${bn(3 - count)} বার` };
+// রক্তদানের সংখ্যা অনুযায়ী ব্যাজ (কাস্টম SVG টিয়ার)
+function badgeOf(count: number): { tier: TierKey; name: string; next: string | null } | null {
+  if (count >= 10) return { tier: "diamond", name: "জীবনরক্ষা যোদ্ধা", next: null };
+  if (count >= 6) return { tier: "gold", name: "প্রবীণ রক্তযোদ্ধা", next: `পরবর্তী ব্যাজে আর ${bn(10 - count)} বার` };
+  if (count >= 3) return { tier: "silver", name: "নিয়মিত রক্তযোদ্ধা", next: `পরবর্তী ব্যাজে আর ${bn(6 - count)} বার` };
+  if (count >= 1) return { tier: "bronze", name: "নব্য রক্তযোদ্ধা", next: `পরবর্তী ব্যাজে আর ${bn(3 - count)} বার` };
   return null;
 }
 
@@ -62,11 +63,11 @@ export default function DashboardPage() {
     <div className="container-page py-10">
       <header className="mb-8 flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 className="font-display text-2xl font-extrabold tracking-tight text-ink">স্বাগতম, {profile?.full_name ?? "রক্তদাতা"} 👋</h1>
+          <h1 className="font-display text-2xl font-extrabold tracking-tight text-ink">স্বাগতম, {profile?.full_name ?? "রক্তদাতা"}</h1>
           <p className="text-sm text-ink/60">আপনার ড্যাশবোর্ড থেকে প্রোফাইল, অনুরোধ ও রক্তদানের ইতিহাস দেখুন।</p>
         </div>
         <div className="flex gap-2">
-          {donor && <Link href="/certificate" className="btn-primary !py-2 text-sm">🏅 সার্টিফিকেট</Link>}
+          {donor && <Link href="/certificate" className="btn-primary !py-2 text-sm"><Medal className="mr-1.5 inline h-4 w-4" />সার্টিফিকেট</Link>}
           <Link href="/" className="btn-outline !py-2 text-sm">হোমে যান</Link>
         </div>
       </header>
@@ -80,14 +81,16 @@ export default function DashboardPage() {
               </span>
               <div>
                 <p className="font-semibold text-ink">{profile?.full_name}</p>
-                <p className="text-xs text-ink/50">{profile?.role === "admin" ? "🛡️ অ্যাডমিন" : "রক্তদাতা"}</p>
+                <p className="flex items-center gap-1 text-xs text-ink/50">{profile?.role === "admin" ? (<><ShieldCheck className="h-3.5 w-3.5 text-brand-600" />অ্যাডমিন</>) : "রক্তদাতা"}</p>
                 {(() => {
                   const b = badgeOf(donations.length);
-                  return b ? (
-                    <span className="mt-1.5 inline-flex items-center gap-1 rounded-full bg-amber-50 px-2 py-0.5 text-[11px] font-bold text-amber-700 ring-1 ring-amber-200">
-                      {b.icon} {b.name}
+                  if (!b) return null;
+                  const meta = tierMeta[b.tier];
+                  return (
+                    <span className={`mt-1.5 inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r px-2 py-0.5 text-[11px] font-bold ring-1 ${meta.bg} ${meta.text} ${meta.ring} ${meta.glow}`}>
+                      <TierBadge tier={b.tier} className="h-3.5 w-3.5" />{b.name}
                     </span>
-                  ) : null;
+                  );
                 })()}
               </div>
             </div>
@@ -105,12 +108,12 @@ export default function DashboardPage() {
             )}
           </div>
           <nav className="card overflow-hidden">
-            <TabBtn active={tab === "profile"} onClick={() => setTab("profile")}>👤 আমার প্রোফাইল</TabBtn>
+            <TabBtn active={tab === "profile"} onClick={() => setTab("profile")}><User className="mr-2 inline h-4 w-4 opacity-60" />আমার প্রোফাইল</TabBtn>
             <TabBtn active={tab === "donations"} onClick={() => setTab("donations")}>
-              🩸 আমার রক্তদান {donations.length > 0 && <span className="ml-1 rounded-full bg-brand-100 px-1.5 text-xs text-brand-700">{donations.length}</span>}
+              <Droplets className="mr-2 inline h-4 w-4 opacity-60" />আমার রক্তদান {donations.length > 0 && <span className="ml-1 rounded-full bg-brand-100 px-1.5 text-xs text-brand-700">{donations.length}</span>}
             </TabBtn>
             <TabBtn active={tab === "requests"} onClick={() => setTab("requests")}>
-              📋 আমার অনুরোধ {requests.length > 0 && <span className="ml-1 rounded-full bg-brand-100 px-1.5 text-xs text-brand-700">{requests.length}</span>}
+              <ClipboardList className="mr-2 inline h-4 w-4 opacity-60" />আমার অনুরোধ {requests.length > 0 && <span className="ml-1 rounded-full bg-brand-100 px-1.5 text-xs text-brand-700">{requests.length}</span>}
             </TabBtn>
           </nav>
         </aside>
@@ -136,7 +139,7 @@ function TabBtn({ active, onClick, children }: { active: boolean; onClick: () =>
 function NoDonor() {
   return (
     <div className="card p-10 text-center">
-      <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-brand-50 text-2xl">🩸</div>
+      <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-brand-50 text-brand-600"><Droplets className="h-7 w-7" /></div>
       <p className="font-medium text-ink">আপনি এখনো রক্তদাতা হিসেবে নিবন্ধন করেননি</p>
       <p className="mt-1 text-sm text-ink/60">রক্তদাতা হিসেবে নিবন্ধন করে একটি জীবন বাঁচানোর অংশীদার হোন।</p>
       <Link href="/become-donor" className="btn-primary mt-5">রক্তদাতা হিসেবে নিবন্ধন করুন</Link>
@@ -162,12 +165,12 @@ function NextDonationCard({ donor, donations }: { donor: Donor; donations: any[]
   if (dates.length === 0) {
     return (
       <div className="card border-l-4 border-l-success-500 p-5">
-        <p className="font-semibold text-ink">✅ আপনি রক্তদানের জন্য প্রস্তুত</p>
+        <p className="flex items-center gap-1.5 font-semibold text-ink"><CheckCircle2 className="h-5 w-5 text-emerald-600" />আপনি রক্তদানের জন্য প্রস্তুত</p>
         <p className="mt-1 text-sm leading-relaxed text-ink/60">
           এখনো কোনো পূর্বের রক্তদানের তারিখ নেই। রক্তদানের পর তারিখটি নিচের ফর্মে যুক্ত করুন — তাহলে এখানে পরবর্তী দিনের কাউন্টডাউন দেখাবে।
         </p>
-        <Link href="/eligibility" className="mt-3 inline-block text-sm font-semibold text-brand-600 hover:underline">
-          🩸 যোগ্যতা যাচাই করুন →
+        <Link href="/eligibility" className="mt-3 inline-flex items-center gap-1 text-sm font-semibold text-brand-600 hover:underline">
+          <Droplets className="h-3.5 w-3.5" />যোগ্যতা যাচাই করুন →
         </Link>
       </div>
     );
@@ -183,12 +186,12 @@ function NextDonationCard({ donor, donations }: { donor: Donor; donations: any[]
   if (daysLeft <= 0) {
     return (
       <div className="card border-l-4 border-l-success-500 p-5">
-        <p className="font-semibold text-ink">✅ আপনি আবার রক্ত দিতে প্রস্তুত!</p>
+        <p className="flex items-center gap-1.5 font-semibold text-ink"><CheckCircle2 className="h-5 w-5 text-emerald-600" />আপনি আবার রক্ত দিতে প্রস্তুত!</p>
         <p className="mt-1 text-sm leading-relaxed text-ink/60">
           সর্বশেষ রক্তদান ({bnDate(new Date(last))})-এর নিরাপদ ব্যবধান ({genderName(donor.gender)} {bn(interval)} দিন) পূর্ণ হয়েছে।
         </p>
         <Link href="/requests" className="btn-primary mt-4 !py-2 text-sm">
-          🚨 জরুরি অনুরোধ দেখুন →
+          <Siren className="mr-1.5 inline h-4 w-4" />জরুরি অনুরোধ দেখুন →
         </Link>
       </div>
     );
@@ -197,7 +200,7 @@ function NextDonationCard({ donor, donations }: { donor: Donor; donations: any[]
   return (
     <div className="card border-l-4 border-l-amber-400 p-5">
       <div className="flex items-center justify-between gap-3">
-        <p className="font-semibold text-ink">⏳ পরবর্তী রক্তদানের কাউন্টডাউন</p>
+        <p className="flex items-center gap-1.5 font-semibold text-ink"><AlarmClock className="h-5 w-5 text-amber-500" />পরবর্তী রক্তদানের কাউন্টডাউন</p>
         <span className="rounded-full bg-amber-50 px-2.5 py-1 text-xs font-bold text-amber-700 ring-1 ring-amber-200">
           {bn(daysLeft)} দিন বাকি
         </span>
@@ -261,7 +264,9 @@ function DonorProfile({ donor, donations, onChanged }: { donor: Donor; donations
           </button>
         </div>
         <p className="mt-2 text-sm text-ink/60">
-          {available ? "🟢 আপনি বর্তমানে রক্তদানে প্রস্তুত। দাতা তালিকায় প্রাধান্য পাবেন।" : "⚪ আপনি এই মুহূর্তে অনুপস্থিত।"}
+          {available
+            ? (<><span className="mr-1.5 inline-block h-2 w-2 rounded-full bg-emerald-500" />আপনি বর্তমানে রক্তদানে প্রস্তুত। দাতা তালিকায় প্রাধান্য পাবেন।</>)
+            : (<><span className="mr-1.5 inline-block h-2 w-2 rounded-full bg-zinc-400" />আপনি এই মুহূর্তে অনুপস্থিত।</>)}
         </p>
       </div>
 
@@ -298,7 +303,7 @@ function MyDonations({ donations, hasDonor }: { donations: any[]; hasDonor: bool
   if (donations.length === 0)
     return (
       <div className="card p-10 text-center text-ink/60">
-        <p className="text-3xl">🩸</p>
+        <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-blood-50 text-blood-500"><Droplets className="h-6 w-6" /></span>
         <p className="mt-2 font-medium text-ink">এখনো আপনার কোনো রক্তদানের রেকর্ড নেই</p>
         <p className="mt-1 text-sm">রক্তদানের পর অ্যাডমিন এটি রেকর্ড করলে এখানে দেখা যাবে।</p>
       </div>
@@ -317,7 +322,7 @@ function MyDonations({ donations, hasDonor }: { donations: any[]; hasDonor: bool
               <p className="font-medium text-ink">{d.units} ইউনিট রক্তদান</p>
               <p className="text-xs text-ink/50">{new Date(d.donated_at).toLocaleDateString("bn-BD", { day: "numeric", month: "long", year: "numeric" })}{d.note && ` • ${d.note}`}</p>
             </div>
-            <span className="text-2xl">❤️</span>
+            <Heart className="h-5 w-5 fill-blood-500 text-blood-500" />
           </div>
         ))}
       </div>
@@ -345,7 +350,7 @@ function MyRequests({ requests, onChanged }: { requests: BloodRequest[]; onChang
             <StatusBadge status={(r as any).status ?? "pending"} />
           </div>
           {["pending", "approved"].includes((r as any).status ?? "pending") && (
-            <button onClick={() => cancel(r.id)} className="btn-ghost mt-3 !px-3 !py-1.5 text-xs text-blood-600">✕ বাতিল করুন</button>
+            <button onClick={() => cancel(r.id)} className="btn-ghost mt-3 !px-3 !py-1.5 text-xs text-blood-600"><X className="mr-1 inline h-3.5 w-3.5" />বাতিল করুন</button>
           )}
         </div>
       ))}

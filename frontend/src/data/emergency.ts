@@ -24,10 +24,10 @@ export type Facility = {
 
 // --- জাতীয় জরুরি হটলাইন ---
 export const nationalHotlines: Hotline[] = [
-  { name: "জাতীয় জরুরি সেবা", number: "999", desc: "পুলিশ, ফায়ার সার্ভিস ও অ্যাম্বুলেন্স — ২৪ ঘণ্টা", icon: "🚨" },
-  { name: "শাস্থ্য বাতায়ন", number: "16263", desc: "সরকারি স্বাস্থ্য সেবা ও ডাক্তারের তথ্য", icon: "🩺" },
-  { name: "আইইডিসিআর", number: "10655", desc: "রোগতত্ত্ব, রোগ নিয়ন্ত্রণ ও গবেষণা প্রতিষ্ঠান", icon: "🧫" },
-  { name: "জরুরি সহায়তা", number: "109", desc: "নারী ও শিশু নির্যাতন প্রতিরোধ হেল্পলাইন", icon: "🛡️" },
+  { name: "জাতীয় জরুরি সেবা", number: "999", desc: "পুলিশ, ফায়ার সার্ভিস ও অ্যাম্বুলেন্স — ২৪ ঘণ্টা", icon: "siren" },
+  { name: "শাস্থ্য বাতায়ন", number: "16263", desc: "সরকারি স্বাস্থ্য সেবা ও ডাক্তারের তথ্য", icon: "stethoscope" },
+  { name: "আইইডিসিআর", number: "10655", desc: "রোগতত্ত্ব, রোগ নিয়ন্ত্রণ ও গবেষণা প্রতিষ্ঠান", icon: "flask" },
+  { name: "জরুরি সহায়তা", number: "109", desc: "নারী ও শিশু নির্যাতন প্রতিরোধ হেল্পলাইন", icon: "shield" },
 ];
 
 // --- সুনামগঞ্জ জেলা ---
@@ -132,7 +132,14 @@ export const ambulanceSteps: { title: string; desc: string }[] = [
 ];
 
 export const facilityTypeLabel: Record<FacilityType, string> = {
-  govt: "🏥 সরকারি",
-  private: "🏨 বেসরকারি",
-  org: "🤝 সংগঠন",
+  govt: "সরকারি",
+  private: "বেসরকারি",
+  org: "সংগঠন",
+};
+
+// icons.tsx-এর DataIcon key
+export const facilityTypeIcon: Record<FacilityType, string> = {
+  govt: "hospital",
+  private: "building",
+  org: "handshake",
 };

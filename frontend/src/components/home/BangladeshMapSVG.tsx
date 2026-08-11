@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import bdData from "@/data/geo/bangladesh.json";
+import { CheckCircle2 } from "@/components/icons";
 
 // REAL outline (world-atlas natural-earth). Bounds + latitude-corrected projection.
 const LNG0 = 88.02, LNG1 = 92.64, LAT0 = 20.74, LAT1 = 26.62, CLAT = 23.7;
@@ -233,7 +234,7 @@ export default function BangladeshMapSVG() {
           onClick={() => setIs3D(!is3D)}
           className="rounded-lg border border-white/20 bg-white/10 px-2.5 py-1 text-[11px] font-bold text-white transition hover:bg-white/20 backdrop-blur-sm"
         >
-          {is3D ? "📐 3D Perspective" : "🗺️ 2D View"}
+          {is3D ? "3D Perspective" : "2D View"}
         </button>
       </div>
 
@@ -427,15 +428,15 @@ export default function BangladeshMapSVG() {
         {hoveredDiv ? (
           <div className="rounded-xl border border-brand-300/30 bg-brand-950/80 px-3.5 py-1.5 backdrop-blur-md transition-all shadow-lg">
             <p className="font-bold text-white flex items-center gap-1.5 justify-center">
-              <span>{hoveredDiv.isActive ? "🟢" : "🔜"}</span>
+              {hoveredDiv.isActive ? <span className="inline-block h-2 w-2 rounded-full bg-emerald-400" /> : <span className="rounded bg-amber-400/20 px-1 text-[9px] font-bold text-amber-300">শীঘ্রই</span>}
               <span>{hoveredDiv.nameBn} বিভাগ ({hoveredDiv.nameEn})</span>
             </p>
             <p className="mt-0.5 text-[11px] text-brand-200/90">{hoveredDiv.statusBn}</p>
           </div>
         ) : (
           <div className="transition-all">
-            <p className="font-bold text-white">✅ সিলেট বিভাগ সম্পূর্ণ সক্রিয় (৮টি বিভাগ চিহ্নিত)</p>
-            <p className="mt-0.5 text-brand-200/70">🔜 পরবর্তী লক্ষ্য: সারা বাংলাদেশে রক্তসেবা সম্প্রসারণ</p>
+            <p className="flex items-center gap-1.5 font-bold text-white"><CheckCircle2 className="h-4 w-4 text-emerald-400" />সিলেট বিভাগ সম্পূর্ণ সক্রিয় (৮টি বিভাগ চিহ্নিত)</p>
+            <p className="mt-0.5 text-brand-200/70">পরবর্তী লক্ষ্য: সারা বাংলাদেশে রক্তসেবা সম্প্রসারণ</p>
           </div>
         )}
       </div>

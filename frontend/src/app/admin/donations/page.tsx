@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import BloodGroupBadge from "@/components/BloodGroupBadge";
 import { logActivity } from "@/lib/activity";
+import { Droplets, Shield, X } from "@/components/icons";
 
 export default function AdminDonationsPage() {
   const supabase = createClient();
@@ -57,12 +58,12 @@ export default function AdminDonationsPage() {
   }
 
   if (!ready) return <div className="container-page py-20 text-center text-ink/50">লোড হচ্ছে…</div>;
-  if (!authed) return <div className="container-page py-20 text-center"><p className="text-3xl">🛡️</p><p className="mt-2 font-medium text-ink">শুধু অ্যাডমিনদের জন্য।</p><Link href="/" className="btn-outline mt-4">হোমে ফিরুন</Link></div>;
+  if (!authed) return <div className="container-page py-20 text-center"><span className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-50 text-brand-600"><Shield className="h-7 w-7" /></span><p className="mt-2 font-medium text-ink">শুধু অ্যাডমিনদের জন্য।</p><Link href="/" className="btn-outline mt-4">হোমে ফিরুন</Link></div>;
 
   return (
     <div className="container-page py-10">
       <header className="mb-8 flex items-center justify-between">
-        <h1 className="font-display text-2xl font-extrabold tracking-tight text-ink">🩸 রক্তদানের রেকর্ড</h1>
+        <h1 className="flex items-center gap-2 font-display text-2xl font-extrabold tracking-tight text-ink"><Droplets className="h-6 w-6 text-brand-600" />রক্তদানের রেকর্ড</h1>
         <Link href="/admin" className="btn-outline">← ড্যাশবোর্ড</Link>
       </header>
 
@@ -90,7 +91,7 @@ export default function AdminDonationsPage() {
                 <p className="text-xs text-ink/50">{new Date(it.donated_at).toLocaleDateString("bn-BD", { day: "numeric", month: "long", year: "numeric" })}{it.note && ` • ${it.note}`}</p>
               </div>
             </div>
-            <button onClick={() => remove(it.id)} className="btn-ghost !px-2 !py-1 text-xs text-blood-600">✕</button>
+            <button onClick={() => remove(it.id)} className="btn-ghost !px-2 !py-1 text-xs text-blood-600"><X className="h-3.5 w-3.5" /></button>
           </div>
         ))}
         {items.length === 0 && <p className="text-center text-sm text-ink/50">এখনো কোনো রক্তদান রেকর্ড নেই।</p>}

@@ -7,6 +7,7 @@ import { createClient } from "@/lib/supabase/client";
 import { exportCSV } from "@/lib/csv";
 import type { BloodRequest, Donor } from "@/lib/types";
 import { site } from "@/data/site";
+import { BarChart3, Printer, Shield } from "@/components/icons";
 
 export default function AdminReportsPage() {
   const supabase = createClient();
@@ -34,19 +35,19 @@ export default function AdminReportsPage() {
   useEffect(() => { load(); }, [load]);
 
   if (!ready) return <div className="container-page py-20 text-center text-ink/50">লোড হচ্ছে…</div>;
-  if (!authed) return <div className="container-page py-20 text-center"><p className="text-3xl">🛡️</p><p className="mt-2 font-medium text-ink">শুধু অ্যাডমিনদের জন্য।</p><Link href="/" className="btn-outline mt-4">হোমে ফিরুন</Link></div>;
+  if (!authed) return <div className="container-page py-20 text-center"><span className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-50 text-brand-600"><Shield className="h-7 w-7" /></span><p className="mt-2 font-medium text-ink">শুধু অ্যাডমিনদের জন্য।</p><Link href="/" className="btn-outline mt-4">হোমে ফিরুন</Link></div>;
 
   const completed = requests.filter((r) => (r as any).status === "completed").length;
 
   return (
     <div className="container-page py-10">
       <header className="mb-6 flex flex-wrap items-center justify-between gap-3 print:hidden">
-        <h1 className="font-display text-2xl font-extrabold tracking-tight text-ink">📊 রিপোর্ট</h1>
+        <h1 className="flex items-center gap-2 font-display text-2xl font-extrabold tracking-tight text-ink"><BarChart3 className="h-6 w-6 text-brand-600" />রিপোর্ট</h1>
         <div className="flex flex-wrap gap-2">
           <Link href="/admin" className="btn-outline">← ড্যাশবোর্ড</Link>
           <button onClick={() => exportCSV("donors.csv", donors)} className="btn-outline !py-2 text-xs">দাতা CSV</button>
           <button onClick={() => exportCSV("blood-requests.csv", requests)} className="btn-outline !py-2 text-xs">অনুরোধ CSV</button>
-          <button onClick={() => window.print()} className="btn-primary !py-2 text-xs">🖨️ PDF হিসেবে সেভ করুন</button>
+          <button onClick={() => window.print()} className="btn-primary !py-2 text-xs"><Printer className="mr-1.5 inline h-4 w-4" />PDF হিসেবে সেভ করুন</button>
         </div>
       </header>
 

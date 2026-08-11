@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useCallback, useContext, useState, type ReactNode } from "react";
+import { AlertTriangle, Check } from "@/components/icons";
 
 type ToastType = "success" | "error" | "info";
 type Toast = { id: number; type: ToastType; msg: string };
@@ -20,7 +21,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
     setTimeout(() => setToasts((t) => t.filter((x) => x.id !== id)), 3200);
   }, []);
 
-  const icons: Record<ToastType, string> = { success: "✓", error: "⚠️", info: "ℹ️" };
+  const icons: Record<ToastType, ReactNode> = { success: <Check className="h-4 w-4" />, error: <AlertTriangle className="h-4 w-4" />, info: <AlertTriangle className="h-4 w-4" /> };
   const colors: Record<ToastType, string> = {
     success: "bg-success-500",
     error: "bg-blood-600",

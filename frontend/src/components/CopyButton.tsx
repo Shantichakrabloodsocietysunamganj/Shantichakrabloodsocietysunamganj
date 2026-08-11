@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Check, ClipboardList } from "@/components/icons";
 
 export default function CopyButton({ text, label = "কপি করুন" }: { text: string; label?: string }) {
   const [copied, setCopied] = useState(false);
@@ -31,7 +32,7 @@ export default function CopyButton({ text, label = "কপি করুন" }: {
           : "bg-brand-600 text-white hover:bg-brand-700"
       }`}
     >
-      {copied ? "✓ কপি হয়েছে" : `📋 ${label}`}
+      {copied ? (<><Check className="mr-1 inline h-3.5 w-3.5" />কপি হয়েছে</>) : (<><ClipboardList className="mr-1 inline h-3.5 w-3.5" />{label}</>)}
     </button>
   );
 }

@@ -8,6 +8,7 @@ import type { Donor } from "@/lib/types";
 import DonorCard from "@/components/DonorCard";
 import Reveal from "@/components/Reveal";
 import { t, useLangClient } from "@/lib/i18n";
+import { AlertTriangle, Droplets } from "@/components/icons";
 
 export default function DonorsPage() {
   return (
@@ -141,7 +142,7 @@ function DonorsContent() {
       <div className="mt-8">
         {error ? (
           <div className="card p-10 text-center">
-            <p className="text-3xl">⚠️</p>
+            <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-amber-50 text-amber-500"><AlertTriangle className="h-6 w-6" /></span>
             <p className="mt-2 font-medium text-zinc-800">{lang === "en" ? "Failed to load" : "তালিকা আনা যায়নি"}</p>
             <p className="mt-1 text-sm text-zinc-500">{error}</p>
           </div>
@@ -151,7 +152,7 @@ function DonorsContent() {
           </div>
         ) : donors.length === 0 ? (
           <div className="card p-12 text-center">
-            <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-brand-50 text-2xl">🩸</div>
+            <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-brand-50 text-brand-600"><Droplets className="h-7 w-7" /></div>
             <p className="font-medium text-zinc-800">{hasFilter ? (lang === "en" ? "No donors match these filters" : "এই ফিল্টারে কোনো দাতা নেই") : (lang === "en" ? "No donors yet" : "এখনো কেউ নিবন্ধন করেননি")}</p>
           </div>
         ) : (

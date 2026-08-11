@@ -7,6 +7,7 @@ import { createClient } from "@/lib/supabase/client";
 import { BLOOD_GROUPS, DISTRICTS, upazilasOf } from "@/data/constants";
 import { useLangClient } from "@/lib/i18n";
 import { scrollToPageTop } from "@/lib/motion";
+import { AlertTriangle, BloodDropIcon, Stethoscope } from "@/components/icons";
 
 const schema = z.object({
   patient_name: z.string().min(2),
@@ -68,7 +69,7 @@ export default function RequestBloodPage() {
   if (done) {
     return (
       <div className="container-page py-20"><div className="mx-auto max-w-md card p-10 text-center">
-        <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-brand-50 text-3xl">🩸</div>
+        <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-blood-50"><BloodDropIcon className="h-9 w-9" /></div>
         <h1 className="text-2xl font-bold text-zinc-900">{en ? "Request Posted" : "অনুরোধটি পোস্ট হয়েছে"}</h1>
         <p className="mt-2 text-zinc-600">{en ? "Your blood request is visible to all donors across Sylhet." : "আপনার রক্তের অনুরোধ সারা সিলেট বিভাগের দাতাদের কাছে দৃশ্যমান।"}</p>
         <div className="mt-6 flex flex-col gap-3"><Link href="/donors" className="btn-primary">{en ? "Find Donors" : "এখনই রক্তদাতা খুঁজুন"}</Link><Link href="/requests" className="btn-ghost">{en ? "All Requests" : "সব অনুরোধ দেখুন"}</Link></div>
@@ -85,8 +86,8 @@ export default function RequestBloodPage() {
         <p className="mx-auto mt-4 max-w-xl text-ink/60">{en ? "Enter patient details — your request will appear instantly." : "রোগীর তথ্য দিন — আপনার অনুরোধ তাৎক্ষণিকভাবে প্রকাশ্য তালিকায় চলে যাবে।"}</p>
       </header>
       <form onSubmit={submit} className="mt-8 card p-6 sm:p-8">
-        {serverError && <div className="mb-5 rounded-xl bg-brand-50 p-3 text-sm font-medium text-brand-700">⚠️ {serverError}</div>}
-        {Object.keys(errors).length > 0 && <div className="mb-5 rounded-xl bg-blood-50 p-3 text-sm font-medium text-blood-700">⚠️ {en ? "Please fill all required fields correctly." : "অনুগ্রহ করে সব প্রয়োজনীয় তথ্য সঠিকভাবে দিন।"}</div>}
+        {serverError && <div className="mb-5 flex items-center gap-1.5 rounded-xl bg-brand-50 p-3 text-sm font-medium text-brand-700"><AlertTriangle className="h-4 w-4 shrink-0" />{serverError}</div>}
+        {Object.keys(errors).length > 0 && <div className="mb-5 flex items-center gap-1.5 rounded-xl bg-blood-50 p-3 text-sm font-medium text-blood-700"><AlertTriangle className="h-4 w-4 shrink-0" />{en ? "Please fill all required fields correctly." : "অনুগ্রহ করে সব প্রয়োজনীয় তথ্য সঠিকভাবে দিন।"}</div>}
         <div className="grid gap-5 sm:grid-cols-2">
           <Field label={en ? "Patient Name *" : "রোগীর নাম *"}><input className="input" value={form.patient_name} onChange={(e) => set("patient_name", e.target.value)} /></Field>
           <Field label={en ? "Blood Group *" : "গ্রুপ *"}><select className="input" value={form.blood_group} onChange={(e) => set("blood_group", e.target.value)}><option value="">{en ? "Select" : "নির্বাচন"}</option>{BLOOD_GROUPS.map((g) => <option key={g} value={g}>{g}</option>)}</select></Field>
@@ -102,7 +103,7 @@ export default function RequestBloodPage() {
 
         {/* Patient Medical Info */}
         <div className="mt-5 rounded-xl bg-brand-50/50 p-4 dark:bg-white/5">
-          <p className="mb-3 text-sm font-bold text-ink">{en ? "🩺 Patient Medical Info" : "🩺 রোগীর চিকিৎসা তথ্য"}</p>
+          <p className="mb-3 flex items-center gap-1.5 text-sm font-bold text-ink"><Stethoscope className="h-4 w-4 text-brand-600" />{en ? "Patient Medical Info" : "রোগীর চিকিৎসা তথ্য"}</p>
           <div className="grid gap-4 sm:grid-cols-2">
             <Field label={en ? "Hemoglobin * (g/dL)" : "হিমোগ্লোবিন * (g/dL)"}><input className="input" placeholder={en ? "e.g. 7.5" : "যেমন: ৭.৫"} value={form.hemoglobin} onChange={(e) => set("hemoglobin", e.target.value)} /></Field>
             <Field label={en ? "Patient Age" : "রোগীর বয়স"}><input type="number" min={0} max={120} className="input" value={form.patient_age} onChange={(e) => set("patient_age", e.target.value)} /></Field>

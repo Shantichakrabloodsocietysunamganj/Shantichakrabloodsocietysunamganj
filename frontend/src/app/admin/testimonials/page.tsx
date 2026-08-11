@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { Check, MessageCircle, Shield, Star, X } from "@/components/icons";
 
 export default function AdminTestimonialsPage() {
   const supabase = createClient();
@@ -42,12 +43,12 @@ export default function AdminTestimonialsPage() {
   }
 
   if (!ready) return <div className="container-page py-20 text-center text-ink/50">লোড হচ্ছে…</div>;
-  if (!authed) return <div className="container-page py-20 text-center"><p className="text-3xl">🛡️</p><p className="mt-2 font-medium text-ink">শুধু অ্যাডমিনদের জন্য।</p><Link href="/" className="btn-outline mt-4">হোমে ফিরুন</Link></div>;
+  if (!authed) return <div className="container-page py-20 text-center"><span className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-50 text-brand-600"><Shield className="h-7 w-7" /></span><p className="mt-2 font-medium text-ink">শুধু অ্যাডমিনদের জন্য।</p><Link href="/" className="btn-outline mt-4">হোমে ফিরুন</Link></div>;
 
   return (
     <div className="container-page py-10">
       <header className="mb-8 flex items-center justify-between">
-        <h1 className="font-display text-2xl font-extrabold tracking-tight text-ink">💬 Testimonials</h1>
+        <h1 className="flex items-center gap-2 font-display text-2xl font-extrabold tracking-tight text-ink"><MessageCircle className="h-6 w-6 text-brand-600" />Testimonials</h1>
         <Link href="/admin" className="btn-outline">← ড্যাশবোর্ড</Link>
       </header>
 
@@ -72,14 +73,14 @@ export default function AdminTestimonialsPage() {
           <div key={t.id} className="card p-4">
             <div className="flex items-start justify-between gap-3">
               <div>
-                <p className="font-semibold text-ink">{t.name} <span className="text-amber-500 text-xs">{"★".repeat(t.rating ?? 5)}</span></p>
+                <p className="flex items-center gap-1.5 font-semibold text-ink">{t.name} <span className="flex text-amber-500">{Array.from({ length: t.rating ?? 5 }).map((_, i) => <Star key={i} className="h-3 w-3 fill-amber-400 text-amber-400" />)}</span></p>
                 <p className="text-sm text-ink/60">{t.message}</p>
               </div>
               <div className="flex shrink-0 gap-2">
                 <button onClick={() => toggle(t.id, !t.approved)} className={`btn-ghost !px-2 !py-1 text-xs ${t.approved ? "text-success-700" : "text-ink/40"}`}>
-                  {t.approved ? "✓ প্রকাশিত" : "অপ্রকাশিত"}
+                  {t.approved ? (<><Check className="mr-1 inline h-3.5 w-3.5" />প্রকাশিত</>) : "অপ্রকাশিত"}
                 </button>
-                <button onClick={() => remove(t.id)} className="btn-ghost !px-2 !py-1 text-xs text-blood-600">✕</button>
+                <button onClick={() => remove(t.id)} className="btn-ghost !px-2 !py-1 text-xs text-blood-600"><X className="h-3.5 w-3.5" /></button>
               </div>
             </div>
           </div>
