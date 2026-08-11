@@ -107,82 +107,121 @@ export default async function AboutPage() {
         </div>
       </section>
 
-      {/* Developer Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-brand-950 via-brand-900 to-brand-800 py-16">
-        <div className="pointer-events-none absolute -top-24 left-1/2 h-64 w-[42rem] -translate-x-1/2 rounded-full bg-brand-500/15 blur-3xl" />
-        <div className="pointer-events-none absolute bottom-0 right-0 h-64 w-64 rounded-full bg-blood-600/15 blur-3xl" />
+      {/* Developer Section — https://www.rahatahmed.site/en */}
+      <section className="relative overflow-hidden bg-brand-950 py-20">
+        <div className="pointer-events-none absolute -top-32 left-1/4 h-96 w-96 rounded-full bg-brand-600/20 blur-3xl" />
+        <div className="pointer-events-none absolute -bottom-32 right-0 h-96 w-96 rounded-full bg-blood-600/20 blur-3xl" />
+        <div className="pointer-events-none absolute right-1/4 top-8 h-40 w-40 rounded-full bg-success-500/10 blur-3xl" />
         <div className="container-page relative">
           <Reveal>
-            <div className="mx-auto max-w-4xl overflow-hidden rounded-3xl border border-white/10 bg-white/[0.06] shadow-glow backdrop-blur-md">
-              <div className="grid items-center gap-8 p-8 md:grid-cols-2 md:p-10">
-                {/* Left: Photo */}
-                <div className="flex flex-col items-center gap-4">
+            <div className="mx-auto max-w-2xl text-center">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-4 py-1.5 text-xs font-bold text-brand-200 ring-1 ring-white/10">
+                💻 {lang === "en" ? "Website Developer" : "ওয়েবসাইট ডেভেলপার"}
+              </span>
+              <h2 className="mt-4 font-display text-2xl font-extrabold tracking-tight text-white sm:text-3xl">
+                {lang === "en" ? "Designed & Developed by" : "ডিজাইন ও ডেভেলপ করেছেন"}
+              </h2>
+              <a href="https://www.rahatahmed.site/en" target="_blank" rel="noreferrer" className="mt-1 inline-block bg-gradient-to-r from-brand-300 via-white to-blood-200 bg-clip-text font-display text-4xl font-extrabold text-transparent transition hover:opacity-80">
+                Rahat Ahmed
+              </a>
+              <p className="mt-3 text-sm text-brand-200/70">
+                {lang === "en"
+                  ? "Student · Web Developer · Teacher · Blood Donor — creator of RahatVerse"
+                  : "শিক্ষার্থী · ওয়েব ডেভেলপার · শিক্ষক · রক্তদাতা — RahatVerse-এর স্রষ্টা"}
+              </p>
+            </div>
+          </Reveal>
+
+          <Reveal delay={120}>
+            <div className="mx-auto mt-10 max-w-5xl overflow-hidden rounded-3xl border border-white/10 bg-white/[0.05] shadow-glow backdrop-blur-md">
+              <div className="grid gap-10 p-8 md:p-10 lg:grid-cols-[260px_1fr]">
+                {/* Left: Profile */}
+                <div className="flex flex-col items-center gap-4 text-center">
                   <div className="relative">
                     <div className="absolute -inset-3 rounded-full bg-gradient-to-br from-brand-400/40 to-blood-500/40 blur-2xl" />
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
-                      src="https://res.cloudinary.com/easd4c4k/image/upload/v1785333427/IMG_20260520_122929449_lqtjjm.jpg"
-                      alt="Rahat Ahmed"
+                      src="https://res.cloudinary.com/kbc3dfnj/image/upload/v1786125213/rahatverse/profile/1786125213546.jpg"
+                      alt="Rahat Ahmed — ওয়েব ডেভেলপার"
                       className="relative h-32 w-32 rounded-full object-cover ring-4 ring-white/15"
                     />
-                    <span className="absolute bottom-1 right-1 flex h-6 w-6 items-center justify-center rounded-full bg-success-500 text-xs ring-4 ring-brand-950">
+                    <span className="absolute bottom-1 right-1 flex h-6 w-6 items-center justify-center rounded-full bg-success-500 ring-4 ring-brand-950" title={lang === "en" ? "Available for projects" : "প্রজেক্টের জন্য উপলব্ধ"}>
                       <span className="h-2 w-2 rounded-full bg-white" />
                     </span>
                   </div>
-                  <div className="text-center">
+                  <div>
                     <h3 className="font-display text-xl font-extrabold text-white">Rahat Ahmed</h3>
-                    <p className="text-sm text-brand-200">{lang === "en" ? "Full-Stack Web Developer" : "ফুল-স্ট্যাক ওয়েব ডেভেলপার"}</p>
-                    <div className="mt-2 flex flex-wrap justify-center gap-1.5">
-                      {["Next.js", "Supabase", "Cloudinary", "Tailwind", "TypeScript"].map((t) => (
-                        <span key={t} className="rounded-md bg-white/10 px-2 py-0.5 text-[10px] font-medium text-white/80 ring-1 ring-white/10">{t}</span>
-                      ))}
-                    </div>
+                    <p className="text-sm text-brand-200">রাহাত আহমেদ</p>
                   </div>
+                  <div className="flex flex-wrap justify-center gap-1.5">
+                    {(lang === "en"
+                      ? ["Web Developer", "Blood Donor", "BNCC Cadet", "Teacher"]
+                      : ["ওয়েব ডেভেলপার", "রক্তদাতা", "BNCC ক্যাডেট", "শিক্ষক"]
+                    ).map((r) => (
+                      <span key={r} className="rounded-full bg-white/10 px-2.5 py-1 text-[10px] font-semibold text-white/85 ring-1 ring-white/10">{r}</span>
+                    ))}
+                  </div>
+                  <a href="https://www.rahatahmed.site/en" target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 rounded-full bg-brand-500/15 px-3.5 py-1.5 text-xs font-bold text-brand-200 ring-1 ring-brand-400/25 transition hover:bg-brand-500/25">
+                    🌐 rahatahmed.site
+                  </a>
                 </div>
 
                 {/* Right: Info */}
-                <div className="text-center md:text-left">
-                  <span className="inline-flex items-center gap-1.5 rounded-full bg-blood-500/15 px-3 py-1 text-xs font-bold text-blood-300">
-                    💻 {lang === "en" ? "Website Developer" : "ওয়েবসাইট ডেভেলপার"}
-                  </span>
-                  <h2 className="mt-3 font-display text-2xl font-extrabold tracking-tight text-white">
-                    {lang === "en" ? "Built by Rahat Ahmed" : "ডেভেলপার: রাহাত আহমেদ"}
-                  </h2>
-                  <p className="mt-2 text-sm leading-relaxed text-brand-100/70">
+                <div>
+                  <p className="text-sm leading-relaxed text-brand-100/80">
                     {lang === "en"
-                      ? "This complete Blood Donation Management System was designed and developed by Rahat Ahmed — from UI/UX to database, authentication, admin CMS, and deployment."
-                      : "এই সম্পূর্ণ রক্তদান ব্যবস্থাপনা ব্যবস্থা রাহাত আহমেদ দ্বারা ডিজাইন ও ডেভেলপ করা — UI/UX থেকে ডেটাবেস, অথেনটিকেশন, অ্যাডমিন প্যানেল ও ডেপ্লয় পর্যন্ত।"}
+                      ? "A student and web developer from Sunamganj, Sylhet, Bangladesh — and the creator of RahatVerse. He builds modern digital experiences for education, social service and technology. This complete Blood Donation Management System was designed and developed by him — from UI/UX to database, authentication, admin CMS, and deployment."
+                      : "সুনামগঞ্জ, সিলেট, বাংলাদেশের একজন শিক্ষার্থী ও ওয়েব ডেভেলপার — এবং RahatVerse-এর স্রষ্টা। শিক্ষা, সমাজসেবা ও প্রযুক্তির জন্য আধুনিক ডিজিটাল অভিজ্ঞতা তৈরি করেন। এই সম্পূর্ণ রক্তদান ব্যবস্থাপনা প্ল্যাটফর্মটি তিনি ডিজাইন ও ডেভেলপ করেছেন — UI/UX থেকে ডেটাবেস, অথেনটিকেশন, অ্যাডমিন প্যানেল ও ডেপ্লয়মেন্ট পর্যন্ত।"}
                   </p>
+                  <blockquote className="mt-4 border-l-2 border-blood-400/60 pl-4 text-sm italic leading-relaxed text-brand-100/70">
+                    {lang === "en"
+                      ? "“Standing by people, learning, and teaching — these three things drive me forward.”"
+                      : "“মানুষের পাশে দাঁড়ানো, শেখা এবং শেখানো — এই তিনটি জিনিস আমাকে এগিয়ে নিয়ে যায়।”"}
+                  </blockquote>
+
+                  {/* Quick facts */}
+                  <div className="mt-4 space-y-1.5 text-sm text-brand-100/70">
+                    <p>📍 {lang === "en" ? "Sunamganj, Sylhet, Bangladesh" : "সুনামগঞ্জ, সিলেট, বাংলাদেশ"}</p>
+                    <p>🎓 {lang === "en" ? "HSC 2nd Year (Science), Sunamganj Govt. College" : "এইচএসসি ২য় বর্ষ (বিজ্ঞান), সুনামগঞ্জ সরকারি কলেজ"}</p>
+                    <p>🩸 {lang === "en" ? "Blood Group: A+ — has donated blood 4 times" : "রক্তের গ্রুপ: A+ — ৪ বার রক্তদান করেছেন"}</p>
+                  </div>
 
                   {/* Stats */}
-                  <div className="mt-4 grid grid-cols-3 gap-2">
+                  <div className="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-4">
                     <div className="rounded-xl bg-white/5 p-3 text-center ring-1 ring-white/10">
-                      <p className="font-display text-xl font-extrabold text-white">25+</p>
-                      <p className="text-[10px] text-brand-200/60">{lang === "en" ? "Pages" : "পেজ"}</p>
+                      <p className="font-display text-xl font-extrabold text-white">9</p>
+                      <p className="mt-0.5 text-[10px] text-brand-200/60">{lang === "en" ? "Achievements" : "টি অর্জন"}</p>
                     </div>
                     <div className="rounded-xl bg-white/5 p-3 text-center ring-1 ring-white/10">
-                      <p className="font-display text-xl font-extrabold text-white">19+</p>
-                      <p className="text-[10px] text-brand-200/60">{lang === "en" ? "Admin Modules" : "অ্যাডমিন মডিউল"}</p>
+                      <p className="font-display text-xl font-extrabold text-white">5×</p>
+                      <p className="mt-0.5 text-[10px] text-brand-200/60">{lang === "en" ? "1st Places" : "বার প্রথম স্থান"}</p>
+                    </div>
+                    <div className="rounded-xl bg-blood-500/10 p-3 text-center ring-1 ring-blood-400/20">
+                      <p className="font-display text-xl font-extrabold text-blood-300">4×</p>
+                      <p className="mt-0.5 text-[10px] text-blood-200/70">{lang === "en" ? "Blood Donations" : "বার রক্তদান"}</p>
                     </div>
                     <div className="rounded-xl bg-white/5 p-3 text-center ring-1 ring-white/10">
-                      <p className="font-display text-xl font-extrabold text-white">100%</p>
-                      <p className="text-[10px] text-brand-200/60">{lang === "en" ? "Custom" : "কাস্টম"}</p>
+                      <p className="font-display text-xl font-extrabold text-white">2×</p>
+                      <p className="mt-0.5 text-[10px] text-brand-200/60">{lang === "en" ? "GPA 5.00" : "বার জিপিএ ৫.০০"}</p>
                     </div>
                   </div>
 
-                  {/* CTA */}
-                  <div className="mt-5 flex flex-col gap-2 sm:flex-row">
-                    <a href="https://rahatahmedbd.github.io/" target="_blank" rel="noreferrer" className="btn bg-white text-brand-700 hover:bg-brand-50">
-                      🌐 {lang === "en" ? "View Portfolio →" : "Portfolio দেখুন →"}
+                  {/* CTAs */}
+                  <div className="mt-5 flex flex-wrap gap-2">
+                    <a href="https://www.rahatahmed.site/en" target="_blank" rel="noreferrer" className="btn bg-white text-brand-700 hover:bg-brand-50">
+                      🌐 {lang === "en" ? "Visit Website" : "ওয়েবসাইট দেখুন"}
                     </a>
-                    <a href="https://rahatahmedbd.github.io/" target="_blank" rel="noreferrer" className="btn border border-white/25 text-white hover:bg-white/10">
-                      💼 {lang === "en" ? "Order a Website" : "অর্ডার করুন"}
+                    <a href="https://www.rahatahmed.site/en/order" target="_blank" rel="noreferrer" className="btn border border-white/25 text-white hover:bg-white/10">
+                      💼 {lang === "en" ? "Order a Website" : " ওয়েবসাইট অর্ডার করুন"}
+                    </a>
+                    <a href="https://www.rahatahmed.site/en/portfolio" target="_blank" rel="noreferrer" className="btn border border-white/25 text-white hover:bg-white/10">
+                      🖼️ {lang === "en" ? "Portfolio" : "পোর্টফোলিও"}
                     </a>
                   </div>
                 </div>
               </div>
 
-              {/* Bottom CTA bar (was a faint one-liner) */}
+              {/* Bottom CTA bar */}
               <div className="relative border-t border-white/10 bg-gradient-to-r from-brand-700/50 via-brand-600/30 to-blood-700/50 px-6 py-5 sm:px-10">
                 <div className="flex flex-col items-center justify-between gap-3 text-center sm:flex-row sm:text-left">
                   <div className="flex items-center gap-3">
@@ -191,7 +230,7 @@ export default async function AboutPage() {
                       {lang === "en" ? "Need a website like this for your organization?" : "আপনার সংগঠনের জন্য এরকম ওয়েবসাইট দরকার?"}
                     </p>
                   </div>
-                  <a href="https://rahatahmedbd.github.io/" target="_blank" rel="noreferrer" className="btn shrink-0 bg-white text-brand-700 hover:bg-brand-50 !py-2 text-sm">
+                  <a href="https://www.rahatahmed.site/en/contact" target="_blank" rel="noreferrer" className="btn shrink-0 bg-white text-brand-700 hover:bg-brand-50 !py-2 text-sm">
                     {lang === "en" ? "Contact Rahat Ahmed →" : "রাহাত আহমেদের সাথে যোগাযোগ →"}
                   </a>
                 </div>

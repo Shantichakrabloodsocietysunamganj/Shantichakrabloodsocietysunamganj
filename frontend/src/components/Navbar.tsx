@@ -172,19 +172,10 @@ export default function Navbar({
 }
 
 function Logo({ logoUrl }: { logoUrl?: string | null }) {
-  if (logoUrl) {
-    // eslint-disable-next-line @next/next/no-img-element
-    return (
-      <span className="relative flex h-9 w-9 items-center justify-center overflow-hidden rounded-xl bg-white shadow-sm ring-1 ring-zinc-100">
-        <img src={logoUrl} alt="লোগো" className="h-full w-full object-contain p-0.5" />
-      </span>
-    );
-  }
+  // eslint-disable-next-line @next/next/no-img-element
   return (
-    <span className="relative flex h-9 w-9 items-center justify-center overflow-hidden rounded-xl bg-gradient-to-br from-brand-600 via-brand-700 to-blood-700 text-white shadow-glow">
-      <svg viewBox="0 0 24 24" className="h-5 w-5 drop-shadow-sm" fill="currentColor" aria-hidden="true">
-        <path d="M12 2s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11z" />
-      </svg>
+    <span className="relative flex h-9 w-9 items-center justify-center overflow-hidden rounded-full bg-white shadow-sm ring-1 ring-zinc-100">
+      <img src={logoUrl || "/images/logo.png"} alt="লোগো" className="h-full w-full rounded-full object-cover" />
     </span>
   );
 }

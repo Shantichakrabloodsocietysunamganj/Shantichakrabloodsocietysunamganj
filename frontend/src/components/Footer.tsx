@@ -19,15 +19,9 @@ export default function Footer({ settings, lang }: { settings: SiteSettings; lan
       <div className="container-page relative grid gap-10 py-14 md:grid-cols-2 lg:grid-cols-4">
         <div className="lg:col-span-1">
           <div className="flex items-center gap-2.5">
-            <span className="flex h-9 w-9 items-center justify-center overflow-hidden rounded-xl bg-white/10 text-white ring-1 ring-white/15">
-              {settings.logo_url ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={settings.logo_url} alt="logo" className="h-full w-full object-contain" />
-              ) : (
-                <svg viewBox="0 0 24 24" className="h-5 w-5" fill="currentColor">
-                  <path d="M12 2s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11z" />
-                </svg>
-              )}
+            <span className="flex h-9 w-9 items-center justify-center overflow-hidden rounded-full bg-white text-white ring-1 ring-white/15">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={settings.logo_url || "/images/logo.png"} alt="logo" className="h-full w-full rounded-full object-cover" />
             </span>
             <div>
               <div className="font-display font-bold text-white">{site.shortName}</div>
@@ -87,11 +81,11 @@ export default function Footer({ settings, lang }: { settings: SiteSettings; lan
         <div className="container-page flex flex-col items-center justify-between gap-3 py-5 text-xs text-slate-500 sm:flex-row">
           <p>© {new Date().getFullYear()} {site.name}। {t("footer.rights", lang)}</p>
           <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1">
-            <a href="https://rahatahmedbd.github.io/" target="_blank" rel="noreferrer" className="font-semibold text-white hover:underline">
+            <a href="https://www.rahatahmed.site/en" target="_blank" rel="noreferrer" className="font-semibold text-white hover:underline">
               💻 Developed by Rahat Ahmed
             </a>
             <span className="hidden sm:inline">•</span>
-            <a href="https://rahatahmedbd.github.io/" target="_blank" rel="noreferrer" className="hover:text-white hover:underline">
+            <a href="https://www.rahatahmed.site/en/order" target="_blank" rel="noreferrer" className="hover:text-white hover:underline">
               {lang === "en" ? "Need a website like this? Order →" : "আপনার সংগঠনের জন্য এরকম ওয়েবসাইট? অর্ডার করুন →"}
             </a>
           </div>

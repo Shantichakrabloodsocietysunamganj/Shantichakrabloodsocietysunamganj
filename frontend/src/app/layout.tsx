@@ -56,7 +56,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
     name: site.name,
     alternateName: site.nameEn,
     url: SITE_URL,
-    logo: settings.logo_url || `${SITE_URL}/icon.svg`,
+    logo: settings.logo_url || `${SITE_URL}/images/logo.png`,
     description: site.mission.slice(0, 280),
     telephone: settings.phone || site.phone,
     email: settings.email || site.email,
