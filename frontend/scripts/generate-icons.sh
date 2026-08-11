@@ -42,8 +42,8 @@ echo ">> Source: $SRC"
 # --- 1) Trim uniform borders (e.g. white margin around the artwork) ----------
 "$IM" "$SRC" -auto-orient -trim +repage "$TMP/trim.png"
 
-W=$("$IM" identify -format "%w" "$TMP/trim.png")
-H=$("$IM" identify -format "%h" "$TMP/trim.png")
+W=$(identify -format "%w" "$TMP/trim.png")
+H=$(identify -format "%h" "$TMP/trim.png")
 S=$(( W > H ? W : H ))
 echo ">> Trimmed to ${W}x${H}, squaring to ${S}x${S}"
 
