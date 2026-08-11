@@ -6,6 +6,7 @@ import { z } from "zod";
 import { createClient } from "@/lib/supabase/client";
 import { BLOOD_GROUPS, DISTRICTS, upazilasOf } from "@/data/constants";
 import { useLangClient } from "@/lib/i18n";
+import { scrollToPageTop } from "@/lib/motion";
 
 const schema = z.object({
   patient_name: z.string().min(2),
@@ -60,7 +61,7 @@ export default function RequestBloodPage() {
         blood_component: parsed.data.blood_component || "whole_blood",
       });
       if (error) throw new Error("error");
-      setDone(true); window.scrollTo({ top: 0, behavior: "smooth" });
+      setDone(true); scrollToPageTop();
     } catch (e: any) { setServerError(e?.message ?? "error"); } finally { setSubmitting(false); }
   };
 

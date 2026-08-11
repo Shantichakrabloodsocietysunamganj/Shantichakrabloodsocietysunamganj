@@ -18,17 +18,30 @@ export default function Reveal({
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-    const obs = new IntersectionObserver(
+
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduceMotion || !("IntersectionObserver" in window)) {
+      setVisible(true);
+      return;
+    }
+
+    let frame = 0;
+    const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting) {
-          setVisible(true);
-          obs.unobserve(el);
-        }
+        if (!entry.isIntersecting) return;
+        // Commit the reveal at the start of a paint frame so layout and paint
+        // are not mixed inside the observer callback.
+        frame = requestAnimationFrame(() => setVisible(true));
+        observer.unobserve(el);
       },
-      { threshold: 0.12 },
+      { threshold: 0.08, rootMargin: "0px 0px -6% 0px" },
     );
-    obs.observe(el);
-    return () => obs.disconnect();
+
+    observer.observe(el);
+    return () => {
+      observer.disconnect();
+      cancelAnimationFrame(frame);
+    };
   }, []);
 
   return (
@@ -37,8 +50,9 @@ export default function Reveal({
       className={className}
       style={{
         opacity: visible ? 1 : 0,
-        transform: visible ? "translateY(0)" : "translateY(24px)",
-        transition: `opacity 0.6s ease-out ${delay}ms, transform 0.6s cubic-bezier(0.22,1,0.36,1) ${delay}ms`,
+        transform: visible ? "translate3d(0, 0, 0)" : "translate3d(0, 22px, 0)",
+        transition: `opacity 600ms ease-out ${delay}ms, transform 700ms cubic-bezier(0.22,1,0.36,1) ${delay}ms`,
+        willChange: visible ? "auto" : "opacity, transform",
       }}
     >
       {children}

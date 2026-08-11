@@ -17,24 +17,47 @@ export default function Faq({ items }: { items?: { question: string; answer: str
 
   return (
     <div className="mx-auto max-w-3xl space-y-3">
-      {faqs.map((item, i) => (
-        <div key={i} className="card overflow-hidden">
-          <button
-            onClick={() => setOpen(open === i ? null : i)}
-            className="flex w-full items-center justify-between gap-4 p-5 text-left"
-          >
-            <span className="font-semibold text-ink">{item.question}</span>
-            <span className={`text-brand-600 transition-transform ${open === i ? "rotate-45" : ""}`}>
-              <svg className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
-                <path strokeLinecap="round" d="M12 5v14M5 12h14" />
-              </svg>
-            </span>
-          </button>
-          {open === i && (
-            <div className="animate-fade-in px-5 pb-5 text-sm leading-relaxed text-ink/70">{item.answer}</div>
-          )}
-        </div>
-      ))}
+      {faqs.map((item, i) => {
+        const expanded = open === i;
+        const panelId = `faq-panel-${i}`;
+        const buttonId = `faq-button-${i}`;
+
+        return (
+          <div key={i} className="card overflow-hidden">
+            <button
+              id={buttonId}
+              type="button"
+              aria-expanded={expanded}
+              aria-controls={panelId}
+              onClick={() => setOpen(expanded ? null : i)}
+              className="flex w-full items-center justify-between gap-4 p-5 text-left"
+            >
+              <span className="font-semibold text-ink">{item.question}</span>
+              <span
+                className={`shrink-0 text-brand-600 transition-transform duration-300 ease-out-expo ${expanded ? "rotate-45" : "rotate-0"}`}
+                aria-hidden="true"
+              >
+                <svg className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" d="M12 5v14M5 12h14" />
+                </svg>
+              </span>
+            </button>
+            <div
+              id={panelId}
+              role="region"
+              aria-labelledby={buttonId}
+              aria-hidden={!expanded}
+              className={`grid transition-[grid-template-rows,opacity] duration-300 ease-out-expo ${
+                expanded ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
+              }`}
+            >
+              <div className="min-h-0 overflow-hidden">
+                <div className="px-5 pb-5 text-sm leading-relaxed text-ink/70">{item.answer}</div>
+              </div>
+            </div>
+          </div>
+        );
+      })}
     </div>
   );
 }

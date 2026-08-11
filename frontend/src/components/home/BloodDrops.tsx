@@ -50,149 +50,189 @@ function dropSvg(size: number, uid: string, label: string): string {
 // ভাসমান/পড়ন্ত 3D রক্তের ফোঁটা — device tilt (gyroscope) অনুযায়ী gravity
 export default function BloodDrops() {
   const containerRef = useRef<HTMLDivElement>(null);
-  const dropsRef = useRef<Drop[]>([]);
-  const gravityRef = useRef({ x: 0, y: 0.045 }); // ডিফল্ট: নিচে
-  const rafRef = useRef<number>(0);
 
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
-    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-    const W = () => container.clientWidth;
-    const H = () => container.clientHeight;
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    let width = container.clientWidth;
+    let height = container.clientHeight;
+    let frame = 0;
+    let lastTime = 0;
+    let inView = true;
+    let orientationAttached = false;
+    const gravity = { x: 0, y: 0.045 };
 
-    // drop তৈরি
-    const make = (d: Drop) => {
-      d.x = Math.random() * W();
-      d.y = -20 - Math.random() * H() * 0.4;
-      d.vx = (Math.random() - 0.5) * 0.6;
-      d.vy = Math.random() * 0.6;
-      d.rot = (Math.random() - 0.5) * 18;
+    const updateBounds = () => {
+      width = container.clientWidth;
+      height = container.clientHeight;
     };
-    const COUNT = 9;
-    const drops: Drop[] = Array.from({ length: COUNT }, (_, i) => {
-      const d: Drop = {
+    const resizeObserver = typeof ResizeObserver !== "undefined"
+      ? new ResizeObserver(updateBounds)
+      : null;
+    resizeObserver?.observe(container);
+
+    const reset = (drop: Drop, visible = false) => {
+      drop.x = Math.random() * Math.max(width - drop.size, 1);
+      drop.y = visible
+        ? Math.random() * Math.max(height - drop.size * 1.4, 1)
+        : -20 - Math.random() * height * 0.4;
+      drop.vx = (Math.random() - 0.5) * 0.6;
+      drop.vy = Math.random() * 0.6;
+      drop.rot = (Math.random() - 0.5) * 18;
+    };
+
+    // Keep the decorative layer lighter on small screens where GPU/CPU
+    // resources are usually tighter.
+    const count = window.matchMedia("(max-width: 640px)").matches ? 6 : 9;
+    const drops: Drop[] = Array.from({ length: count }, (_, i) => {
+      const drop: Drop = {
         x: 0,
         y: 0,
         vx: 0,
         vy: 0,
-        // label দেখানোর জন্য ফোঁটা একটু বড় রাখা হয়েছে
         size: 14 + Math.random() * 14,
         rot: 0,
         label: GROUPS[i % GROUPS.length],
         el: null,
       };
-      make(d);
-      return d;
+      reset(drop, reduceMotion);
+      return drop;
     });
-    dropsRef.current = drops;
 
-    // render elements — 3D glossy SVG
-    container.innerHTML = "";
-    drops.forEach((d, i) => {
+    container.replaceChildren();
+    drops.forEach((drop, i) => {
       const span = document.createElement("span");
       const opacity = 0.42 + Math.random() * 0.28;
       span.style.cssText = [
         "position:absolute",
         "top:0",
         "left:0",
-        "will-change:transform,opacity",
+        "will-change:transform",
+        "backface-visibility:hidden",
         `opacity:${opacity.toFixed(2)}`,
         "pointer-events:none",
         "line-height:0",
       ].join(";");
-      span.innerHTML = dropSvg(d.size, `d${i}`, d.label);
+      span.innerHTML = dropSvg(drop.size, `d${i}`, drop.label);
+      span.style.transform = `translate3d(${drop.x.toFixed(1)}px,${drop.y.toFixed(1)}px,0) rotate(${drop.rot.toFixed(1)}deg)`;
       container.appendChild(span);
-      d.el = span;
+      drop.el = span;
     });
 
-    if (reduce) {
-      gravityRef.current = { x: 0, y: 0 };
-      // still paint once so reduced-motion users see the 3D drops
-      for (const d of drops) {
-        if (d.el) {
-          d.el.style.transform = `translate3d(${d.x.toFixed(1)}px,${d.y.toFixed(1)}px,0) rotate(${d.rot.toFixed(1)}deg)`;
-        }
-      }
-      return;
+    // Reduced-motion users still get a static decorative composition.
+    if (reduceMotion) {
+      return () => resizeObserver?.disconnect();
     }
 
-    // physics loop
-    const step = () => {
-      const w = W();
-      const h = H();
-      const g = gravityRef.current;
-      for (const d of drops) {
-        d.vx += g.x;
-        d.vy += g.y;
-        // সামান্য drag
-        d.vx *= 0.995;
-        d.x += d.vx;
-        d.y += d.vy;
-        // slight tilt toward velocity for 3D motion feel
-        d.rot += d.vx * 0.35;
-        d.rot *= 0.98;
-        // off-screen → reset (gravity দিক অনুযায়ী)
-        if (d.y > h + 30 || d.y < -60 || d.x > w + 30 || d.x < -30) {
-          make(d);
-          // নতুন করে উপরে না হয়ে gravity-র উৎস দিক থেকে আসুক
-          d.y = -20;
-          d.x = Math.random() * w;
-          d.vy = 0;
-          d.vx = 0;
+    const step = (now: number) => {
+      // Normalize against 60fps, cap large background-tab jumps.
+      const delta = lastTime ? Math.min((now - lastTime) / (1000 / 60), 2) : 1;
+      lastTime = now;
+      const drag = Math.pow(0.995, delta);
+      const rotationDrag = Math.pow(0.98, delta);
+
+      for (const drop of drops) {
+        drop.vx = (drop.vx + gravity.x * delta) * drag;
+        drop.vy = (drop.vy + gravity.y * delta) * drag;
+        drop.x += drop.vx * delta;
+        drop.y += drop.vy * delta;
+        drop.rot = (drop.rot + drop.vx * 0.35 * delta) * rotationDrag;
+
+        if (
+          drop.y > height + 30 ||
+          drop.y < -60 ||
+          drop.x > width + 30 ||
+          drop.x < -30
+        ) {
+          reset(drop);
+          drop.y = -20;
+          drop.x = Math.random() * Math.max(width - drop.size, 1);
+          drop.vx = 0;
+          drop.vy = 0;
         }
-        if (d.el) {
-          d.el.style.transform = `translate3d(${d.x.toFixed(1)}px,${d.y.toFixed(1)}px,0) rotate(${d.rot.toFixed(1)}deg)`;
+
+        if (drop.el) {
+          drop.el.style.transform = `translate3d(${drop.x.toFixed(1)}px,${drop.y.toFixed(1)}px,0) rotate(${drop.rot.toFixed(1)}deg)`;
         }
       }
-      rafRef.current = requestAnimationFrame(step);
+
+      frame = requestAnimationFrame(step);
     };
-    rafRef.current = requestAnimationFrame(step);
+
+    const start = () => {
+      if (frame || !inView || document.hidden) return;
+      lastTime = 0;
+      frame = requestAnimationFrame(step);
+    };
+    const stop = () => {
+      cancelAnimationFrame(frame);
+      frame = 0;
+      lastTime = 0;
+    };
+
+    const viewObserver = "IntersectionObserver" in window
+      ? new IntersectionObserver(([entry]) => {
+          inView = entry.isIntersecting;
+          if (inView) start(); else stop();
+        }, { rootMargin: "100px" })
+      : null;
+    viewObserver?.observe(container);
+
+    const onVisibilityChange = () => {
+      if (document.hidden) stop(); else start();
+    };
+    document.addEventListener("visibilitychange", onVisibilityChange);
+    start();
 
     // device orientation → gravity (মোবাইল ঝুকলে সেদিকে)
-    const onOrient = (e: DeviceOrientationEvent) => {
-      const gamma = e.gamma ?? 0; // left/right tilt (-90..90)
-      const beta = e.beta ?? 0; // front/back (-180..180)
-      const gx = Math.max(-0.12, Math.min(0.12, (gamma / 90) * 0.12));
-      const gy = Math.max(0.01, Math.min(0.12, (Math.abs(beta) / 90) * 0.06 + 0.04));
-      gravityRef.current = { x: gx, y: gy };
+    const onOrient = (event: DeviceOrientationEvent) => {
+      const gamma = event.gamma ?? 0;
+      const beta = event.beta ?? 0;
+      gravity.x = Math.max(-0.12, Math.min(0.12, (gamma / 90) * 0.12));
+      gravity.y = Math.max(0.01, Math.min(0.12, (Math.abs(beta) / 90) * 0.06 + 0.04));
     };
-    const tryOrient = () => {
+    const attachOrientation = () => {
+      if (orientationAttached) return;
+      orientationAttached = true;
       window.addEventListener("deviceorientation", onOrient, true);
     };
 
     // iOS এ permission লাগে — প্রথম tap-এ request
-    const DOE = window.DeviceOrientationEvent as unknown as {
+    const orientationEvent = window.DeviceOrientationEvent as unknown as {
       requestPermission?: () => Promise<string>;
     };
-    const onRequest = () => {
-      if (DOE && typeof DOE.requestPermission === "function") {
-        DOE.requestPermission()
-          .then((p: string) => p === "granted" && tryOrient())
+    const requestOrientation = () => {
+      if (orientationEvent && typeof orientationEvent.requestPermission === "function") {
+        orientationEvent.requestPermission()
+          .then((permission: string) => permission === "granted" && attachOrientation())
           .catch(() => {});
       } else {
-        tryOrient();
+        attachOrientation();
       }
-      window.removeEventListener("pointerdown", onRequest);
     };
-    if (DOE && typeof DOE.requestPermission === "function") {
-      window.addEventListener("pointerdown", onRequest, { once: true });
+
+    if (orientationEvent && typeof orientationEvent.requestPermission === "function") {
+      window.addEventListener("pointerdown", requestOrientation, { once: true });
     } else {
-      tryOrient();
+      attachOrientation();
     }
 
     return () => {
-      cancelAnimationFrame(rafRef.current);
+      stop();
+      resizeObserver?.disconnect();
+      viewObserver?.disconnect();
+      document.removeEventListener("visibilitychange", onVisibilityChange);
       window.removeEventListener("deviceorientation", onOrient, true);
-      window.removeEventListener("pointerdown", onRequest);
+      window.removeEventListener("pointerdown", requestOrientation);
     };
   }, []);
 
   return (
     <div
       ref={containerRef}
-      className="pointer-events-none absolute inset-0 overflow-hidden"
+      className="pointer-events-none absolute inset-0 overflow-hidden [contain:layout_paint_style]"
       aria-hidden="true"
     />
   );

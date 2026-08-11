@@ -103,7 +103,15 @@ export default function AIAssistant() {
     try { const s = localStorage.getItem("shanti-chat"); if (s) { const p = JSON.parse(s); if (Array.isArray(p) && p.length) setMsgs(p); } } catch {}
   }, []);
   useEffect(() => { try { localStorage.setItem("shanti-chat", JSON.stringify(msgs.slice(-20))); } catch {} }, [msgs]);
-  useEffect(() => { scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" }); }, [msgs, open, typing]);
+  useEffect(() => {
+    const frame = requestAnimationFrame(() => {
+      const area = scrollRef.current;
+      if (!area) return;
+      const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      area.scrollTo({ top: area.scrollHeight, behavior: reduceMotion ? "auto" : "smooth" });
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [msgs, open, typing]);
   useEffect(() => { if (!open) { window.speechSynthesis?.cancel(); audioRefs.current.forEach(a => { a.pause(); a.currentTime = 0; }); audioRefs.current = []; } }, [open]);
 
   // Strip emoji + symbols so TTS doesn't read them aloud; tidy spacing
@@ -510,7 +518,7 @@ export default function AIAssistant() {
 
       {/* Chat panel */}
       {open && (
-        <div className="fixed bottom-24 right-4 z-[55] flex h-[30rem] w-[min(23rem,calc(100vw-2rem))] flex-col overflow-hidden rounded-3xl border border-zinc-200 bg-white shadow-2xl sm:right-6">
+        <div className="fixed bottom-24 right-4 z-[55] flex h-[30rem] w-[min(23rem,calc(100vw-2rem))] origin-bottom-right animate-panel-in flex-col overflow-hidden rounded-3xl border border-zinc-200 bg-white shadow-2xl sm:right-6">
           {/* Header */}
           <div className="flex items-center justify-between bg-gradient-to-r from-violet-700 via-fuchsia-700 to-brand-700 px-4 py-3 text-white">
             <div className="flex items-center gap-3">
@@ -532,7 +540,7 @@ export default function AIAssistant() {
 
           {/* Voice picker panel (English mode only — Bangla uses Google TTS) */}
           {voicePanelOpen && (
-            <div className="max-h-48 overflow-y-auto border-b border-zinc-100 bg-violet-50/60 px-3 py-2 text-xs">
+            <div className="max-h-48 origin-top animate-panel-in overflow-y-auto border-b border-zinc-100 bg-violet-50/60 px-3 py-2 text-xs">
               <div className="mb-1.5 flex items-center justify-between">
                 <p className="font-bold text-violet-800">{en ? "🔊 Voice" : "🔊 ভয়েস"}</p>
                 <p className="text-[10px] text-zinc-500">{en ? "Bangla: Google female voice" : "বাংলা: Google মহিলা ভয়েস"}</p>
@@ -564,7 +572,7 @@ export default function AIAssistant() {
           )}
 
           {/* Messages */}
-          <div ref={scrollRef} className="flex-1 space-y-2.5 overflow-y-auto bg-canvas/60 p-3">
+          <div ref={scrollRef} className="flex-1 space-y-2.5 overflow-y-auto scroll-smooth bg-canvas/60 p-3">
             {msgs.map((m, i) => (
               <div key={i} className={`flex flex-col ${m.from === "user" ? "items-end" : "items-start"}`}>
                 <div className={`max-w-[88%] rounded-2xl px-3.5 py-2.5 text-sm ${m.from === "user" ? "bg-brand-600 text-white" : "bg-white text-ink shadow-soft ring-1 ring-zinc-100"}`}>

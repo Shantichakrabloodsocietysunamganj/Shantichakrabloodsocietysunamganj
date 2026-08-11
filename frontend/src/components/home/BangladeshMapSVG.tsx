@@ -138,9 +138,10 @@ const partialEnd = (a: [number, number], b: [number, number], f: number) =>
 
 export default function BangladeshMapSVG() {
   const ref = useRef<HTMLDivElement>(null);
-  const [tilt, setTilt] = useState({ x: 12, y: -6 });
+  const mapRef = useRef<HTMLDivElement>(null);
   const [hoveredDiv, setHoveredDiv] = useState<DivisionInfo | null>(null);
   const [is3D, setIs3D] = useState(true);
+  const [reduceMotion, setReduceMotion] = useState(false);
 
   const mainPath = useMemo(() => {
     const geom = bdData.features[0].geometry as any;
@@ -150,22 +151,72 @@ export default function BangladeshMapSVG() {
   }, []);
 
   useEffect(() => {
+    const query = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const update = () => setReduceMotion(query.matches);
+    update();
+    query.addEventListener?.("change", update);
+    return () => query.removeEventListener?.("change", update);
+  }, []);
+
+  useEffect(() => {
     const el = ref.current;
-    if (!el || !is3D) return;
-    const onMove = (e: MouseEvent) => {
-      const r = el.getBoundingClientRect();
-      const dx = (e.clientX - r.left - r.width / 2) / r.width;
-      const dy = (e.clientY - r.top - r.height / 2) / r.height;
-      setTilt({ x: 12 + dy * 8, y: -6 - dx * 10 });
+    const map = mapRef.current;
+    if (!el || !map) return;
+
+    if (!is3D) {
+      map.style.transform = "none";
+      map.style.willChange = "auto";
+      return;
+    }
+
+    let frame = 0;
+    let targetX = 12;
+    let targetY = -6;
+    let currentX = targetX;
+    let currentY = targetY;
+
+    const renderTilt = () => {
+      currentX += (targetX - currentX) * 0.18;
+      currentY += (targetY - currentY) * 0.18;
+      map.style.transform = `rotateX(${currentX.toFixed(2)}deg) rotateY(${currentY.toFixed(2)}deg)`;
+
+      if (Math.abs(targetX - currentX) > 0.01 || Math.abs(targetY - currentY) > 0.01) {
+        frame = requestAnimationFrame(renderTilt);
+      } else {
+        frame = 0;
+        map.style.willChange = "auto";
+      }
     };
-    const onLeave = () => setTilt({ x: 12, y: -6 });
-    el.addEventListener("mousemove", onMove);
-    el.addEventListener("mouseleave", onLeave);
+    const scheduleTilt = () => {
+      map.style.willChange = "transform";
+      if (!frame) frame = requestAnimationFrame(renderTilt);
+    };
+    const onMove = (event: PointerEvent) => {
+      const rect = el.getBoundingClientRect();
+      const dx = (event.clientX - rect.left - rect.width / 2) / rect.width;
+      const dy = (event.clientY - rect.top - rect.height / 2) / rect.height;
+      targetX = 12 + dy * 8;
+      targetY = -6 - dx * 10;
+      scheduleTilt();
+    };
+    const onLeave = () => {
+      targetX = 12;
+      targetY = -6;
+      scheduleTilt();
+    };
+
+    map.style.transform = `rotateX(${currentX}deg) rotateY(${currentY}deg)`;
+    if (!reduceMotion) {
+      el.addEventListener("pointermove", onMove, { passive: true });
+      el.addEventListener("pointerleave", onLeave);
+    }
+
     return () => {
-      el.removeEventListener("mousemove", onMove);
-      el.removeEventListener("mouseleave", onLeave);
+      el.removeEventListener("pointermove", onMove);
+      el.removeEventListener("pointerleave", onLeave);
+      cancelAnimationFrame(frame);
     };
-  }, [is3D]);
+  }, [is3D, reduceMotion]);
 
   const nonSylhetDivisions = useMemo(() => ALL_DIVISIONS.filter((d) => !d.isActive), []);
 
@@ -201,19 +252,17 @@ export default function BangladeshMapSVG() {
         />
       ))}
 
-      <div
-        className="animate-float w-full max-w-[16rem] transition-transform duration-500 group-hover:scale-[1.03] sm:max-w-[18.5rem]"
-        style={{
-          transform: is3D ? `rotateX(${tilt.x}deg) rotateY(${tilt.y}deg)` : "none",
-          transition: "transform 0.25s cubic-bezier(0.16,1,0.3,1)",
-        }}
-      >
-        <svg
-          viewBox={`0 0 ${VB_W} ${VB_H}`}
-          className="block h-auto w-full drop-shadow-[0_26px_36px_rgba(0,0,0,0.55)]"
-          role="img"
-          aria-label="বাংলাদেশের ৩ডি ম্যাপ ও বিভাগসমূহ"
-        >
+      {/* Float, hover-scale and pointer-tilt use separate layers so their
+          transforms never overwrite one another. */}
+      <div className="motion-compositor w-full max-w-[16rem] animate-float sm:max-w-[18.5rem]">
+        <div className="w-full transition-transform duration-500 ease-out-expo group-hover:scale-[1.03]">
+          <div ref={mapRef} className="w-full [transform-style:preserve-3d]">
+            <svg
+              viewBox={`0 0 ${VB_W} ${VB_H}`}
+              className="block h-auto w-full drop-shadow-[0_26px_36px_rgba(0,0,0,0.55)]"
+              role="img"
+              aria-label="বাংলাদেশের ৩ডি ম্যাপ ও বিভাগসমূহ"
+            >
           <defs>
             <linearGradient id="sf-face" x1="0" y1="0" x2="0.5" y2="1">
               <stop offset="0%" stopColor="#2a5586" />
@@ -259,12 +308,14 @@ export default function BangladeshMapSVG() {
           {nonSylhetDivisions.map((div, i) => (
             <g key={`route-${div.id}`}>
               <path d={curve(ORIGIN, div.coords)} fill="none" stroke="#64748b" strokeWidth="1" strokeOpacity="0.5" strokeDasharray="3 5">
-                <animate attributeName="stroke-dashoffset" values="0;-32" dur="3.5s" begin={`${i * 0.4}s`} repeatCount="indefinite" />
+                {!reduceMotion && <animate attributeName="stroke-dashoffset" values="0;-32" dur="3.5s" begin={`${i * 0.4}s`} repeatCount="indefinite" />}
               </path>
-              <circle r="2.4" fill="#94a3b8" opacity="0.5">
-                <animateMotion dur="3.5s" begin={`${i * 0.4}s`} repeatCount="indefinite" path={curve(ORIGIN, partialEnd(ORIGIN, div.coords, 0.42))} />
-                <animate attributeName="opacity" values="0;0.55;0" dur="3.5s" begin={`${i * 0.4}s`} repeatCount="indefinite" />
-              </circle>
+              {!reduceMotion && (
+                <circle r="2.4" fill="#94a3b8" opacity="0.5">
+                  <animateMotion dur="3.5s" begin={`${i * 0.4}s`} repeatCount="indefinite" path={curve(ORIGIN, partialEnd(ORIGIN, div.coords, 0.42))} />
+                  <animate attributeName="opacity" values="0;0.55;0" dur="3.5s" begin={`${i * 0.4}s`} repeatCount="indefinite" />
+                </circle>
+              )}
             </g>
           ))}
 
@@ -280,12 +331,14 @@ export default function BangladeshMapSVG() {
             return (
               <g key={id}>
                 <path id={id} d={curve(ORIGIN, p)} fill="none" stroke="none" />
-                <circle r="4.5" fill="url(#sf-drop)" filter="url(#sf-edge)">
-                  <animateMotion dur={`${dur}s`} begin={`${i * 0.18}s`} repeatCount="indefinite">
-                    <mpath href={`#${id}`} />
-                  </animateMotion>
-                  <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.15;0.8;1" dur={`${dur}s`} begin={`${i * 0.18}s`} repeatCount="indefinite" />
-                </circle>
+                {!reduceMotion && (
+                  <circle r="4.5" fill="url(#sf-drop)" filter="url(#sf-edge)">
+                    <animateMotion dur={`${dur}s`} begin={`${i * 0.18}s`} repeatCount="indefinite">
+                      <mpath href={`#${id}`} />
+                    </animateMotion>
+                    <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.15;0.8;1" dur={`${dur}s`} begin={`${i * 0.18}s`} repeatCount="indefinite" />
+                  </circle>
+                )}
               </g>
             );
           })}
@@ -293,8 +346,12 @@ export default function BangladeshMapSVG() {
           {/* Origin hub: Sunamganj */}
           <circle cx={sx(ORIGIN[0])} cy={sy(ORIGIN[1])} r="14" fill="url(#sf-sylhet)" />
           <circle cx={sx(ORIGIN[0])} cy={sy(ORIGIN[1])} r="6" fill="none" stroke="#ffffff" strokeWidth="1.4">
-            <animate attributeName="r" values="6;16;6" dur="2s" repeatCount="indefinite" />
-            <animate attributeName="opacity" values="0.9;0;0.9" dur="2s" repeatCount="indefinite" />
+            {!reduceMotion && (
+              <>
+                <animate attributeName="r" values="6;16;6" dur="2s" repeatCount="indefinite" />
+                <animate attributeName="opacity" values="0.9;0;0.9" dur="2s" repeatCount="indefinite" />
+              </>
+            )}
           </circle>
           <circle cx={sx(ORIGIN[0])} cy={sy(ORIGIN[1])} r="4" fill="#ffffff" />
 
@@ -315,8 +372,12 @@ export default function BangladeshMapSVG() {
                 {div.isActive ? (
                   <>
                     <circle cx={px} cy={py} r="7" fill="#ef4444" opacity="0.4">
-                      <animate attributeName="r" values="5;10;5" dur="1.8s" repeatCount="indefinite" />
-                      <animate attributeName="opacity" values="0.6;0.1;0.6" dur="1.8s" repeatCount="indefinite" />
+                      {!reduceMotion && (
+                        <>
+                          <animate attributeName="r" values="5;10;5" dur="1.8s" repeatCount="indefinite" />
+                          <animate attributeName="opacity" values="0.6;0.1;0.6" dur="1.8s" repeatCount="indefinite" />
+                        </>
+                      )}
                     </circle>
                     <circle cx={px} cy={py} r="4" fill="#10b981" stroke="#ffffff" strokeWidth="1.2" />
                   </>
@@ -339,7 +400,7 @@ export default function BangladeshMapSVG() {
                   />
                   {div.isActive && (
                     <circle cx="5" cy="-2.5" r="2.5" fill="#34d399">
-                      <animate attributeName="opacity" values="1;0.3;1" dur="1.2s" repeatCount="indefinite" />
+                      {!reduceMotion && <animate attributeName="opacity" values="1;0.3;1" dur="1.2s" repeatCount="indefinite" />}
                     </circle>
                   )}
                   <text
@@ -356,7 +417,9 @@ export default function BangladeshMapSVG() {
               </g>
             );
           })}
-        </svg>
+            </svg>
+          </div>
+        </div>
       </div>
 
       {/* Hover Info Banner / Tooltip Card */}
@@ -377,7 +440,7 @@ export default function BangladeshMapSVG() {
         )}
       </div>
 
-      <style>{`@keyframes svgP { 0%,100%{transform:translateY(0) scale(1);opacity:.2} 50%{transform:translateY(-12px) scale(1.4);opacity:.55} }`}</style>
+      <style>{`@keyframes svgP { 0%,100%{transform:translate3d(0,0,0) scale(1);opacity:.2} 50%{transform:translate3d(0,-12px,0) scale(1.4);opacity:.55} }`}</style>
     </div>
   );
 }

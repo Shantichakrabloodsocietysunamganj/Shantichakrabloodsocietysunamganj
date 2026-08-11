@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { bn, bnDate } from "@/lib/format";
+import { scrollToPageTop } from "@/lib/motion";
 
 /* ----------------------------------------------------------
    রক্তদান যোগ্যতা যাচাই — সাধারণ চিকিৎসা নির্দেশিকা অনুযায়ী
@@ -188,14 +189,14 @@ export default function EligibilityChecker() {
       eligibleFrom,
       daysLeft,
     });
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    scrollToPageTop();
   }
 
   function reset() {
     setVerdict(null);
     setAge(""); setWeight(""); setGender("");
     setDonatedBefore(""); setLastDate(""); setAns({});
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    scrollToPageTop();
   }
 
   const setA = (id: string, v: Tri) => setAns((s) => ({ ...s, [id]: v }));
