@@ -45,11 +45,10 @@ export default async function RequestDetailPage({ params }: { params: { id: stri
   const fbUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(pageUrl)}`;
 
   const steps = [
-    { key: "pending", label: "অপেক্ষমাণ" },
-    { key: "approved", label: "অনুমোদিত" },
+    { key: "approved", label: "লাইভ" },
     { key: "completed", label: "সম্পন্ন" },
   ];
-  const order: Record<string, number> = { pending: 0, approved: 1, completed: 2 };
+  const order: Record<string, number> = { pending: 0, approved: 0, completed: 1 };
 
   return (
     <div className="container-page py-10">
@@ -131,7 +130,7 @@ function StatusPill({ status }: { status: string }) {
   const map: Record<string, string> = {
     pending: "bg-amber-500", approved: "bg-brand-500", completed: "bg-success-500", cancelled: "bg-zinc-500",
   };
-  const labels: Record<string, string> = { pending: "অপেক্ষমাণ", approved: "অনুমোদিত", completed: "সম্পন্ন", cancelled: "বাতিল" };
+  const labels: Record<string, string> = { pending: "লাইভ", approved: "লাইভ", completed: "সম্পন্ন", cancelled: "বাতিল" };
   return <span className={`rounded-full px-3 py-1 text-xs font-bold text-white ${map[status] ?? "bg-zinc-500"}`}>{labels[status] ?? status}</span>;
 }
 

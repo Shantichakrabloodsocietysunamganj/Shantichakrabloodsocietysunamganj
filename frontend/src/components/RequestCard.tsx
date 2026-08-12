@@ -87,11 +87,10 @@ export default function RequestCard({ req, lang = "bn" }: { req: BloodRequest; l
         {/* status timeline */}
         <div className="mt-3 flex items-center border-t border-zinc-100 pt-3">
           {[
-            { key: "pending", label: en ? "Pending" : "অপেক্ষমাণ" },
-            { key: "approved", label: en ? "Approved" : "অনুমোদিত" },
+            { key: "approved", label: en ? "Live" : "লাইভ" },
             { key: "completed", label: en ? "Done" : "সম্পন্ন" },
           ].map((step, i) => {
-            const order: Record<string, number> = { pending: 0, approved: 1, completed: 2 };
+            const order: Record<string, number> = { pending: 0, approved: 0, completed: 1 };
             const cur = order[req.status] ?? 0;
             const done = req.status !== "cancelled" && cur >= i;
             return (

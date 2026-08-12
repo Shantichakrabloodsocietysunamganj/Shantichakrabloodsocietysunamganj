@@ -104,17 +104,6 @@ export default function AdminPage() {
     setBulkBusy(false);
     load();
   }
-  async function bulkApproveReqs() {
-    if (selectedReqs.size === 0) return;
-    setBulkBusy(true);
-    const ids = Array.from(selectedReqs);
-    for (const id of ids) { await supabase.from("blood_requests").update({ status: "approved" }).eq("id", id); }
-    logActivity(`${ids.length} টি অনুরোধ bulk approve করেছেন`);
-    setSelectedReqs(new Set());
-    setBulkBusy(false);
-    load();
-  }
-
   if (loading) return <div className="container-page py-12"><GridSkeleton count={2} /></div>;
   if (!authed)
     return (
@@ -202,7 +191,6 @@ export default function AdminPage() {
             <div className="flex items-center justify-between rounded-xl bg-brand-50 p-3">
               <span className="text-sm font-medium text-brand-700">{selectedReqs.size} টি নির্বাচিত</span>
               <div className="flex gap-2">
-                <button onClick={bulkApproveReqs} disabled={bulkBusy} className="btn-outline !py-1.5 text-xs text-success-700">✓ Bulk Approve</button>
                 <button onClick={bulkDeleteReqs} disabled={bulkBusy} className="btn-ghost !py-1.5 text-xs text-blood-600">🗑️ Bulk Delete</button>
               </div>
             </div>
@@ -302,7 +290,6 @@ function RequestActions({ req, onChanged }: { req: BloodRequest; onChanged: () =
   async function remove() { await supabase.from("blood_requests").update({ deleted_at: new Date().toISOString() }).eq("id", req.id); logActivity("রক্তের অনুরোধ মুছেছেন", req.patient_name); onChanged(); }
   return (
     <div className="mt-3 flex flex-wrap gap-2">
-      {status !== "approved" && <button onClick={() => setStatus("approved")} className="btn-outline !px-3 !py-1.5 text-xs">অনুমোদন</button>}
       {status !== "completed" && <button onClick={() => setStatus("completed")} className="btn-outline !px-3 !py-1.5 text-xs text-success-700">সম্পন্ন</button>}
       {status !== "cancelled" && <button onClick={() => setStatus("cancelled")} className="btn-ghost !px-3 !py-1.5 text-xs">বাতিল</button>}
       <button onClick={remove} className="btn-ghost !px-3 !py-1.5 text-xs text-blood-600">মুছুন</button>
