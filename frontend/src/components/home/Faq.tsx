@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTr } from "@/lib/useLang";
 
 const DEFAULT_FAQS = [
   { question: "রক্তদাতা হিসেবে নিবন্ধন করতে কী লাগে?", answer: "শুধু আপনার নাম, সক্রিয় মোবাইল নম্বর, রক্তের গ্রুপ ও এলাকা প্রয়োজন। 'রক্তদাতা হোন' ফর্ম পূরণ করলেই হবে। সম্পূর্ণ ফ্রি।" },
@@ -12,6 +13,7 @@ const DEFAULT_FAQS = [
 ];
 
 export default function Faq({ items }: { items?: { question: string; answer: string }[] }) {
+  const { t: tx } = useTr();
   const [open, setOpen] = useState<number | null>(0);
   const faqs = items && items.length > 0 ? items : DEFAULT_FAQS;
 
@@ -32,7 +34,7 @@ export default function Faq({ items }: { items?: { question: string; answer: str
               onClick={() => setOpen(expanded ? null : i)}
               className="flex w-full items-center justify-between gap-4 p-5 text-left"
             >
-              <span className="font-semibold text-ink">{item.question}</span>
+              <span className="font-semibold text-ink">{tx(item.question)}</span>
               <span
                 className={`shrink-0 text-brand-600 transition-transform duration-300 ease-out-expo ${expanded ? "rotate-45" : "rotate-0"}`}
                 aria-hidden="true"
@@ -52,7 +54,7 @@ export default function Faq({ items }: { items?: { question: string; answer: str
               }`}
             >
               <div className="min-h-0 overflow-hidden">
-                <div className="px-5 pb-5 text-sm leading-relaxed text-ink/70">{item.answer}</div>
+                <div className="px-5 pb-5 text-sm leading-relaxed text-ink/70">{tx(item.answer)}</div>
               </div>
             </div>
           </div>

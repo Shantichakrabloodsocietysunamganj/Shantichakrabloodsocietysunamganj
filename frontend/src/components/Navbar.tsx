@@ -10,6 +10,7 @@ import ThemeToggle from "@/components/ThemeToggle";
 import LanguageToggle from "@/components/LanguageToggle";
 import { site } from "@/data/site";
 import { t, type Lang } from "@/lib/i18n";
+import { useTr } from "@/lib/useLang";
 
 const navLinks = [
   { href: "/", key: "nav.home" },
@@ -36,6 +37,7 @@ export default function Navbar({
   logoUrl?: string | null;
   lang: Lang;
 }) {
+  const { t: tx } = useTr();
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const router = useRouter();
@@ -77,7 +79,7 @@ export default function Navbar({
         <Link href="/" className="flex shrink-0 items-center gap-2.5" onClick={() => setOpen(false)}>
           <Logo logoUrl={logoUrl} />
           <div className="leading-tight">
-            <div className="font-display text-[15px] font-extrabold tracking-tight text-ink">{site.shortName}</div>
+            <div className="font-display text-[15px] font-extrabold tracking-tight text-ink">{tx(site.shortName)}</div>
             <div className="text-[10px] font-semibold uppercase tracking-[0.12em] text-brand-600">
               {t("nav.subtype", lang)}
             </div>
@@ -125,7 +127,7 @@ export default function Navbar({
         </div>
 
         <button
-          aria-label="মেনু"
+          aria-label={tx("মেনু")}
           className="inline-flex h-10 w-10 items-center justify-center rounded-lg text-ink hover:bg-zinc-100 xl:hidden"
           onClick={() => setOpen((v) => !v)}
         >
@@ -174,10 +176,11 @@ export default function Navbar({
 }
 
 function Logo({ logoUrl }: { logoUrl?: string | null }) {
+  const { t: tx } = useTr();
   return (
     <span className="relative flex h-9 w-9 items-center justify-center overflow-hidden rounded-full bg-white shadow-sm ring-1 ring-zinc-100">
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src={logoUrl || "/images/logo.png"} alt="শান্তিচক্র ব্লাড সোসাইটি লোগো - সুনামগঞ্জ স্বেচ্ছাসেবী রক্তদান সংগঠন" className="h-full w-full rounded-full object-cover" />
+      <img src={logoUrl || "/images/logo.png"} alt={tx("শান্তিচক্র ব্লাড সোসাইটি লোগো - সুনামগঞ্জ স্বেচ্ছাসেবী রক্তদান সংগঠন")} className="h-full w-full rounded-full object-cover" />
     </span>
   );
 }

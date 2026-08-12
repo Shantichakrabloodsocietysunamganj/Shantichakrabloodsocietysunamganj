@@ -4,8 +4,10 @@ import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { useTr } from "@/lib/useLang";
 
 export default function AdminSeoPage() {
+  const { t: tx } = useTr();
   const supabase = createClient();
   const router = useRouter();
   const [ready, setReady] = useState(false);
@@ -50,8 +52,8 @@ export default function AdminSeoPage() {
     setTimeout(() => setSaved(false), 2500);
   }
 
-  if (!ready) return <div className="container-page py-20 text-center text-ink/50">লোড হচ্ছে…</div>;
-  if (!authed) return <div className="container-page py-20 text-center"><p className="text-3xl">🛡️</p><p className="mt-2 font-medium text-ink">শুধু অ্যাডমিনদের জন্য।</p><Link href="/" className="btn-outline mt-4">হোমে ফিরুন</Link></div>;
+  if (!ready) return <div className="container-page py-20 text-center text-ink/50">{tx("লোড হচ্ছে…")}</div>;
+  if (!authed) return <div className="container-page py-20 text-center"><p className="text-3xl">🛡️</p><p className="mt-2 font-medium text-ink">{tx("শুধু অ্যাডমিনদের জন্য।")}</p><Link href="/" className="btn-outline mt-4">{tx("হোমে ফিরুন")}</Link></div>;
 
   return (
     <div className="container-page py-10">
@@ -60,47 +62,47 @@ export default function AdminSeoPage() {
           <h1 className="font-display text-2xl font-extrabold tracking-tight text-ink">🔍 SEO Settings</h1>
           <p className="text-sm text-ink/60">Search engine optimization — meta tags, keywords, analytics।</p>
         </div>
-        <Link href="/admin" className="btn-outline">← ড্যাশবোর্ড</Link>
+        <Link href="/admin" className="btn-outline">{tx("← ড্যাশবোর্ড")}</Link>
       </header>
 
-      {saved && <div className="mb-6 rounded-xl bg-success-50 p-3 text-sm font-medium text-success-700">✓ সংরক্ষিত হয়েছে</div>}
+      {saved && <div className="mb-6 rounded-xl bg-success-50 p-3 text-sm font-medium text-success-700">{tx("✓ সংরক্ষিত হয়েছে")}</div>}
 
       <form onSubmit={save} className="card p-6 space-y-4">
         <div>
           <label className="label">Meta Title</label>
           <input className="input" placeholder="Shantichakra Blood Society | Donate Blood, Save Lives" value={form.meta_title} onChange={(e) => setForm({ ...form, meta_title: e.target.value })} />
-          <p className="mt-1 text-xs text-ink/40">খালি রাখলে ডিফল্ট ব্যবহার হবে। ৫০-৬০ অক্ষর আদর্শ।</p>
+          <p className="mt-1 text-xs text-ink/40">{tx("খালি রাখলে ডিফল্ট ব্যবহার হবে। ৫০-৬০ অক্ষর আদর্শ।")}</p>
         </div>
         <div>
           <label className="label">Meta Description</label>
-          <textarea className="input min-h-20" placeholder="স্বেচ্ছাসেবী রক্তদান নেটওয়ার্ক — সিলেট বিভাগ..." value={form.meta_description} onChange={(e) => setForm({ ...form, meta_description: e.target.value })} />
-          <p className="mt-1 text-xs text-ink/40">১৫০-১৬০ অক্ষর আদর্শ। Google সার্চে দেখায়।</p>
+          <textarea className="input min-h-20" placeholder={tx("স্বেচ্ছাসেবী রক্তদান নেটওয়ার্ক — সিলেট বিভাগ...")} value={form.meta_description} onChange={(e) => setForm({ ...form, meta_description: e.target.value })} />
+          <p className="mt-1 text-xs text-ink/40">{tx("১৫০-১৬০ অক্ষর আদর্শ। Google সার্চে দেখায়।")}</p>
         </div>
         <div>
           <label className="label">Meta Keywords (comma separated)</label>
-          <input className="input" placeholder="রক্তদান, blood donation, Sylhet, Sunamganj" value={form.meta_keywords} onChange={(e) => setForm({ ...form, meta_keywords: e.target.value })} />
+          <input className="input" placeholder={tx("রক্তদান, blood donation, Sylhet, Sunamganj")} value={form.meta_keywords} onChange={(e) => setForm({ ...form, meta_keywords: e.target.value })} />
         </div>
         <div>
           <label className="label">Open Graph Image (Social Share)</label>
           <div className="flex items-center gap-4">
             {ogImage && <img src={ogImage} alt="OG" className="h-16 w-16 rounded-lg object-cover" />}
             <label className="btn-outline cursor-pointer">
-              {uploading ? "আপলোড…" : (ogImage ? "✓ সেট" : "+ ছবি")}
+              {uploading ? tx("আপলোড…") : (ogImage ? tx("✓ সেট") : tx("+ ছবি"))}
               <input type="file" accept="image/*" className="hidden" onChange={(e) => e.target.files?.[0] && uploadOg(e.target.files[0])} />
             </label>
           </div>
-          <p className="mt-1 text-xs text-ink/40">Facebook/WhatsApp শেয়ারে এই ছবি দেখায়। ১২০০×৬৩০ আদর্শ।</p>
+          <p className="mt-1 text-xs text-ink/40">{tx("Facebook/WhatsApp শেয়ারে এই ছবি দেখায়। ১২০০×৬৩০ আদর্শ।")}</p>
         </div>
         <div>
           <label className="label">Google Analytics ID</label>
           <input className="input" placeholder="G-XXXXXXXXXX" value={form.ga_id} onChange={(e) => setForm({ ...form, ga_id: e.target.value })} />
-          <p className="mt-1 text-xs text-ink/40">GA4 measurement ID। খালি রাখলে tracking বন্ধ থাকবে।</p>
+          <p className="mt-1 text-xs text-ink/40">{tx("GA4 measurement ID। খালি রাখলে tracking বন্ধ থাকবে।")}</p>
         </div>
-        <button disabled={saving} className="btn-primary">{saving ? "সংরক্ষণ হচ্ছে…" : "SEO সংরক্ষণ করুন"}</button>
+        <button disabled={saving} className="btn-primary">{saving ? tx("সংরক্ষণ হচ্ছে…") : tx("SEO সংরক্ষণ করুন")}</button>
       </form>
 
       <div className="mt-6 card p-5">
-        <h3 className="mb-2 font-semibold text-ink">📌 স্বয়ংক্রিয় SEO (আগে থেকেই সক্রিয়)</h3>
+        <h3 className="mb-2 font-semibold text-ink">{tx("📌 স্বয়ংক্রিয় SEO (আগে থেকেই সক্রিয়)")}</h3>
         <ul className="space-y-1 text-sm text-ink/60">
           <li>✅ robots.txt — <a href="/robots.txt" className="text-brand-600">/robots.txt</a></li>
           <li>✅ sitemap.xml — <a href="/sitemap.xml" className="text-brand-600">/sitemap.xml</a></li>

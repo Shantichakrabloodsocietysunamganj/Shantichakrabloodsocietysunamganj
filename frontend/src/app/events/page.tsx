@@ -5,6 +5,8 @@ import SectionHeading from "@/components/ui/SectionHeading";
 import Reveal from "@/components/Reveal";
 import { getLang } from "@/lib/i18n-server";
 import BreadcrumbJsonLd from "@/components/seo/BreadcrumbJsonLd";
+import { tr, type Lang } from "@/lib/i18n";
+import { fmtDate } from "@/lib/format";
 
 export const metadata: Metadata = {
   title: "রক্তদান কর্মসূচি ও ক্যাম্প | শান্তিচক্র ব্লাড সোসাইটি",
@@ -20,12 +22,13 @@ export const metadata: Metadata = {
   },
 };
 
-function fmt(d: string, en: boolean) {
-  try { return new Date(d).toLocaleDateString("bn-BD", { day: "numeric", month: "long", year: "numeric" }); } catch { return d; }
+function fmt(d: string, lang: Lang) {
+  return fmtDate(d, lang);
 }
 
 export default async function EventsPage() {
   const lang = await getLang();
+  const tx = (s: string) => tr(s, lang);
   const en = lang === "en";
   const supabase = createClient();
   let events: any[] = [];
@@ -41,8 +44,8 @@ export default async function EventsPage() {
     <div className="container-page py-12">
       <BreadcrumbJsonLd
         items={[
-          { name: "হোম", url: "https://shanticakrabloodsocaiety.rahatahmed.site" },
-          { name: "রক্তদান কর্মসূচি ও ক্যাম্প", url: "https://shanticakrabloodsocaiety.rahatahmed.site/events" },
+          { name: tx("হোম"), url: "https://shanticakrabloodsocaiety.rahatahmed.site" },
+          { name: tx("রক্তদান কর্মসূচি ও ক্যাম্প"), url: "https://shanticakrabloodsocaiety.rahatahmed.site/events" },
         ]}
       />
       <SectionHeading eyebrow={en ? "Events" : "কর্মসূচি"} title={en ? "Events & Programs" : "ইভেন্ট ও কর্মসূচি"} subtitle={en ? "Blood donation camps, awareness programs and community events." : "রক্তদান শিবির, সচেতনতামূলক ও সামাজিক কর্মসূচি।"} />
@@ -55,7 +58,7 @@ export default async function EventsPage() {
             {en ? "Upcoming" : "আসন্ন কর্মসূচি"}
           </h3>
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {upcoming.map((e, i) => <Reveal key={e.id} delay={i * 80}><EventCard e={e} en={en} /></Reveal>)}
+            {upcoming.map((e, i) => <Reveal key={e.id} delay={i * 80}><EventCard e={e} lang={lang} /></Reveal>)}
           </div>
         </div>
       )}
@@ -65,7 +68,7 @@ export default async function EventsPage() {
         <div className="mt-12">
           <h3 className="mb-5 font-display text-lg font-bold text-ink/70">{en ? "Past Events" : "অতীত কর্মসূচি"}</h3>
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {past.map((e, i) => <Reveal key={e.id} delay={i * 60}><EventCard e={e} en={en} past /></Reveal>)}
+            {past.map((e, i) => <Reveal key={e.id} delay={i * 60}><EventCard e={e} lang={lang} past /></Reveal>)}
           </div>
         </div>
       )}
@@ -81,7 +84,8 @@ export default async function EventsPage() {
   );
 }
 
-function EventCard({ e, en, past }: { e: any; en: boolean; past?: boolean }) {
+function EventCard({ e, lang, past }: { e: any; lang: Lang; past?: boolean }) {
+  const en = lang === "en";
   return (
     <div className={`card-hover overflow-hidden ${past ? "opacity-75" : ""}`}>
       {e.cover_url && (
@@ -90,7 +94,7 @@ function EventCard({ e, en, past }: { e: any; en: boolean; past?: boolean }) {
       )}
       <div className="p-5">
         <span className="inline-flex items-center gap-1.5 rounded-full bg-brand-50 px-2.5 py-1 text-xs font-semibold text-brand-600 dark:bg-white/5">
-          <CalendarDays className="h-3.5 w-3.5" /> {fmt(e.event_date, en)}
+          <CalendarDays className="h-3.5 w-3.5" /> {fmt(e.event_date, lang)}
         </span>
         <h3 className="mt-3 font-display text-lg font-bold text-ink">{e.title}</h3>
         {e.location && <p className="mt-1 flex items-center gap-1 text-sm text-ink/50"><MapPin className="h-3.5 w-3.5" /> {e.location}</p>}

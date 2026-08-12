@@ -4,7 +4,8 @@ import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { site } from "@/data/site";
 import { z } from "zod";
-import { t, useLangClient } from "@/lib/i18n";
+import {t, tr } from "@/lib/i18n";
+import { useLang } from "@/lib/useLang";
 
 const schema = z.object({
   name: z.string().min(2, "min"),
@@ -15,8 +16,9 @@ const schema = z.object({
 
 export default function ContactPage() {
   const supabase = createClient();
-  const lang = useLangClient();
+  const lang = useLang();
   const en = lang === "en";
+  const tx = (v: string) => tr(v, lang);
   const [form, setForm] = useState({ name: "", email: "", phone: "", message: "" });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
@@ -66,7 +68,7 @@ export default function ContactPage() {
         <div className="space-y-4 lg:col-span-2">
           <InfoCard icon="📞" title={en ? "Phone" : "ফোন"} value={site.phone} />
           <InfoCard icon="✉️" title={en ? "Email" : "ইমেইল"} value={site.email} />
-          <InfoCard icon="📍" title={en ? "Address" : "ঠিকানা"} value={site.address} />
+          <InfoCard icon="📍" title={en ? "Address" : "ঠিকানা"} value={tx(site.address)} />
           <a href={site.facebook} target="_blank" rel="noreferrer" className="card flex items-center gap-4 p-5 transition hover:border-brand-200 hover:bg-brand-50">
             <span className="text-2xl">📘</span>
             <div><p className="font-medium text-ink">Facebook</p><p className="text-sm text-brand-600">{en ? "Visit our page →" : "আমাদের পেজে লাইক দিন →"}</p></div>

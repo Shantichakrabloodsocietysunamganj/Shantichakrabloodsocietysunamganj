@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import BloodSeekersClient from "./BloodSeekersClient";
 import BreadcrumbJsonLd from "@/components/seo/BreadcrumbJsonLd";
+import { tr } from "@/lib/i18n";
+import { getLang } from "@/lib/i18n-server";
 
 export const metadata: Metadata = {
   title: "রক্তপ্রার্থী তালিকা (লাইভ) | শান্তিচক্র ব্লাড সোসাইটি",
@@ -16,13 +18,15 @@ export const metadata: Metadata = {
   },
 };
 
-export default function BloodSeekersPage() {
+export default async function BloodSeekersPage() {
+  const lang = await getLang();
+  const tx = (s: string) => tr(s, lang);
   return (
     <>
       <BreadcrumbJsonLd
         items={[
-          { name: "হোম", url: "https://shanticakrabloodsocaiety.rahatahmed.site" },
-          { name: "রক্তপ্রার্থী তালিকা", url: "https://shanticakrabloodsocaiety.rahatahmed.site/blood-seekers" },
+          { name: tx("হোম"), url: "https://shanticakrabloodsocaiety.rahatahmed.site" },
+          { name: tx("রক্তপ্রার্থী তালিকা"), url: "https://shanticakrabloodsocaiety.rahatahmed.site/blood-seekers" },
         ]}
       />
       <BloodSeekersClient />

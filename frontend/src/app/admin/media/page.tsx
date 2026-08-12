@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { useTr } from "@/lib/useLang";
 
 type Item = { id: string; url: string; source: string; label: string };
 const CATS = ["all", "gallery", "donor", "blog", "event", "committee"] as const;
@@ -12,6 +13,7 @@ const CAT_LABEL: Record<string, string> = {
 };
 
 export default function AdminMediaPage() {
+  const { t: tx } = useTr();
   const supabase = createClient();
   const router = useRouter();
   const [ready, setReady] = useState(false);
@@ -67,29 +69,29 @@ export default function AdminMediaPage() {
 
   const filtered = cat === "all" ? items : items.filter((x) => x.source === cat);
 
-  if (!ready) return <div className="container-page py-20 text-center text-ink/50">লোড হচ্ছে…</div>;
-  if (!authed) return <div className="container-page py-20 text-center"><p className="text-3xl">🛡️</p><p className="mt-2 font-medium text-ink">শুধু অ্যাডমিনদের জন্য।</p><Link href="/" className="btn-outline mt-4">হোমে ফিরুন</Link></div>;
+  if (!ready) return <div className="container-page py-20 text-center text-ink/50">{tx("লোড হচ্ছে…")}</div>;
+  if (!authed) return <div className="container-page py-20 text-center"><p className="text-3xl">🛡️</p><p className="mt-2 font-medium text-ink">{tx("শুধু অ্যাডমিনদের জন্য।")}</p><Link href="/" className="btn-outline mt-4">{tx("হোমে ফিরুন")}</Link></div>;
 
   return (
     <div className="container-page py-10">
       <header className="mb-6 flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="font-display text-2xl font-extrabold tracking-tight text-ink">🖼️ মিডিয়া লাইব্রেরি</h1>
-          <p className="text-sm text-ink/60">সাইটে ব্যবহৃত সব ছবি — {items.length} টি।</p>
+          <h1 className="font-display text-2xl font-extrabold tracking-tight text-ink">{tx("🖼️ মিডিয়া লাইব্রেরি")}</h1>
+          <p className="text-sm text-ink/60">{tx("সাইটে ব্যবহৃত সব ছবি —")} {items.length} {tx("টি।")}</p>
         </div>
-        <Link href="/admin" className="btn-outline">← ড্যাশবোর্ড</Link>
+        <Link href="/admin" className="btn-outline">{tx("← ড্যাশবোর্ড")}</Link>
       </header>
 
       <div className="mb-5 flex flex-wrap gap-2">
         {CATS.map((c) => (
           <button key={c} onClick={() => setCat(c)} className={`rounded-full px-3 py-1.5 text-xs font-medium transition ${cat === c ? "bg-brand-600 text-white" : "bg-white text-ink/70 ring-1 ring-zinc-200 hover:bg-brand-50"}`}>
-            {CAT_LABEL[c]} {c !== "all" && `(${items.filter((x) => x.source === c).length})`}
+            {tx(CAT_LABEL[c])} {c !== "all" && `(${items.filter((x) => x.source === c).length})`}
           </button>
         ))}
       </div>
 
       {filtered.length === 0 ? (
-        <p className="py-16 text-center text-sm text-ink/50">এই ক্যাটেগরিতে কোনো ছবি নেই।</p>
+        <p className="py-16 text-center text-sm text-ink/50">{tx("এই ক্যাটেগরিতে কোনো ছবি নেই।")}</p>
       ) : (
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
           {filtered.map((it) => (
@@ -100,7 +102,7 @@ export default function AdminMediaPage() {
               <button
                 onClick={() => remove(it)}
                 className="absolute right-1 top-1 flex h-7 w-7 items-center justify-center rounded-lg bg-black/60 text-white opacity-0 transition group-hover:opacity-100"
-                aria-label="মুছুন"
+                aria-label={tx("মুছুন")}
               >✕</button>
             </div>
           ))}
@@ -115,7 +117,7 @@ export default function AdminMediaPage() {
             <img src={preview.url} alt={preview.label} className="max-h-[80vh] w-auto rounded-xl" />
             <div className="mt-3 flex items-center justify-between gap-3 rounded-xl bg-white p-3 text-sm">
               <span className="truncate text-ink">{preview.label} <span className="text-ink/40">• {CAT_LABEL[preview.source]}</span></span>
-              <button onClick={() => remove(preview)} className="btn-ghost !px-3 !py-1.5 text-xs text-blood-600">মুছুন</button>
+              <button onClick={() => remove(preview)} className="btn-ghost !px-3 !py-1.5 text-xs text-blood-600">{tx("মুছুন")}</button>
             </div>
           </div>
         </div>

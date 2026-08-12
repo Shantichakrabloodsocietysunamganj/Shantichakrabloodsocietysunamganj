@@ -5,8 +5,10 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import StatusBadge from "@/components/StatusBadge";
+import { useTr } from "@/lib/useLang";
 
 export default function AdminVolunteersPage() {
+  const { t: tx } = useTr();
   const supabase = createClient();
   const router = useRouter();
   const [ready, setReady] = useState(false);
@@ -35,14 +37,14 @@ export default function AdminVolunteersPage() {
     load();
   }
 
-  if (!ready) return <div className="container-page py-20 text-center text-ink/50">লোড হচ্ছে…</div>;
-  if (!authed) return <div className="container-page py-20 text-center"><p className="text-3xl">🛡️</p><p className="mt-2 font-medium text-ink">শুধু অ্যাডমিনদের জন্য।</p><Link href="/" className="btn-outline mt-4">হোমে ফিরুন</Link></div>;
+  if (!ready) return <div className="container-page py-20 text-center text-ink/50">{tx("লোড হচ্ছে…")}</div>;
+  if (!authed) return <div className="container-page py-20 text-center"><p className="text-3xl">🛡️</p><p className="mt-2 font-medium text-ink">{tx("শুধু অ্যাডমিনদের জন্য।")}</p><Link href="/" className="btn-outline mt-4">{tx("হোমে ফিরুন")}</Link></div>;
 
   return (
     <div className="container-page py-10">
       <header className="mb-8 flex items-center justify-between">
-        <h1 className="font-display text-2xl font-extrabold tracking-tight text-ink">🙋 স্বেচ্ছাসেবক ব্যবস্থাপনা</h1>
-        <Link href="/admin" className="btn-outline">← ড্যাশবোর্ড</Link>
+        <h1 className="font-display text-2xl font-extrabold tracking-tight text-ink">{tx("🙋 স্বেচ্ছাসেবক ব্যবস্থাপনা")}</h1>
+        <Link href="/admin" className="btn-outline">{tx("← ড্যাশবোর্ড")}</Link>
       </header>
 
       <div className="space-y-3">
@@ -56,14 +58,14 @@ export default function AdminVolunteersPage() {
               </div>
               <div className="flex gap-2">
                 {v.status === "active"
-                  ? <button onClick={() => setStatus(v.id, "inactive")} className="btn-outline !px-3 !py-1.5 text-xs">নিষ্ক্রিয় করুন</button>
-                  : <button onClick={() => setStatus(v.id, "active")} className="btn-outline !px-3 !py-1.5 text-xs text-success-700">অনুমোদন</button>}
+                  ? <button onClick={() => setStatus(v.id, "inactive")} className="btn-outline !px-3 !py-1.5 text-xs">{tx("নিষ্ক্রিয় করুন")}</button>
+                  : <button onClick={() => setStatus(v.id, "active")} className="btn-outline !px-3 !py-1.5 text-xs text-success-700">{tx("অনুমোদন")}</button>}
                 <button onClick={() => remove(v.id)} className="btn-ghost !px-2 !py-1.5 text-xs text-blood-600">✕</button>
               </div>
             </div>
           </div>
         ))}
-        {items.length === 0 && <p className="text-center text-sm text-ink/50">কোনো স্বেচ্ছাসেবক নেই।</p>}
+        {items.length === 0 && <p className="text-center text-sm text-ink/50">{tx("কোনো স্বেচ্ছাসেবক নেই।")}</p>}
       </div>
     </div>
   );

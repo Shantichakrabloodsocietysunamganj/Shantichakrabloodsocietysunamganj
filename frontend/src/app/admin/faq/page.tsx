@@ -5,8 +5,10 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { logActivity } from "@/lib/activity";
+import { useTr } from "@/lib/useLang";
 
 export default function AdminFaqPage() {
+  const { t: tx } = useTr();
   const supabase = createClient();
   const router = useRouter();
   const [ready, setReady] = useState(false);
@@ -30,32 +32,32 @@ export default function AdminFaqPage() {
   async function add(e: React.FormEvent) {
     e.preventDefault();
     const { error } = await supabase.from("faqs").insert(form);
-    if (!error) { logActivity("FAQ যোগ করেছেন", form.question); setForm({ question: "", answer: "", order: 0 }); load(); }
+    if (!error) { logActivity(tx("FAQ যোগ করেছেন"), form.question); setForm({ question: "", answer: "", order: 0 }); load(); }
   }
 
   async function remove(id: string, q: string) {
     await supabase.from("faqs").delete().eq("id", id);
-    logActivity("FAQ মুছেছেন", q);
+    logActivity(tx("FAQ মুছেছেন"), q);
     load();
   }
 
-  if (!ready) return <div className="container-page py-20 text-center text-ink/50">লোড হচ্ছে…</div>;
-  if (!authed) return <div className="container-page py-20 text-center"><p className="text-3xl">🛡️</p><p className="mt-2 font-medium text-ink">শুধু অ্যাডমিনদের জন্য।</p><Link href="/" className="btn-outline mt-4">হোমে ফিরুন</Link></div>;
+  if (!ready) return <div className="container-page py-20 text-center text-ink/50">{tx("লোড হচ্ছে…")}</div>;
+  if (!authed) return <div className="container-page py-20 text-center"><p className="text-3xl">🛡️</p><p className="mt-2 font-medium text-ink">{tx("শুধু অ্যাডমিনদের জন্য।")}</p><Link href="/" className="btn-outline mt-4">{tx("হোমে ফিরুন")}</Link></div>;
 
   return (
     <div className="container-page py-10">
       <header className="mb-8 flex items-center justify-between">
-        <h1 className="font-display text-2xl font-extrabold tracking-tight text-ink">❓ FAQ ব্যবস্থাপনা</h1>
-        <Link href="/admin" className="btn-outline">← ড্যাশবোর্ড</Link>
+        <h1 className="font-display text-2xl font-extrabold tracking-tight text-ink">{tx("❓ FAQ ব্যবস্থাপনা")}</h1>
+        <Link href="/admin" className="btn-outline">{tx("← ড্যাশবোর্ড")}</Link>
       </header>
 
       <form onSubmit={add} className="card mb-6 p-5">
-        <h2 className="mb-3 font-semibold text-ink">নতুন প্রশ্ন যোগ করুন</h2>
-        <input className="input mb-3" placeholder="প্রশ্ন *" required value={form.question} onChange={(e) => setForm({ ...form, question: e.target.value })} />
-        <textarea className="input mb-3" placeholder="উত্তর *" required value={form.answer} onChange={(e) => setForm({ ...form, answer: e.target.value })} />
+        <h2 className="mb-3 font-semibold text-ink">{tx("নতুন প্রশ্ন যোগ করুন")}</h2>
+        <input className="input mb-3" placeholder={tx("প্রশ্ন *")} required value={form.question} onChange={(e) => setForm({ ...form, question: e.target.value })} />
+        <textarea className="input mb-3" placeholder={tx("উত্তর *")} required value={form.answer} onChange={(e) => setForm({ ...form, answer: e.target.value })} />
         <div className="flex items-center gap-3">
-          <input type="number" className="input !w-32" placeholder="ক্রম" value={form.order} onChange={(e) => setForm({ ...form, order: Number(e.target.value) })} />
-          <button className="btn-primary">যোগ করুন</button>
+          <input type="number" className="input !w-32" placeholder={tx("ক্রম")} value={form.order} onChange={(e) => setForm({ ...form, order: Number(e.target.value) })} />
+          <button className="btn-primary">{tx("যোগ করুন")}</button>
         </div>
       </form>
 
@@ -71,7 +73,7 @@ export default function AdminFaqPage() {
             </div>
           </div>
         ))}
-        {items.length === 0 && <p className="text-center text-sm text-ink/50">এখনো কোনো FAQ নেই। উপরের ফর্ম থেকে যোগ করুন।</p>}
+        {items.length === 0 && <p className="text-center text-sm text-ink/50">{tx("এখনো কোনো FAQ নেই। উপরের ফর্ম থেকে যোগ করুন।")}</p>}
       </div>
     </div>
   );

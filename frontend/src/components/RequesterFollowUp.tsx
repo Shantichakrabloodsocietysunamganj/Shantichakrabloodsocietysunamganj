@@ -9,13 +9,13 @@ import {
   postponeOwnedBloodRequest,
   type OwnedBloodRequest,
 } from "@/lib/requestOwnership";
-import { useLangClient } from "@/lib/i18n";
 import { useToast } from "@/components/Toast";
+import { useLang } from "@/lib/useLang";
 
 /** Only appears in the browser that originally posted the request. */
 export default function RequesterFollowUp() {
   const supabase = useMemo(() => createClient(), []);
-  const lang = useLangClient();
+  const lang = useLang();
   const en = lang === "en";
   const toast = useToast();
   const [request, setRequest] = useState<OwnedBloodRequest | null>(null);

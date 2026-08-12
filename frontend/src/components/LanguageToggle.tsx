@@ -2,9 +2,11 @@
 
 import { useRouter } from "next/navigation";
 import type { Lang } from "@/lib/i18n";
+import { useTr } from "@/lib/useLang";
 
 // BN/EN ভাষা টগল — cookie সেট করে পেজ রিফ্রেশ করে
 export default function LanguageToggle({ lang }: { lang: Lang }) {
+  const { t: tx } = useTr();
   const router = useRouter();
 
   const set = (l: Lang) => {
@@ -19,7 +21,7 @@ export default function LanguageToggle({ lang }: { lang: Lang }) {
         className={`rounded-md px-2 py-1 transition ${lang === "bn" ? "bg-white text-brand-700 shadow-sm dark:bg-brand-600 dark:text-white" : "text-ink/60 dark:text-brand-100/60"}`}
         aria-pressed={lang === "bn"}
       >
-        বাং
+        {tx("বাং")}
       </button>
       <button
         onClick={() => set("en")}

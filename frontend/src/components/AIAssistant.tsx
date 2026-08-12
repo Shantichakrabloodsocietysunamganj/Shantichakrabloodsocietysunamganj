@@ -2,6 +2,8 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { tr } from "@/lib/i18n";
+import { useLang } from "@/lib/useLang";
 
 type Msg = { from: "bot" | "user"; text: string; cta?: { label: string; href: string }; time: number };
 type Entry = { keys: string[]; bn: string; en: string; cta?: { bn: string; en: string; href: string }; followUp?: string[] };
@@ -61,12 +63,6 @@ const KB: Entry[] = [
   { keys: ["ফ্রি", "খরচ", "মূল্য", "price", "cost", "free"],
     bn: "সম্পূর্ণ ফ্রি ও স্বেচ্ছাসেবী। কোনো টাকা লাগে না।", en: "100% free and voluntary." },
 ];
-
-function useLang(): "bn" | "en" {
-  const [lang, setLang] = useState<"bn" | "en">("bn");
-  useEffect(() => { const m = document.cookie.match(/lang=(\w+)/); setLang(m && m[1] === "en" ? "en" : "bn"); }, []);
-  return lang;
-}
 
 function fmtTime(ts: number) {
   return new Date(ts).toLocaleTimeString("bn-BD", { hour: "2-digit", minute: "2-digit" });
@@ -608,7 +604,7 @@ export default function AIAssistant() {
           {/* Follow-up suggestions */}
           <div className="flex flex-wrap gap-1.5 border-t border-zinc-100 bg-white px-2.5 pt-2">
             {(msgs.length <= 1 ? SUGGESTIONS : followUp).map((s) => (
-              <button key={s} onClick={() => send(s.replace(/^[^\s]+\s/, ""))} className="rounded-full bg-violet-50 px-2.5 py-1 text-[11px] font-medium text-violet-700 hover:bg-violet-100">{s}</button>
+              <button key={s} onClick={() => send(s.replace(/^[^\s]+\s/, ""))} className="rounded-full bg-violet-50 px-2.5 py-1 text-[11px] font-medium text-violet-700 hover:bg-violet-100">{tr(s, lang)}</button>
             ))}
           </div>
 

@@ -1,7 +1,14 @@
+import { tr, type Lang } from "@/lib/i18n";
+
+function currentLang(): Lang {
+  if (typeof document === "undefined") return "bn";
+  return /(?:^|;\s*)lang=en\b/.test(document.cookie) ? "en" : "bn";
+}
+
 // CSV এক্সপোর্ট হেল্পার — রিপোর্টের জন্য
 export function exportCSV(filename: string, rows: Record<string, any>[]) {
   if (!rows.length) {
-    alert("এক্সপোর্ট করার মতো তথ্য নেই");
+    alert(tr("এক্সপোর্ট করার মতো তথ্য নেই", currentLang()));
     return;
   }
   const headers = Object.keys(rows[0]);

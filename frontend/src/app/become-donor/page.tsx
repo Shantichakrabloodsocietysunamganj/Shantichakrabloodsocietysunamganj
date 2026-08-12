@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import BecomeDonorClient from "./BecomeDonorClient";
 import BreadcrumbJsonLd from "@/components/seo/BreadcrumbJsonLd";
+import { tr } from "@/lib/i18n";
+import { getLang } from "@/lib/i18n-server";
 
 export const metadata: Metadata = {
   title: "রক্তদাতা হিসেবে নিবন্ধন করুন | শান্তিচক্র ব্লাড সোসাইটি",
@@ -16,13 +18,15 @@ export const metadata: Metadata = {
   },
 };
 
-export default function BecomeDonorPage() {
+export default async function BecomeDonorPage() {
+  const lang = await getLang();
+  const tx = (s: string) => tr(s, lang);
   return (
     <>
       <BreadcrumbJsonLd
         items={[
-          { name: "হোম", url: "https://shanticakrabloodsocaiety.rahatahmed.site" },
-          { name: "রক্তদাতা নিবন্ধন", url: "https://shanticakrabloodsocaiety.rahatahmed.site/become-donor" },
+          { name: tx("হোম"), url: "https://shanticakrabloodsocaiety.rahatahmed.site" },
+          { name: tx("রক্তদাতা নিবন্ধন"), url: "https://shanticakrabloodsocaiety.rahatahmed.site/become-donor" },
         ]}
       />
       <BecomeDonorClient />

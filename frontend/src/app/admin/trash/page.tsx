@@ -6,10 +6,12 @@ import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import BloodGroupBadge from "@/components/BloodGroupBadge";
 import { logActivity } from "@/lib/activity";
+import { useTr } from "@/lib/useLang";
 
 type TrashTab = "donors" | "requests";
 
 export default function AdminTrashPage() {
+  const { t: tx } = useTr();
   const supabase = createClient();
   const router = useRouter();
   const [ready, setReady] = useState(false);
@@ -39,32 +41,32 @@ export default function AdminTrashPage() {
   async function restoreDonor(id: string, name: string) {
     setBusy(true);
     await supabase.from("donors").update({ deleted_at: null }).eq("id", id);
-    logActivity("দাতা restore করেছেন", name);
+    logActivity(tx("দাতা restore করেছেন"), name);
     setBusy(false); load();
   }
   async function restoreReq(id: string, name: string) {
     setBusy(true);
     await supabase.from("blood_requests").update({ deleted_at: null }).eq("id", id);
-    logActivity("অনুরোধ restore করেছেন", name);
+    logActivity(tx("অনুরোধ restore করেছেন"), name);
     setBusy(false); load();
   }
   async function permDeleteDonor(id: string, name: string) {
-    if (!confirm(`"${name}" স্থায়ীভাবে মুছে ফেলবেন? এটি আর ফেরত আনা যাবে না।`)) return;
+    if (!confirm(`"${name}" ${tx("স্থায়ীভাবে মুছে ফেলবেন? এটি আর ফেরত আনা যাবে না।")}`)) return;
     setBusy(true);
     await supabase.from("donors").delete().eq("id", id);
-    logActivity("দাতা স্থায়ীভাবে মুছেছেন", name);
+    logActivity(tx("দাতা স্থায়ীভাবে মুছেছেন"), name);
     setBusy(false); load();
   }
   async function permDeleteReq(id: string, name: string) {
-    if (!confirm(`"${name}" স্থায়ীভাবে মুছে ফেলবেন?`)) return;
+    if (!confirm(`"${name}" ${tx("স্থায়ীভাবে মুছে ফেলবেন?")}`)) return;
     setBusy(true);
     await supabase.from("blood_requests").delete().eq("id", id);
-    logActivity("অনুরোধ স্থায়ীভাবে মুছেছেন", name);
+    logActivity(tx("অনুরোধ স্থায়ীভাবে মুছেছেন"), name);
     setBusy(false); load();
   }
 
-  if (!ready) return <div className="container-page py-20 text-center text-ink/50">লোড হচ্ছে…</div>;
-  if (!authed) return <div className="container-page py-20 text-center"><p className="text-3xl">🛡️</p><p className="mt-2 font-medium text-ink">শুধু অ্যাডমিনদের জন্য।</p><Link href="/" className="btn-outline mt-4">হোমে ফিরুন</Link></div>;
+  if (!ready) return <div className="container-page py-20 text-center text-ink/50">{tx("লোড হচ্ছে…")}</div>;
+  if (!authed) return <div className="container-page py-20 text-center"><p className="text-3xl">🛡️</p><p className="mt-2 font-medium text-ink">{tx("শুধু অ্যাডমিনদের জন্য।")}</p><Link href="/" className="btn-outline mt-4">{tx("হোমে ফিরুন")}</Link></div>;
 
   const active = tab === "donors" ? donors : requests;
 
@@ -72,26 +74,26 @@ export default function AdminTrashPage() {
     <div className="container-page py-10">
       <header className="mb-8 flex items-center justify-between">
         <div>
-          <h1 className="font-display text-2xl font-extrabold tracking-tight text-ink">🗑️ ট্র্যাশ — মুছে ফেলা আইটেম</h1>
-          <p className="text-sm text-ink/60">soft-delete করা আইটেম এখানে — restore বা স্থায়ীভাবে মুছুন।</p>
+          <h1 className="font-display text-2xl font-extrabold tracking-tight text-ink">{tx("🗑️ ট্র্যাশ — মুছে ফেলা আইটেম")}</h1>
+          <p className="text-sm text-ink/60">{tx("soft-delete করা আইটেম এখানে — restore বা স্থায়ীভাবে মুছুন।")}</p>
         </div>
-        <Link href="/admin" className="btn-outline">← ড্যাশবোর্ড</Link>
+        <Link href="/admin" className="btn-outline">{tx("← ড্যাশবোর্ড")}</Link>
       </header>
 
       <nav className="mb-6 flex gap-2">
         <button onClick={() => setTab("donors")} className={`rounded-xl px-4 py-2 text-sm font-medium transition ${tab === "donors" ? "bg-brand-600 text-white" : "bg-white text-ink/70 ring-1 ring-zinc-200"}`}>
-          🩸 দাতা ({donors.length})
+          {tx("🩸 দাতা (")}{donors.length})
         </button>
         <button onClick={() => setTab("requests")} className={`rounded-xl px-4 py-2 text-sm font-medium transition ${tab === "requests" ? "bg-brand-600 text-white" : "bg-white text-ink/70 ring-1 ring-zinc-200"}`}>
-          📋 অনুরোধ ({requests.length})
+          {tx("📋 অনুরোধ (")}{requests.length})
         </button>
       </nav>
 
       {active.length === 0 ? (
         <div className="card p-12 text-center">
           <p className="text-3xl">🗑️</p>
-          <p className="mt-2 font-medium text-ink">ট্র্যাশ খালি</p>
-          <p className="mt-1 text-sm text-ink/60">কোনো আইটেম soft-delete করা হয়নি।</p>
+          <p className="mt-2 font-medium text-ink">{tx("ট্র্যাশ খালি")}</p>
+          <p className="mt-1 text-sm text-ink/60">{tx("কোনো আইটেম soft-delete করা হয়নি।")}</p>
         </div>
       ) : (
         <div className="space-y-3">
@@ -101,7 +103,7 @@ export default function AdminTrashPage() {
                 <BloodGroupBadge group={d.blood_group} size="sm" />
                 <div>
                   <p className="font-medium text-ink">{d.full_name}</p>
-                  <p className="text-xs text-ink/40">মুছেছেন: {d.deleted_at ? new Date(d.deleted_at).toLocaleString("bn-BD") : ""}</p>
+                  <p className="text-xs text-ink/40">{tx("মুছেছেন:")} {d.deleted_at ? new Date(d.deleted_at).toLocaleString("bn-BD") : ""}</p>
                 </div>
               </div>
               <div className="flex gap-2">
@@ -116,7 +118,7 @@ export default function AdminTrashPage() {
                 <BloodGroupBadge group={r.blood_group} size="sm" />
                 <div>
                   <p className="font-medium text-ink">{r.patient_name}</p>
-                  <p className="text-xs text-ink/40">মুছেছেন: {r.deleted_at ? new Date(r.deleted_at).toLocaleString("bn-BD") : ""}</p>
+                  <p className="text-xs text-ink/40">{tx("মুছেছেন:")} {r.deleted_at ? new Date(r.deleted_at).toLocaleString("bn-BD") : ""}</p>
                 </div>
               </div>
               <div className="flex gap-2">

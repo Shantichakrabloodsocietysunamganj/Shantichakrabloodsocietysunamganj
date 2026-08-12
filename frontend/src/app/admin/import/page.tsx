@@ -5,8 +5,10 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { logActivity } from "@/lib/activity";
+import { useTr } from "@/lib/useLang";
 
 export default function AdminImportPage() {
+  const { t: tx } = useTr();
   const supabase = createClient();
   const router = useRouter();
   const [ready, setReady] = useState(false);
@@ -65,36 +67,36 @@ export default function AdminImportPage() {
     setImporting(false);
   };
 
-  if (!ready) return <div className="container-page py-20 text-center text-ink/50">লোড হচ্ছে…</div>;
-  if (!authed) return <div className="container-page py-20 text-center"><p className="text-3xl">🛡️</p><p className="mt-2 font-medium text-ink">শুধু অ্যাডমিনদের জন্য।</p><Link href="/" className="btn-outline mt-4">হোমে ফিরুন</Link></div>;
+  if (!ready) return <div className="container-page py-20 text-center text-ink/50">{tx("লোড হচ্ছে…")}</div>;
+  if (!authed) return <div className="container-page py-20 text-center"><p className="text-3xl">🛡️</p><p className="mt-2 font-medium text-ink">{tx("শুধু অ্যাডমিনদের জন্য।")}</p><Link href="/" className="btn-outline mt-4">{tx("হোমে ফিরুন")}</Link></div>;
 
   return (
     <div className="container-page py-10">
       <header className="mb-8 flex items-center justify-between">
-        <h1 className="font-display text-2xl font-extrabold tracking-tight text-ink">📥 CSV Import — দাতা</h1>
-        <Link href="/admin" className="btn-outline">← ড্যাশবোর্ড</Link>
+        <h1 className="font-display text-2xl font-extrabold tracking-tight text-ink">{tx("📥 CSV Import — দাতা")}</h1>
+        <Link href="/admin" className="btn-outline">{tx("← ড্যাশবোর্ড")}</Link>
       </header>
 
       <div className="card p-6">
-        <h2 className="mb-2 font-semibold text-ink">CSV ফাইল আপলোড করুন</h2>
+        <h2 className="mb-2 font-semibold text-ink">{tx("CSV ফাইল আপলোড করুন")}</h2>
         <p className="mb-4 text-sm text-ink/60">
-          কলাম: <code className="rounded bg-zinc-100 px-1.5 py-0.5">full_name, phone, blood_group, district, upazila</code>
-          <br />প্রথম লাইনে header থাকতে হবে। রক্তের গ্রুপ: A+, B+, O+ ইত্যাদি।
+          {tx("কলাম:")} <code className="rounded bg-zinc-100 px-1.5 py-0.5">full_name, phone, blood_group, district, upazila</code>
+          <br />{tx("প্রথম লাইনে header থাকতে হবে। রক্তের গ্রুপ: A+, B+, O+ ইত্যাদি।")}
         </p>
         <input type="file" accept=".csv,text/csv" onChange={onFile} className="input mb-4" />
-        <p className="mb-3 text-xs text-ink/40">অথবা নিচে সরাসরি CSV পেস্ট করুন:</p>
-        <textarea className="input min-h-32 mb-4 font-mono text-xs" placeholder="full_name,phone,blood_group,district,upazila&#10;রহিম,017xxxxxx,O+,সুনামগঞ্জ,ছাতক" value={text} onChange={(e) => setText(e.target.value)} />
+        <p className="mb-3 text-xs text-ink/40">{tx("অথবা নিচে সরাসরি CSV পেস্ট করুন:")}</p>
+        <textarea className="input min-h-32 mb-4 font-mono text-xs" placeholder={tx("full_name,phone,blood_group,district,upazila&#10;রহিম,017xxxxxx,O+,সুনামগঞ্জ,ছাতক")} value={text} onChange={(e) => setText(e.target.value)} />
         <button onClick={doImport} disabled={!text.trim() || importing} className="btn-primary">
-          {importing ? "ইমপোর্ট হচ্ছে…" : "ইমপোর্ট করুন"}
+          {importing ? tx("ইমপোর্ট হচ্ছে…") : tx("ইমপোর্ট করুন")}
         </button>
       </div>
 
       {results && (
         <div className="mt-6 card p-6">
-          <h3 className="font-bold text-ink">ফলাফল</h3>
+          <h3 className="font-bold text-ink">{tx("ফলাফল")}</h3>
           <div className="mt-3 flex gap-4">
-            <span className="rounded-lg bg-success-50 px-4 py-2 text-sm font-bold text-success-700">✓ সফল: {results.ok}</span>
-            {results.fail > 0 && <span className="rounded-lg bg-blood-50 px-4 py-2 text-sm font-bold text-blood-700">✕ ব্যর্থ: {results.fail}</span>}
+            <span className="rounded-lg bg-success-50 px-4 py-2 text-sm font-bold text-success-700">{tx("✓ সফল:")} {results.ok}</span>
+            {results.fail > 0 && <span className="rounded-lg bg-blood-50 px-4 py-2 text-sm font-bold text-blood-700">{tx("✕ ব্যর্থ:")} {results.fail}</span>}
           </div>
           {results.errors.length > 0 && (
             <div className="mt-4 max-h-40 overflow-y-auto rounded-lg bg-zinc-50 p-3 text-xs text-blood-600">

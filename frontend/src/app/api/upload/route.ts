@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { tr, type Lang } from "@/lib/i18n";
 import { v2 as cloudinary } from "cloudinary";
 
 // সার্ভার-সাইড Cloudinary কনফিগ (secret ব্রাউজারে যায় না)
@@ -48,29 +49,33 @@ function rateLimited(ip: string): boolean {
 }
 
 export async function POST(req: NextRequest) {
+  // Error strings are shown directly to the user, so honour the
+  // language they picked (stored in the `lang` cookie).
+  const lang: Lang = req.cookies.get("lang")?.value === "en" ? "en" : "bn";
+  const msg = (s: string) => tr(s, lang);
   try {
     const ip = (req.headers.get("x-forwarded-for")?.split(",")[0] ?? "local").trim();
     if (rateLimited(ip)) {
-      return NextResponse.json({ error: "খুব বেশি আপলোড। একটু পরে আবার চেষ্টা করুন।" }, { status: 429 });
+      return NextResponse.json({ error: msg("খুব বেশি আপলোড। একটু পরে আবার চেষ্টা করুন।") }, { status: 429 });
     }
 
     const form = await req.formData();
     const file = form.get("file");
 
     if (!file || !(file instanceof File)) {
-      return NextResponse.json({ error: "কোনো ফাইল পাওয়া যায়নি" }, { status: 400 });
+      return NextResponse.json({ error: msg("কোনো ফাইল পাওয়া যায়নি") }, { status: 400 });
     }
     if (file.size > MAX_SIZE) {
-      return NextResponse.json({ error: "ছবি ২০০ কিলোবাইটের মধ্যে হতে হবে (১০০KB-এর কাছাকাছি রাখুন)" }, { status: 400 });
+      return NextResponse.json({ error: msg("ছবি ২০০ কিলোবাইটের মধ্যে হতে হবে (১০০KB-এর কাছাকাছি রাখুন)") }, { status: 400 });
     }
     if (!file.type.startsWith("image/")) {
-      return NextResponse.json({ error: "শুধুমাত্র ছবি আপলোড করুন" }, { status: 400 });
+      return NextResponse.json({ error: msg("শুধুমাত্র ছবি আপলোড করুন") }, { status: 400 });
     }
 
     const buffer = Buffer.from(await file.arrayBuffer());
     const realType = detectImage(buffer);
     if (!realType) {
-      return NextResponse.json({ error: "ফাইলটি বৈধ ছবি নয়" }, { status: 400 });
+      return NextResponse.json({ error: msg("ফাইলটি বৈধ ছবি নয়") }, { status: 400 });
     }
 
     const b64 = buffer.toString("base64");
@@ -84,6 +89,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ url: result.secure_url });
   } catch (e: any) {
     console.error("Upload error:", e);
-    return NextResponse.json({ error: "ছবি আপলোডে সমস্যা হয়েছে" }, { status: 500 });
+    return NextResponse.json({ error: msg("ছবি আপলোডে সমস্যা হয়েছে") }, { status: 500 });
   }
 }

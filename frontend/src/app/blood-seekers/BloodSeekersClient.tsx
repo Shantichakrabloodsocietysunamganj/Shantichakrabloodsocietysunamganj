@@ -14,18 +14,21 @@ import LiveBadge from "@/components/LiveBadge";
 import Reveal from "@/components/Reveal";
 import { useLiveRequests } from "@/lib/useLiveRequests";
 import { getRequestStatus } from "@/lib/request";
-import { t, useLangClient } from "@/lib/i18n";
+import {t} from "@/lib/i18n";
+import { useLang, useTr } from "@/lib/useLang";
 
 export default function BloodSeekersClient() {
+  const { t: tx } = useTr();
   return (
-    <Suspense fallback={<div className="container-page py-20 text-center text-zinc-500">লোড হচ্ছে…</div>}>
+    <Suspense fallback={<div className="container-page py-20 text-center text-zinc-500">{tx("লোড হচ্ছে…")}</div>}>
       <SeekersContent />
     </Suspense>
   );
 }
 
 function SeekersContent() {
-  const lang = useLangClient();
+  const { t: tx } = useTr();
+  const lang = useLang();
   const en = lang === "en";
 
   const [group, setGroup] = useState("");
@@ -134,7 +137,7 @@ function SeekersContent() {
             >
               <option value="">{t("donors.allDistricts", lang)}</option>
               {DISTRICTS.map((d) => (
-                <option key={d} value={d}>{d}</option>
+                <option key={d} value={d}>{tx(d)}</option>
               ))}
             </select>
           </div>
@@ -143,7 +146,7 @@ function SeekersContent() {
             <select className="input" value={upazila} onChange={(e) => setUpazila(e.target.value)}>
               <option value="">{t("donors.allUpazilas", lang)}</option>
               {(district ? upazilasOf(district) : []).map((u) => (
-                <option key={u} value={u}>{u}</option>
+                <option key={u} value={u}>{tx(u)}</option>
               ))}
             </select>
           </div>

@@ -5,7 +5,6 @@ import Link from "next/link";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/client";
 import { BLOOD_GROUPS, DISTRICTS, upazilasOf } from "@/data/constants";
-import { useLangClient } from "@/lib/i18n";
 import { scrollToPageTop } from "@/lib/motion";
 import { rememberRecentlyPostedRequest } from "@/lib/useLiveRequests";
 import {
@@ -14,6 +13,7 @@ import {
   rememberOwnedBloodRequest,
 } from "@/lib/requestOwnership";
 import type { BloodRequest } from "@/lib/types";
+import { useLang, useTr } from "@/lib/useLang";
 
 const schema = z.object({
   patient_name: z.string().min(2),
@@ -34,12 +34,13 @@ const schema = z.object({
 });
 
 export default function RequestBloodPage() {
+  const { t: tx } = useTr();
   const supabase = useMemo(() => createClient(), []);
-  const lang = useLangClient();
+  const lang = useLang();
   const en = lang === "en";
   const [form, setForm] = useState<Record<string, any>>({
     patient_name: "", blood_group: "", units_needed: 1, hospital: "",
-    district: "সুনামগঞ্জ", upazila: "", needed_date: "", contact_name: "",
+    district: tx("সুনামগঞ্জ"), upazila: "", needed_date: "", contact_name: "",
     contact_phone: "", message: "",
     hemoglobin: "", patient_age: "", patient_gender: "", disease: "", blood_component: "whole_blood",
   });
@@ -158,8 +159,8 @@ export default function RequestBloodPage() {
           <Field label={en ? "Blood Group *" : "গ্রুপ *"}><select className="input" value={form.blood_group} onChange={(e) => set("blood_group", e.target.value)}><option value="">{en ? "Select" : "নির্বাচন"}</option>{BLOOD_GROUPS.map((g) => <option key={g} value={g}>{g}</option>)}</select></Field>
           <Field label={en ? "Units *" : "ইউনিট *"}><input type="number" min={1} max={10} className="input" value={form.units_needed} onChange={(e) => set("units_needed", e.target.value)} /></Field>
           <Field label={en ? "Hospital *" : "হাসপাতাল *"}><input className="input" value={form.hospital} onChange={(e) => set("hospital", e.target.value)} /></Field>
-          <Field label={en ? "District *" : "জেলা *"}><select className="input" value={form.district} onChange={(e) => { set("district", e.target.value); set("upazila", ""); }}>{DISTRICTS.map((d) => <option key={d} value={d}>{d}</option>)}</select></Field>
-          <Field label={en ? "Upazila *" : "উপজেলা *"}><select className="input" value={form.upazila} onChange={(e) => set("upazila", e.target.value)}><option value="">{en ? "Select" : "নির্বাচন"}</option>{upazilasOf(form.district).map((u) => <option key={u} value={u}>{u}</option>)}</select></Field>
+          <Field label={en ? "District *" : "জেলা *"}><select className="input" value={form.district} onChange={(e) => { set("district", e.target.value); set("upazila", ""); }}>{DISTRICTS.map((d) => <option key={d} value={d}>{tx(d)}</option>)}</select></Field>
+          <Field label={en ? "Upazila *" : "উপজেলা *"}><select className="input" value={form.upazila} onChange={(e) => set("upazila", e.target.value)}><option value="">{en ? "Select" : "নির্বাচন"}</option>{upazilasOf(form.district).map((u) => <option key={u} value={u}>{tx(u)}</option>)}</select></Field>
           <Field label={en ? "Needed Date *" : "তারিখ *"}><input type="date" className="input" value={form.needed_date} onChange={(e) => set("needed_date", e.target.value)} /></Field>
           <Field label={en ? "Contact Name *" : "যোগাযোগের নাম *"}><input className="input" value={form.contact_name} onChange={(e) => set("contact_name", e.target.value)} /></Field>
           <Field label={en ? "Contact Mobile *" : "যোগাযোগ মোবাইল *"}><input className="input" value={form.contact_phone} onChange={(e) => set("contact_phone", e.target.value)} placeholder="01XXXXXXXXX" /></Field>

@@ -1,9 +1,12 @@
 "use client";
 
+import { useTr } from "@/lib/useLang";
+
 // হালকা SVG ডোনাট চার্ট — রক্তের গ্রুপ বিতরণ দেখাতে
 const COLORS = ["#0b4f9c", "#d62828", "#16a34a", "#f59e0b", "#8b5cf6", "#0891b2", "#db2777", "#475569"];
 
 export default function DonutChart({ data }: { data: { label: string; value: number }[] }) {
+  const { t: tx } = useTr();
   const total = data.reduce((s, d) => s + d.value, 0);
   const radius = 60;
   const circ = 2 * Math.PI * radius;
@@ -33,7 +36,7 @@ export default function DonutChart({ data }: { data: { label: string; value: num
         </svg>
         <div className="absolute inset-0 flex flex-col items-center justify-center">
           <span className="text-3xl font-extrabold text-ink">{total.toLocaleString("bn-BD")}</span>
-          <span className="text-xs text-ink/50">মোট দাতা</span>
+          <span className="text-xs text-ink/50">{tx("মোট দাতা")}</span>
         </div>
       </div>
       <div className="grid grid-cols-2 gap-2 sm:grid-cols-1">

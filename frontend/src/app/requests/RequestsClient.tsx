@@ -7,10 +7,11 @@ import RequestCard from "@/components/RequestCard";
 import LiveBadge from "@/components/LiveBadge";
 import Reveal from "@/components/Reveal";
 import { useLiveRequests } from "@/lib/useLiveRequests";
-import { t, useLangClient } from "@/lib/i18n";
+import {t} from "@/lib/i18n";
+import { useLang } from "@/lib/useLang";
 
 export default function RequestsPage() {
-  const lang = useLangClient();
+  const lang = useLang();
   const en = lang === "en";
   const [group, setGroup] = useState("");
 

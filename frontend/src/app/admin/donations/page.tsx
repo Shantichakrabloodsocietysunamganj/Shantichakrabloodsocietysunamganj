@@ -6,8 +6,11 @@ import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import BloodGroupBadge from "@/components/BloodGroupBadge";
 import { logActivity } from "@/lib/activity";
+import { useTr } from "@/lib/useLang";
+import { fmtDate } from "@/lib/format";
 
 export default function AdminDonationsPage() {
+  const { t: tx, lang } = useTr();
   const supabase = createClient();
   const router = useRouter();
   const [ready, setReady] = useState(false);
@@ -45,39 +48,39 @@ export default function AdminDonationsPage() {
       // দাতার সর্বশেষ রক্তদানের তারিখ আপডেট
       await supabase.from("donors").update({ last_donation_date: form.donated_at }).eq("id", form.donor_id);
       const dn = donors.find((x) => x.id === form.donor_id);
-      logActivity("রক্তদান রেকর্ড করেছেন", dn?.full_name);
+      logActivity(tx("রক্তদান রেকর্ড করেছেন"), dn?.full_name);
       setForm({ donor_id: "", units: 1, donated_at: new Date().toISOString().slice(0, 10), note: "" });
       load();
     }
   }
   async function remove(id: string) {
     await supabase.from("donations").delete().eq("id", id);
-    logActivity("রক্তদান রেকর্ড মুছেছেন");
+    logActivity(tx("রক্তদান রেকর্ড মুছেছেন"));
     load();
   }
 
-  if (!ready) return <div className="container-page py-20 text-center text-ink/50">লোড হচ্ছে…</div>;
-  if (!authed) return <div className="container-page py-20 text-center"><p className="text-3xl">🛡️</p><p className="mt-2 font-medium text-ink">শুধু অ্যাডমিনদের জন্য।</p><Link href="/" className="btn-outline mt-4">হোমে ফিরুন</Link></div>;
+  if (!ready) return <div className="container-page py-20 text-center text-ink/50">{tx("লোড হচ্ছে…")}</div>;
+  if (!authed) return <div className="container-page py-20 text-center"><p className="text-3xl">🛡️</p><p className="mt-2 font-medium text-ink">{tx("শুধু অ্যাডমিনদের জন্য।")}</p><Link href="/" className="btn-outline mt-4">{tx("হোমে ফিরুন")}</Link></div>;
 
   return (
     <div className="container-page py-10">
       <header className="mb-8 flex items-center justify-between">
-        <h1 className="font-display text-2xl font-extrabold tracking-tight text-ink">🩸 রক্তদানের রেকর্ড</h1>
-        <Link href="/admin" className="btn-outline">← ড্যাশবোর্ড</Link>
+        <h1 className="font-display text-2xl font-extrabold tracking-tight text-ink">{tx("🩸 রক্তদানের রেকর্ড")}</h1>
+        <Link href="/admin" className="btn-outline">{tx("← ড্যাশবোর্ড")}</Link>
       </header>
 
       <form onSubmit={record} className="card mb-6 p-5">
-        <h2 className="mb-3 font-semibold text-ink">নতুন রক্তদান রেকর্ড করুন</h2>
+        <h2 className="mb-3 font-semibold text-ink">{tx("নতুন রক্তদান রেকর্ড করুন")}</h2>
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           <select className="input" required value={form.donor_id} onChange={(e) => setForm({ ...form, donor_id: e.target.value })}>
-            <option value="">রক্তদাতা নির্বাচন করুন</option>
+            <option value="">{tx("রক্তদাতা নির্বাচন করুন")}</option>
             {donors.map((d) => (<option key={d.id} value={d.id}>{d.full_name} ({d.blood_group})</option>))}
           </select>
-          <input type="number" min={1} max={10} className="input" placeholder="ইউনিট" value={form.units} onChange={(e) => setForm({ ...form, units: Number(e.target.value) })} />
+          <input type="number" min={1} max={10} className="input" placeholder={tx("ইউনিট")} value={form.units} onChange={(e) => setForm({ ...form, units: Number(e.target.value) })} />
           <input type="date" className="input" value={form.donated_at} onChange={(e) => setForm({ ...form, donated_at: e.target.value })} />
-          <input className="input" placeholder="নোট (ঐচ্ছিক)" value={form.note} onChange={(e) => setForm({ ...form, note: e.target.value })} />
+          <input className="input" placeholder={tx("নোট (ঐচ্ছিক)")} value={form.note} onChange={(e) => setForm({ ...form, note: e.target.value })} />
         </div>
-        <button className="btn-primary mt-3">রেকর্ড করুন</button>
+        <button className="btn-primary mt-3">{tx("রেকর্ড করুন")}</button>
       </form>
 
       <div className="space-y-2">
@@ -86,14 +89,14 @@ export default function AdminDonationsPage() {
             <div className="flex items-center gap-3">
               {it.donor && <BloodGroupBadge group={it.donor.blood_group} size="sm" />}
               <div>
-                <p className="font-medium text-ink">{it.donor?.full_name ?? "অজানা দাতা"} • {it.units} ইউনিট</p>
-                <p className="text-xs text-ink/50">{new Date(it.donated_at).toLocaleDateString("bn-BD", { day: "numeric", month: "long", year: "numeric" })}{it.note && ` • ${it.note}`}</p>
+                <p className="font-medium text-ink">{it.donor?.full_name ?? tx("অজানা দাতা")} • {it.units} {tx("ইউনিট")}</p>
+                <p className="text-xs text-ink/50">{fmtDate(it.donated_at, lang)}{it.note && ` • ${it.note}`}</p>
               </div>
             </div>
             <button onClick={() => remove(it.id)} className="btn-ghost !px-2 !py-1 text-xs text-blood-600">✕</button>
           </div>
         ))}
-        {items.length === 0 && <p className="text-center text-sm text-ink/50">এখনো কোনো রক্তদান রেকর্ড নেই।</p>}
+        {items.length === 0 && <p className="text-center text-sm text-ink/50">{tx("এখনো কোনো রক্তদান রেকর্ড নেই।")}</p>}
       </div>
     </div>
   );

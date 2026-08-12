@@ -4,8 +4,10 @@ import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { useTr } from "@/lib/useLang";
 
 export default function AdminPartnersPage() {
+  const { t: tx } = useTr();
   const supabase = createClient();
   const router = useRouter();
   const [ready, setReady] = useState(false);
@@ -46,30 +48,30 @@ export default function AdminPartnersPage() {
 
   async function remove(id: string) { await supabase.from("partners").delete().eq("id", id); load(); }
 
-  if (!ready) return <div className="container-page py-20 text-center text-ink/50">লোড হচ্ছে…</div>;
-  if (!authed) return <div className="container-page py-20 text-center"><p className="text-3xl">🛡️</p><p className="mt-2 font-medium text-ink">শুধু অ্যাডমিনদের জন্য।</p><Link href="/" className="btn-outline mt-4">হোমে ফিরুন</Link></div>;
+  if (!ready) return <div className="container-page py-20 text-center text-ink/50">{tx("লোড হচ্ছে…")}</div>;
+  if (!authed) return <div className="container-page py-20 text-center"><p className="text-3xl">🛡️</p><p className="mt-2 font-medium text-ink">{tx("শুধু অ্যাডমিনদের জন্য।")}</p><Link href="/" className="btn-outline mt-4">{tx("হোমে ফিরুন")}</Link></div>;
 
   return (
     <div className="container-page py-10">
       <header className="mb-8 flex items-center justify-between">
-        <h1 className="font-display text-2xl font-extrabold tracking-tight text-ink">🤝 পার্টনার ও সহযোগী</h1>
-        <Link href="/admin" className="btn-outline">← ড্যাশবোর্ড</Link>
+        <h1 className="font-display text-2xl font-extrabold tracking-tight text-ink">{tx("🤝 পার্টনার ও সহযোগী")}</h1>
+        <Link href="/admin" className="btn-outline">{tx("← ড্যাশবোর্ড")}</Link>
       </header>
 
       <form onSubmit={add} className="card mb-6 p-5">
-        <h2 className="mb-3 font-semibold text-ink">নতুন পার্টনার যোগ করুন</h2>
+        <h2 className="mb-3 font-semibold text-ink">{tx("নতুন পার্টনার যোগ করুন")}</h2>
         <div className="flex flex-wrap items-end gap-3">
           <div className="flex-1 min-w-48">
-            <label className="label">নাম</label>
-            <input className="input" placeholder="যেমন: রেড ক্রিসেন্ট" required value={name} onChange={(e) => setName(e.target.value)} />
+            <label className="label">{tx("নাম")}</label>
+            <input className="input" placeholder={tx("যেমন: রেড ক্রিসেন্ট")} required value={name} onChange={(e) => setName(e.target.value)} />
           </div>
           <div className="flex items-center gap-3">
             {logoUrl && <img src={logoUrl} alt="logo" className="h-10 w-10 rounded-lg object-contain" />}
             <label className="btn-outline cursor-pointer">
-              {uploading ? "আপলোড…" : (logoUrl ? "✓ লোগো" : "+ লোগো")}
+              {uploading ? tx("আপলোড…") : (logoUrl ? tx("✓ লোগো") : tx("+ লোগো"))}
               <input type="file" accept="image/*" className="hidden" onChange={(e) => e.target.files?.[0] && uploadLogo(e.target.files[0])} />
             </label>
-            <button className="btn-primary">যোগ করুন</button>
+            <button className="btn-primary">{tx("যোগ করুন")}</button>
           </div>
         </div>
       </form>

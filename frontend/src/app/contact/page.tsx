@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import ContactClient from "./ContactClient";
 import BreadcrumbJsonLd from "@/components/seo/BreadcrumbJsonLd";
 import LocalBusinessJsonLd from "@/components/seo/LocalBusinessJsonLd";
+import { tr } from "@/lib/i18n";
+import { getLang } from "@/lib/i18n-server";
 
 export const metadata: Metadata = {
   title: "যোগাযোগ | শান্তিচক্র ব্লাড সোসাইটি, সুনামগঞ্জ",
@@ -17,13 +19,15 @@ export const metadata: Metadata = {
   },
 };
 
-export default function ContactPage() {
+export default async function ContactPage() {
+  const lang = await getLang();
+  const tx = (s: string) => tr(s, lang);
   return (
     <>
       <BreadcrumbJsonLd
         items={[
-          { name: "হোম", url: "https://shanticakrabloodsocaiety.rahatahmed.site" },
-          { name: "যোগাযোগ", url: "https://shanticakrabloodsocaiety.rahatahmed.site/contact" },
+          { name: tx("হোম"), url: "https://shanticakrabloodsocaiety.rahatahmed.site" },
+          { name: tx("যোগাযোগ"), url: "https://shanticakrabloodsocaiety.rahatahmed.site/contact" },
         ]}
       />
       <LocalBusinessJsonLd />

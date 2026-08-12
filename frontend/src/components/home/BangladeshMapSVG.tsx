@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import bdData from "@/data/geo/bangladesh.json";
+import { useTr } from "@/lib/useLang";
 
 // REAL outline (world-atlas natural-earth). Bounds + latitude-corrected projection.
 const LNG0 = 88.02, LNG1 = 92.64, LAT0 = 20.74, LAT1 = 26.62, CLAT = 23.7;
@@ -137,6 +138,7 @@ const partialEnd = (a: [number, number], b: [number, number], f: number) =>
   [a[0] + (b[0] - a[0]) * f, a[1] + (b[1] - a[1]) * f] as [number, number];
 
 export default function BangladeshMapSVG() {
+  const { t: tx, en } = useTr();
   const ref = useRef<HTMLDivElement>(null);
   const mapRef = useRef<HTMLDivElement>(null);
   const [hoveredDiv, setHoveredDiv] = useState<DivisionInfo | null>(null);
@@ -226,7 +228,7 @@ export default function BangladeshMapSVG() {
       <div className="mb-2 flex items-center justify-between w-full px-2 text-xs">
         <span className="font-semibold text-brand-200/90 flex items-center gap-1.5">
           <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-          বাংলাদেশের ৮টি বিভাগ (Division Map)
+          {tx("বাংলাদেশের ৮টি বিভাগ (Division Map)")}
         </span>
         <button
           type="button"
@@ -261,7 +263,7 @@ export default function BangladeshMapSVG() {
               viewBox={`0 0 ${VB_W} ${VB_H}`}
               className="block h-auto w-full drop-shadow-[0_26px_36px_rgba(0,0,0,0.55)]"
               role="img"
-              aria-label="বাংলাদেশের ৩ডি ম্যাপ ও বিভাগসমূহ"
+              aria-label={tx("বাংলাদেশের ৩ডি ম্যাপ ও বিভাগসমূহ")}
             >
           <defs>
             <linearGradient id="sf-face" x1="0" y1="0" x2="0.5" y2="1">
@@ -390,7 +392,7 @@ export default function BangladeshMapSVG() {
                   <rect
                     x="-2"
                     y="-10"
-                    width={div.nameBn.length * 9 + (div.isActive ? 22 : 12)}
+                    width={(en ? div.nameEn : div.nameBn).length * (en ? 6.5 : 9) + (div.isActive ? 22 : 12)}
                     height="15"
                     rx="4"
                     fill={div.isActive ? "#991b1b" : isSelected ? "#0f172a" : "#020617"}
@@ -411,7 +413,7 @@ export default function BangladeshMapSVG() {
                     fill={div.isActive ? "#ffffff" : isSelected ? "#38bdf8" : "#cbd5e1"}
                     fontFamily="inherit"
                   >
-                    {div.nameBn}
+                    {en ? div.nameEn : div.nameBn}
                   </text>
                 </g>
               </g>
@@ -428,14 +430,14 @@ export default function BangladeshMapSVG() {
           <div className="rounded-xl border border-brand-300/30 bg-brand-950/80 px-3.5 py-1.5 backdrop-blur-md transition-all shadow-lg">
             <p className="font-bold text-white flex items-center gap-1.5 justify-center">
               <span>{hoveredDiv.isActive ? "🟢" : "🔜"}</span>
-              <span>{hoveredDiv.nameBn} বিভাগ ({hoveredDiv.nameEn})</span>
+              <span>{en ? `${hoveredDiv.nameEn} Division` : `${hoveredDiv.nameBn} ${tx("বিভাগ (")}${hoveredDiv.nameEn})`}</span>
             </p>
-            <p className="mt-0.5 text-[11px] text-brand-200/90">{hoveredDiv.statusBn}</p>
+            <p className="mt-0.5 text-[11px] text-brand-200/90">{en ? hoveredDiv.statusEn : hoveredDiv.statusBn}</p>
           </div>
         ) : (
           <div className="transition-all">
-            <p className="font-bold text-white">✅ সিলেট বিভাগ সম্পূর্ণ সক্রিয় (৮টি বিভাগ চিহ্নিত)</p>
-            <p className="mt-0.5 text-brand-200/70">🔜 পরবর্তী লক্ষ্য: সারা বাংলাদেশে রক্তসেবা সম্প্রসারণ</p>
+            <p className="font-bold text-white">{tx("✅ সিলেট বিভাগ সম্পূর্ণ সক্রিয় (৮টি বিভাগ চিহ্নিত)")}</p>
+            <p className="mt-0.5 text-brand-200/70">{tx("🔜 পরবর্তী লক্ষ্য: সারা বাংলাদেশে রক্তসেবা সম্প্রসারণ")}</p>
           </div>
         )}
       </div>

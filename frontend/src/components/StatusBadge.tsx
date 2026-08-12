@@ -1,3 +1,7 @@
+"use client";
+
+import { useTr } from "@/lib/useLang";
+
 const MAP: Record<string, { label: string; cls: string }> = {
   // `pending` is kept only for older rows; requests no longer wait for approval.
   pending: { label: "লাইভ", cls: "bg-brand-100 text-brand-700" },
@@ -11,6 +15,7 @@ const MAP: Record<string, { label: string; cls: string }> = {
 };
 
 export default function StatusBadge({ status }: { status: string }) {
+  const { t } = useTr();
   const s = MAP[status] ?? MAP.pending;
-  return <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${s.cls}`}>{s.label}</span>;
+  return <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${s.cls}`}>{t(s.label)}</span>;
 }

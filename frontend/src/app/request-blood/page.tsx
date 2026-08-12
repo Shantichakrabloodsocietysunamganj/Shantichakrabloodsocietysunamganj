@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import RequestBloodClient from "./RequestBloodClient";
 import BreadcrumbJsonLd from "@/components/seo/BreadcrumbJsonLd";
+import { tr } from "@/lib/i18n";
+import { getLang } from "@/lib/i18n-server";
 
 export const metadata: Metadata = {
   title: "রক্তের অনুরোধ করুন | জরুরি রক্তসেবা | শান্তিচক্র",
@@ -16,13 +18,15 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RequestBloodPage() {
+export default async function RequestBloodPage() {
+  const lang = await getLang();
+  const tx = (s: string) => tr(s, lang);
   return (
     <>
       <BreadcrumbJsonLd
         items={[
-          { name: "হোম", url: "https://shanticakrabloodsocaiety.rahatahmed.site" },
-          { name: "রক্তের অনুরোধ করুন", url: "https://shanticakrabloodsocaiety.rahatahmed.site/request-blood" },
+          { name: tx("হোম"), url: "https://shanticakrabloodsocaiety.rahatahmed.site" },
+          { name: tx("রক্তের অনুরোধ করুন"), url: "https://shanticakrabloodsocaiety.rahatahmed.site/request-blood" },
         ]}
       />
       <RequestBloodClient />

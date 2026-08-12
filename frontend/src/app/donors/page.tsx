@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import DonorsClient from "./DonorsClient";
 import BreadcrumbJsonLd from "@/components/seo/BreadcrumbJsonLd";
+import { tr } from "@/lib/i18n";
+import { getLang } from "@/lib/i18n-server";
 
 export const metadata: Metadata = {
   title: "রক্তদাতা খুঁজুন | শান্তিচক্র ব্লাড সোসাইটি",
@@ -16,13 +18,15 @@ export const metadata: Metadata = {
   },
 };
 
-export default function DonorsPage() {
+export default async function DonorsPage() {
+  const lang = await getLang();
+  const tx = (s: string) => tr(s, lang);
   return (
     <>
       <BreadcrumbJsonLd
         items={[
-          { name: "হোম", url: "https://shanticakrabloodsocaiety.rahatahmed.site" },
-          { name: "রক্তদাতা খুঁজুন", url: "https://shanticakrabloodsocaiety.rahatahmed.site/donors" },
+          { name: tx("হোম"), url: "https://shanticakrabloodsocaiety.rahatahmed.site" },
+          { name: tx("রক্তদাতা খুঁজুন"), url: "https://shanticakrabloodsocaiety.rahatahmed.site/donors" },
         ]}
       />
       <DonorsClient />

@@ -5,9 +5,10 @@ import Link from "next/link";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/client";
 import { BLOOD_GROUPS, DISTRICTS, upazilasOf, GENDERS } from "@/data/constants";
-import { useLangClient, t } from "@/lib/i18n";
+import {t} from "@/lib/i18n";
 import { getEligibility } from "@/lib/donation";
 import { scrollToPageTop } from "@/lib/motion";
+import { useLang, useTr } from "@/lib/useLang";
 
 const schema = z.object({
   full_name: z.string().min(2),
@@ -26,12 +27,13 @@ const schema = z.object({
 type FormState = Record<string, any>;
 
 export default function BecomeDonorPage() {
+  const { t: tx } = useTr();
   const supabase = createClient();
-  const lang = useLangClient();
+  const lang = useLang();
   const en = lang === "en";
   const [form, setForm] = useState<FormState>({
     full_name: "", phone: "", blood_group: "", gender: "", age: "",
-    district: "সুনামগঞ্জ", upazila: "", area: "", last_donation_date: "",
+    district: tx("সুনামগঞ্জ"), upazila: "", area: "", last_donation_date: "",
     is_available: true, notes: "",
   });
   const [photo, setPhoto] = useState<File | null>(null);
@@ -114,10 +116,10 @@ export default function BecomeDonorPage() {
           <Field label={en ? "Full Name *" : "পুরো নাম *"} error={errors.full_name ? (en ? "Required" : "দিন") : undefined}><input className="input" value={form.full_name} onChange={(e) => set("full_name", e.target.value)} /></Field>
           <Field label={en ? "Mobile *" : "মোবাইল *"} error={errors.phone ? (en ? "Invalid" : "সঠিক নয়") : undefined}><input className="input" value={form.phone} onChange={(e) => set("phone", e.target.value)} placeholder="01XXXXXXXXX" /></Field>
           <Field label={en ? "Blood Group *" : "রক্তের গ্রুপ *"} error={errors.blood_group ? (en ? "Select" : "নির্বাচন") : undefined}><select className="input" value={form.blood_group} onChange={(e) => set("blood_group", e.target.value)}><option value="">{en ? "Select" : "নির্বাচন করুন"}</option>{BLOOD_GROUPS.map((g) => <option key={g} value={g}>{g}</option>)}</select></Field>
-          <Field label={en ? "District *" : "জেলা *"} error={errors.district ? (en ? "Select" : "নির্বাচন") : undefined}><select className="input" value={form.district} onChange={(e) => { set("district", e.target.value); set("upazila", ""); }}>{DISTRICTS.map((d) => <option key={d} value={d}>{d}</option>)}</select></Field>
-          <Field label={en ? "Upazila *" : "উপজেলা *"} error={errors.upazila ? (en ? "Select" : "নির্বাচন") : undefined}><select className="input" value={form.upazila} onChange={(e) => set("upazila", e.target.value)}><option value="">{en ? "Select" : "নির্বাচন করুন"}</option>{upazilasOf(form.district).map((u) => <option key={u} value={u}>{u}</option>)}</select></Field>
+          <Field label={en ? "District *" : "জেলা *"} error={errors.district ? (en ? "Select" : "নির্বাচন") : undefined}><select className="input" value={form.district} onChange={(e) => { set("district", e.target.value); set("upazila", ""); }}>{DISTRICTS.map((d) => <option key={d} value={d}>{tx(d)}</option>)}</select></Field>
+          <Field label={en ? "Upazila *" : "উপজেলা *"} error={errors.upazila ? (en ? "Select" : "নির্বাচন") : undefined}><select className="input" value={form.upazila} onChange={(e) => set("upazila", e.target.value)}><option value="">{en ? "Select" : "নির্বাচন করুন"}</option>{upazilasOf(form.district).map((u) => <option key={u} value={u}>{tx(u)}</option>)}</select></Field>
           <Field label={en ? "Age (18–60)" : "বয়স (১৮–৬০)"} error={errors.age ? (en ? "18–60" : "১৮-৬০") : undefined}><input type="number" min={18} max={60} className="input" value={form.age} onChange={(e) => set("age", e.target.value)} /></Field>
-          <Field label={en ? "Gender" : "লিঙ্গ"}><select className="input" value={form.gender} onChange={(e) => set("gender", e.target.value)}><option value="">{en ? "Select" : "নির্বাচন"}</option>{GENDERS.map((g) => <option key={g} value={g}>{g}</option>)}</select></Field>
+          <Field label={en ? "Gender" : "লিঙ্গ"}><select className="input" value={form.gender} onChange={(e) => set("gender", e.target.value)}><option value="">{en ? "Select" : "নির্বাচন"}</option>{GENDERS.map((g) => <option key={g} value={g}>{tx(g)}</option>)}</select></Field>
           <Field label={en ? "Area" : "এলাকা"}><input className="input" value={form.area} onChange={(e) => set("area", e.target.value)} /></Field>
           <Field label={en ? "Last Donation Date" : "সর্বশেষ রক্তদান"}><input type="date" className="input" value={form.last_donation_date} onChange={(e) => { const d = e.target.value; set("last_donation_date", d); const el = getEligibility(d || null); set("is_available", el.eligible); }} />{form.last_donation_date && (() => { const el = getEligibility(form.last_donation_date); return <p className={`mt-1 text-xs font-medium ${el.eligible ? "text-emerald-600" : "text-amber-600"}`}>{el.eligible ? (en ? "✓ Eligible to donate now." : "✓ আপনি এখন রক্তদানে প্রস্তুত।") : (en ? `⏳ ${el.daysRemaining} days remaining (eligible ${el.nextEligibleText}).` : `⏳ আর ${el.daysRemaining.toLocaleString("bn-BD")} দিন বাকি (${el.nextEligibleText})।`)}</p>; })()}</Field>
         </div>
