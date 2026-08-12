@@ -8,6 +8,11 @@ import { BLOOD_GROUPS, DISTRICTS, upazilasOf } from "@/data/constants";
 import { useLangClient } from "@/lib/i18n";
 import { scrollToPageTop } from "@/lib/motion";
 import { rememberRecentlyPostedRequest } from "@/lib/useLiveRequests";
+import {
+  createManagementToken,
+  firstFollowUpAt,
+  rememberOwnedBloodRequest,
+} from "@/lib/requestOwnership";
 import type { BloodRequest } from "@/lib/types";
 
 const schema = z.object({
@@ -41,6 +46,7 @@ export default function RequestBloodPage() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState(false);
+  const [followUpEnabled, setFollowUpEnabled] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
   const [userId, setUserId] = useState<string | null>(null);
 
@@ -56,6 +62,8 @@ export default function RequestBloodPage() {
     try {
       // Supplying the id and status ourselves lets us reliably carry this exact
       // row to the list page instead of waiting for a database default/cache.
+      const managementToken = createManagementToken();
+      const nextPromptAt = firstFollowUpAt(parsed.data.needed_date);
       const request: BloodRequest = {
         id: crypto.randomUUID(),
         patient_name: parsed.data.patient_name,
@@ -80,10 +88,35 @@ export default function RequestBloodPage() {
         created_at: new Date().toISOString(),
       };
 
-      const { error } = await supabase.from("blood_requests").insert(request);
-      if (error) throw error;
+      // The RPC atomically creates the public request and its private ownership
+      // token. If the migration has not been run yet, posting still works via
+      // the old insert path, but device follow-up starts after Supabase setup.
+      const rpcResult = await supabase.rpc("create_blood_request_with_access", {
+        p_request: { ...request, next_prompt_at: nextPromptAt },
+        p_token: managementToken,
+      });
+      let ownershipEnabled = !rpcResult.error;
+
+      if (rpcResult.error?.code === "PGRST202") {
+        const { error } = await supabase.from("blood_requests").insert(request);
+        if (error) throw error;
+        ownershipEnabled = false;
+      } else if (rpcResult.error) {
+        throw rpcResult.error;
+      }
 
       rememberRecentlyPostedRequest(request);
+      if (ownershipEnabled) {
+        rememberOwnedBloodRequest({
+          id: request.id,
+          token: managementToken,
+          patientName: request.patient_name,
+          bloodGroup: request.blood_group,
+          createdAt: request.created_at,
+          nextPromptAt,
+        });
+        setFollowUpEnabled(true);
+      }
       setDone(true);
       scrollToPageTop();
     } catch (e: any) {
@@ -99,6 +132,11 @@ export default function RequestBloodPage() {
         <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-brand-50 text-3xl">🩸</div>
         <h1 className="text-2xl font-bold text-zinc-900">{en ? "Request Posted" : "অনুরোধটি পোস্ট হয়েছে"}</h1>
         <p className="mt-2 text-zinc-600">{en ? "Your blood request is visible to all donors across Sylhet." : "আপনার রক্তের অনুরোধ সারা সিলেট বিভাগের দাতাদের কাছে দৃশ্যমান।"}</p>
+        {followUpEnabled && (
+          <p className="mt-4 rounded-xl bg-brand-50 p-3 text-sm text-brand-700">
+            {en ? "We will ask on this browser whether you received blood after the needed date." : "রক্ত লাগার তারিখের পর এই ব্রাউজারেই আমরা জানতে চাইব আপনি রক্ত পেয়েছেন কি না।"}
+          </p>
+        )}
         <div className="mt-6 flex flex-col gap-3"><Link href="/donors" className="btn-primary">{en ? "Find Donors" : "এখনই রক্তদাতা খুঁজুন"}</Link><Link href="/requests" className="btn-ghost">{en ? "All Requests" : "সব অনুরোধ দেখুন"}</Link></div>
       </div></div>
     );
