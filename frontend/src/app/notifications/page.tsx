@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { Bell } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { GridSkeleton } from "@/components/ui/Skeleton";
 
@@ -40,7 +41,7 @@ export default function NotificationsPage() {
     <div className="container-page py-10">
       <header className="mb-6 flex items-center justify-between">
         <div>
-          <h1 className="font-display text-2xl font-extrabold tracking-tight text-ink">🔔 বিজ্ঞপ্তি</h1>
+          <h1 className="flex items-center gap-2 font-display text-2xl font-extrabold tracking-tight text-ink"><Bell className="h-6 w-6 text-brand-600" /> বিজ্ঞপ্তি</h1>
           <p className="text-sm text-ink/60">আপনার সাম্প্রতিক নোটিফিকেশন।</p>
         </div>
         {items.some((i) => !i.is_read) && (

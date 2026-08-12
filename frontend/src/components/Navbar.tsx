@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { LayoutDashboard, Shield } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import NotificationBell from "@/components/NotificationBell";
 import ThemeToggle from "@/components/ThemeToggle";
@@ -100,9 +101,9 @@ export default function Navbar({
           {profile ? (
             <div className="flex items-center gap-2">
               {(profile.role === "admin" || profile.role === "moderator") && (
-                <Link href="/admin" className="btn-ghost !px-3 !py-2 text-xs">{profile.role === "admin" ? `🛡️ ${t("nav.admin", lang)}` : "🔹 মডারেটর"}</Link>
+                <Link href="/admin" className="btn-ghost inline-flex items-center gap-1.5 !px-3 !py-2 text-xs"><Shield className="h-3.5 w-3.5" /> {profile.role === "admin" ? t("nav.admin", lang) : "মডারেটর"}</Link>
               )}
-              <Link href="/dashboard" className="btn-ghost !px-3 !py-2 text-xs">📊 {t("nav.dashboard", lang)}</Link>
+              <Link href="/dashboard" className="btn-ghost inline-flex items-center gap-1.5 !px-3 !py-2 text-xs"><LayoutDashboard className="h-3.5 w-3.5" /> {t("nav.dashboard", lang)}</Link>
               <NotificationBell />
               <div className="flex items-center gap-2 rounded-xl bg-zinc-50 px-2.5 py-1.5 ring-1 ring-zinc-100 dark:bg-white/5 dark:ring-white/10">
                 <span className="flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-br from-brand-600 to-brand-800 text-xs font-bold text-white">

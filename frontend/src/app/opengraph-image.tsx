@@ -7,10 +7,11 @@ export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
 export default async function OpenGraphImage() {
-  // Circular organisation logo (public/images/logo.png) embedded as a data URL.
+  // Circular organisation logo (optimized 256px copy) embedded as a data URL —
+  // full-size logo.png (~725KB) is too heavy to inline on every OG request.
   let logoSrc: string | null = null;
   try {
-    const buf = await readFile(path.join(process.cwd(), "public/images/logo.png"));
+    const buf = await readFile(path.join(process.cwd(), "public/images/logo-og.png"));
     logoSrc = `data:image/png;base64,${buf.toString("base64")}`;
   } catch {
     logoSrc = null;

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Check, Copy } from "lucide-react";
 
 export default function CopyButton({ text, label = "কপি করুন" }: { text: string; label?: string }) {
   const [copied, setCopied] = useState(false);
@@ -25,13 +26,13 @@ export default function CopyButton({ text, label = "কপি করুন" }: {
     <button
       onClick={copy}
       type="button"
-      className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition ${
+      className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition ${
         copied
           ? "bg-success-500 text-white"
           : "bg-brand-600 text-white hover:bg-brand-700"
       }`}
     >
-      {copied ? "✓ কপি হয়েছে" : `📋 ${label}`}
+      {copied ? <><Check className="h-3.5 w-3.5" /> কপি হয়েছে</> : <><Copy className="h-3.5 w-3.5" /> {label}</>}
     </button>
   );
 }
