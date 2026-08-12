@@ -5,14 +5,14 @@ import { tr } from "@/lib/i18n";
 import { getLang } from "@/lib/i18n-server";
 
 export const metadata: Metadata = {
-  title: "রক্তদাতা খুঁজুন | শান্তিচক্র ব্লাড সোসাইটি",
+  title: "রক্তদাতা খুঁজুন (Find Blood Donors)",
   description:
-    "রক্তের গ্রুপ ও এলাকা অনুযায়ী নিবন্ধিত রক্তদাতাদের খুঁজুন এবং জরুরি রক্তের প্রয়োজনে যোগাযোগ করুন।",
+    "Find volunteer blood donors in Sunamganj and Sylhet Division through Shantichakra Blood Society Sunamganj (শান্তিচক্র ব্লাড সোসাইটি সুনামগঞ্জ). রক্তের গ্রুপ ও এলাকা অনুযায়ী রক্তদাতাদের খুঁজুন।",
   alternates: { canonical: "/donors" },
   openGraph: {
-    title: "রক্তদাতা খুঁজুন | শান্তিচক্র ব্লাড সোসাইটি",
+    title: "রক্তদাতা খুঁজুন (Find Blood Donors) | Shantichakra Blood Society Sunamganj",
     description:
-      "রক্তের গ্রুপ ও এলাকা অনুযায়ী নিবন্ধিত রক্তদাতাদের খুঁজুন এবং জরুরি রক্তের প্রয়োজনে যোগাযোগ করুন।",
+      "Find volunteer blood donors in Sunamganj and Sylhet Division through Shantichakra Blood Society Sunamganj (শান্তিচক্র ব্লাড সোসাইটি সুনামগঞ্জ). রক্তের গ্রুপ ও এলাকা অনুযায়ী রক্তদাতাদের খুঁজুন।",
     url: "https://shantichakrabloodsociety.rahatahmed.site/donors",
     type: "website",
   },

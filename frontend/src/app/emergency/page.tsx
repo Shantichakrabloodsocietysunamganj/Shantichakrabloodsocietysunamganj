@@ -18,14 +18,14 @@ import { tr, type Lang } from "@/lib/i18n";
 import { getLang } from "@/lib/i18n-server";
 
 export const metadata: Metadata = {
-  title: "জরুরি ডিরেক্টরি ও রক্তসেবা | শান্তিচক্র ব্লাড সোসাইটি",
+  title: "জরুরি ডিরেক্টরি ও রক্তসেবা (Emergency Directory)",
   description:
-    "সুনামগঞ্জ ও সিলেট বিভাগের জরুরি হাসপাতাল, ব্লাড ব্যাংক ও হটলাইন নম্বর এবং তাৎক্ষণিক রক্তসেবা যোগাযোগ ডিরেক্টরি।",
+    "Emergency blood support, hospitals, blood banks, and ambulance hotline directory across Sunamganj and Sylhet Division by Shantichakra Blood Society Sunamganj (শান্তিচক্র ব্লাড সোসাইটি সুনামগঞ্জ).",
   alternates: { canonical: "/emergency" },
   openGraph: {
-    title: "জরুরি ডিরেক্টরি ও রক্তসেবা | শান্তিচক্র ব্লাড সোসাইটি",
+    title: "জরুরি ডিরেক্টরি ও রক্তসেবা (Emergency Directory) | Shantichakra Blood Society Sunamganj",
     description:
-      "সুনামগঞ্জ ও সিলেট বিভাগের জরুরি হাসপাতাল, ব্লাড ব্যাংক ও হটলাইন নম্বর এবং তাৎক্ষণিক রক্তসেবা যোগাযোগ ডিরেক্টরি।",
+      "Emergency blood support, hospitals, blood banks, and ambulance hotline directory across Sunamganj and Sylhet Division by Shantichakra Blood Society Sunamganj (শান্তিচক্র ব্লাড সোসাইটি সুনামগঞ্জ).",
     url: "https://shantichakrabloodsociety.rahatahmed.site/emergency",
     type: "website",
   },

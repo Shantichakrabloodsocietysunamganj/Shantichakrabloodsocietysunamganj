@@ -5,14 +5,14 @@ import { tr } from "@/lib/i18n";
 import { getLang } from "@/lib/i18n-server";
 
 export const metadata: Metadata = {
-  title: "স্বেচ্ছাসেবী হিসেবে যুক্ত হন | শান্তিচক্র ব্লাড সোসাইটি",
+  title: "স্বেচ্ছাসেবী নিবন্ধন (Become a Volunteer)",
   description:
-    "সুনামগঞ্জ ও সিলেট বিভাগের মানুষের জীবন বাঁচাতে স্বেচ্ছাসেবী হিসেবে শান্তিচক্র ব্লাড সোসাইটির মানবিক কার্যক্রমে যুক্ত হন।",
+    "Join Shantichakra Blood Society Sunamganj (শান্তিচক্র ব্লাড সোসাইটি সুনামগঞ্জ) as a volunteer in Sunamganj and Sylhet Division. সুনামগঞ্জ ও সিলেট বিভাগে স্বেচ্ছাসেবী হিসেবে মানবিক কার্যক্রমে যুক্ত হন।",
   alternates: { canonical: "/volunteer" },
   openGraph: {
-    title: "স্বেচ্ছাসেবী হিসেবে যুক্ত হন | শান্তিচক্র ব্লাড সোসাইটি",
+    title: "স্বেচ্ছাসেবী নিবন্ধন (Become a Volunteer) | Shantichakra Blood Society Sunamganj",
     description:
-      "সুনামগঞ্জ ও সিলেট বিভাগের মানুষের জীবন বাঁচাতে স্বেচ্ছাসেবী হিসেবে শান্তিচক্র ব্লাড সোসাইটির মানবিক কার্যক্রমে যুক্ত হন।",
+      "Join Shantichakra Blood Society Sunamganj (শান্তিচক্র ব্লাড সোসাইটি সুনামগঞ্জ) as a volunteer in Sunamganj and Sylhet Division. সুনামগঞ্জ ও সিলেট বিভাগে স্বেচ্ছাসেবী হিসেবে মানবিক কার্যক্রমে যুক্ত হন।",
     url: "https://shantichakrabloodsociety.rahatahmed.site/volunteer",
     type: "website",
   },

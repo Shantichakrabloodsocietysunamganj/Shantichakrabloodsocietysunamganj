@@ -11,14 +11,14 @@ import BreadcrumbJsonLd from "@/components/seo/BreadcrumbJsonLd";
 import { tr } from "@/lib/i18n";
 
 export const metadata: Metadata = {
-  title: "আমাদের প্রভাব ও অর্জন | শান্তিচক্র ব্লাড সোসাইটি",
+  title: "আমাদের অর্জন (Impact & Statistics)",
   description:
-    "শান্তিচক্র ব্লাড সোসাইটির স্বচ্ছতা, রক্তদানের পরিসংখ্যান, অর্জিত সাফল্য ও সামাজিক প্রভাবের বিস্তারিত বিবরণ।",
+    "Impact, transparency and blood donation statistics of Shantichakra Blood Society Sunamganj (শান্তিচক্র ব্লাড সোসাইটি সুনামগঞ্জ). আমাদের প্রভাব ও অর্জন।",
   alternates: { canonical: "/impact" },
   openGraph: {
-    title: "আমাদের প্রভাব ও অর্জন | শান্তিচক্র ব্লাড সোসাইটি",
+    title: "আমাদের অর্জন (Impact & Statistics) | Shantichakra Blood Society Sunamganj",
     description:
-      "শান্তিচক্র ব্লাড সোসাইটির স্বচ্ছতা, রক্তদানের পরিসংখ্যান, অর্জিত সাফল্য ও সামাজিক প্রভাবের বিস্তারিত বিবরণ।",
+      "Impact, transparency and blood donation statistics of Shantichakra Blood Society Sunamganj (শান্তিচক্র ব্লাড সোসাইটি সুনামগঞ্জ). আমাদের প্রভাব ও অর্জন।",
     url: "https://shantichakrabloodsociety.rahatahmed.site/impact",
     type: "website",
   },

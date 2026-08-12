@@ -5,8 +5,8 @@ export default function LocalBusinessJsonLd() {
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": ["NGO", "LocalBusiness", "Organization"],
-    name: site.name,
-    alternateName: "Shantichakra Blood Society Sunamganj",
+    name: "Shantichakra Blood Society Sunamganj",
+    alternateName: "শান্তিচক্র ব্লাড সোসাইটি সুনামগঞ্জ",
     url: site.url,
     logo: `${site.url}/images/logo.png`,
     image: `${site.url}/images/logo.png`,

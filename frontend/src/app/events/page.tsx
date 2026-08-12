@@ -9,14 +9,14 @@ import { tr, type Lang } from "@/lib/i18n";
 import { fmtDate } from "@/lib/format";
 
 export const metadata: Metadata = {
-  title: "রক্তদান কর্মসূচি ও ক্যাম্প | শান্তিচক্র ব্লাড সোসাইটি",
+  title: "রক্তদান কর্মসূচি (Events & Camps)",
   description:
-    "শান্তিচক্র ব্লাড সোসাইটির রক্তদান শিবির, বিনামূল্যে রক্তের গ্রুপ নির্ধারণ ও স্বাস্থ্য সচেতনতামূলক বিভিন্ন কর্মসূচির বিবরণ।",
+    "Blood donation camps, free blood group tests, and awareness programs by Shantichakra Blood Society Sunamganj (শান্তিচক্র ব্লাড সোসাইটি সুনামগঞ্জ).",
   alternates: { canonical: "/events" },
   openGraph: {
-    title: "রক্তদান কর্মসূচি ও ক্যাম্প | শান্তিচক্র ব্লাড সোসাইটি",
+    title: "রক্তদান কর্মসূচি (Events & Camps) | Shantichakra Blood Society Sunamganj",
     description:
-      "শান্তিচক্র ব্লাডসম্পৃক্ত শিবির, বিনামূল্যে রক্তের গ্রুপ নির্ধারণ ও স্বাস্থ্য সচেতনতামূলক বিভিন্ন কর্মসূচির বিবরণ।",
+      "Blood donation camps, free blood group tests, and awareness programs by Shantichakra Blood Society Sunamganj (শান্তিচক্র ব্লাড সোসাইটি সুনামগঞ্জ).",
     url: "https://shantichakrabloodsociety.rahatahmed.site/events",
     type: "website",
   },

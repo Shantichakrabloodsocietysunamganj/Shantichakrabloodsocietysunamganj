@@ -7,14 +7,14 @@ import { tr } from "@/lib/i18n";
 import { getLang } from "@/lib/i18n-server";
 
 export const metadata: Metadata = {
-  title: "রক্তদান কর্মসূচির ছবি | শান্তিচক্র ব্লাড সোসাইটি",
+  title: "ছবির গ্যালারি (Photo Gallery)",
   description:
-    "সুনামগঞ্জ ও সিলেট বিভাগের বিভিন্ন রক্তদান ক্যাম্প, স্বেচ্ছাসেবী কার্যক্রম ও সচেতনতামূলক কর্মসূচির ছবির গ্যালারি।",
+    "Photo gallery of blood donation camps, awareness programs and community events of Shantichakra Blood Society Sunamganj (শান্তিচক্র ব্লাড সোসাইটি সুনামগঞ্জ).",
   alternates: { canonical: "/gallery" },
   openGraph: {
-    title: "রক্তদান কর্মসূচির ছবি | শান্তিচক্র ব্লাড সোসাইটি",
+    title: "ছবির গ্যালারি (Photo Gallery) | Shantichakra Blood Society Sunamganj",
     description:
-      "সুনামগঞ্জ ও সিলেট বিভাগের বিভিন্ন রক্তদান ক্যাম্প, স্বেচ্ছাসেবী কার্যক্রম ও সচেতনতামূলক কর্মসূচির ছবির গ্যালারি।",
+      "Photo gallery of blood donation camps, awareness programs and community events of Shantichakra Blood Society Sunamganj (শান্তিচক্র ব্লাড সোসাইটি সুনামগঞ্জ).",
     url: "https://shantichakrabloodsociety.rahatahmed.site/gallery",
     type: "website",
   },

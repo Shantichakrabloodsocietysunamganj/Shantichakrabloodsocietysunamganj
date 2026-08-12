@@ -5,14 +5,14 @@ import { tr } from "@/lib/i18n";
 import { getLang } from "@/lib/i18n-server";
 
 export const metadata: Metadata = {
-  title: "গোপনীয়তা নীতি (Privacy Policy) | শান্তিচক্র ব্লাড সোসাইটি",
+  title: "গোপনীয়তা নীতি (Privacy Policy)",
   description:
-    "শান্তিচক্র ব্লাড সোসাইটির ওয়েবসাইট ব্যবহারকারীদের তথ্য সংগ্রহ, সুরক্ষা ও ব্যবহার সম্পর্কিত গোপনীয়তা নীতি।",
+    "Privacy policy of Shantichakra Blood Society Sunamganj (শান্তিচক্র ব্লাড সোসাইটি সুনামগঞ্জ). তথ্য সংগ্রহ, সুরক্ষা ও ব্যবহার সম্পর্কিত গোপনীয়তা নীতি।",
   alternates: { canonical: "/privacy" },
   openGraph: {
-    title: "গোপনীয়তা নীতি (Privacy Policy) | শান্তিচক্র ব্লাড সোসাইটি",
+    title: "গোপনীয়তা নীতি (Privacy Policy) | Shantichakra Blood Society Sunamganj",
     description:
-      "শান্তিচক্র ব্লাড সোসাইটির ওয়েবসাইট ব্যবহারকারীদের তথ্য সংগ্রহ, সুরক্ষা ও ব্যবহার সম্পর্কিত গোপনীয়তা নীতি।",
+      "Privacy policy of Shantichakra Blood Society Sunamganj (শান্তিচক্র ব্লাড সোসাইটি সুনামগঞ্জ). তথ্য সংগ্রহ, সুরক্ষা ও ব্যবহার সম্পর্কিত গোপনীয়তা নীতি।",
     url: "https://shantichakrabloodsociety.rahatahmed.site/privacy",
     type: "website",
   },

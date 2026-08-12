@@ -6,14 +6,14 @@ import { tr } from "@/lib/i18n";
 import { getLang } from "@/lib/i18n-server";
 
 export const metadata: Metadata = {
-  title: "সাধারণ জিজ্ঞাসা (FAQ) | শান্তিচক্র ব্লাড সোসাইটি",
+  title: "সাধারণ জিজ্ঞাসা (FAQ)",
   description:
-    "রক্তদান, রক্তদাতা নিবন্ধন, জরুরি রক্তের অনুরোধ ও সংগঠনের কার্যক্রম সম্পর্কিত সাধারণ প্রশ্ন ও উত্তর।",
+    "Frequently asked questions about blood donation, donor registration, and emergency blood support at Shantichakra Blood Society Sunamganj (শান্তিচক্র ব্লাড সোসাইটি সুনামগঞ্জ).",
   alternates: { canonical: "/faq" },
   openGraph: {
-    title: "সাধারণ জিজ্ঞাসা (FAQ) | শান্তিচক্র ব্লাড সোসাইটি",
+    title: "সাধারণ জিজ্ঞাসা (FAQ) | Shantichakra Blood Society Sunamganj",
     description:
-      "রক্তদান, রক্তদাতা নিবন্ধন, জরুরি রক্তের অনুরোধ ও সংগঠনের কার্যক্রম সম্পর্কিত সাধারণ প্রশ্ন ও উত্তর।",
+      "Frequently asked questions about blood donation, donor registration, and emergency blood support at Shantichakra Blood Society Sunamganj (শান্তিচক্র ব্লাড সোসাইটি সুনামগঞ্জ).",
     url: "https://shantichakrabloodsociety.rahatahmed.site/faq",
     type: "website",
   },

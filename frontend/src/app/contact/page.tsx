@@ -6,14 +6,14 @@ import { tr } from "@/lib/i18n";
 import { getLang } from "@/lib/i18n-server";
 
 export const metadata: Metadata = {
-  title: "যোগাযোগ | শান্তিচক্র ব্লাড সোসাইটি, সুনামগঞ্জ",
+  title: "যোগাযোগ (Contact)",
   description:
-    "শান্তিচক্র ব্লাড সোসাইটির সঙ্গে যোগাযোগ করুন। রক্তদান সংক্রান্ত যেকোনো জিজ্ঞাসা বা সহযোগিতার জন্য আমাদের সাথে যুক্ত হন।",
+    "Contact Shantichakra Blood Society Sunamganj (শান্তিচক্র ব্লাড সোসাইটি সুনামগঞ্জ). রক্তদান সংক্রান্ত যেকোনো জিজ্ঞাসা বা সহযোগিতার জন্য আমাদের সাথে যোগাযোগ করুন।",
   alternates: { canonical: "/contact" },
   openGraph: {
-    title: "যোগাযোগ | শান্তিচক্র ব্লাড সোসাইটি, সুনামগঞ্জ",
+    title: "যোগাযোগ (Contact) | Shantichakra Blood Society Sunamganj",
     description:
-      "শান্তিচক্র ব্লাড সোসাইটির সঙ্গে যোগাযোগ করুন। রক্তদান সংক্রান্ত যেকোনো জিজ্ঞাসা বা সহযোগিতার জন্য আমাদের সাথে যুক্ত হন।",
+      "Contact Shantichakra Blood Society Sunamganj (শান্তিচক্র ব্লাড সোসাইটি সুনামগঞ্জ). রক্তদান সংক্রান্ত যেকোনো জিজ্ঞাসা বা সহযোগিতার জন্য আমাদের সাথে যোগাযোগ করুন।",
     url: "https://shantichakrabloodsociety.rahatahmed.site/contact",
     type: "website",
   },

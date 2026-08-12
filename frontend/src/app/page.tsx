@@ -27,16 +27,18 @@ import type { Donor } from "@/lib/types";
 import { shortDate } from "@/lib/format";
 
 export const metadata: Metadata = {
-  title: "শান্তিচক্র ব্লাড সোসাইটি, সুনামগঞ্জ | রক্তদান ও জরুরি রক্তসেবা",
-  description: "সুনামগঞ্জ ও সিলেট বিভাগে স্বেচ্ছায় রক্তদান, রক্তদাতা খোঁজা ও জরুরি রক্তসেবা সমন্বয়ে শান্তিচক্র ব্লাড সোসাইটির সঙ্গে যুক্ত হন।",
+  title: {
+    absolute: "Shantichakra Blood Society Sunamganj | শান্তিচক্র ব্লাড সোসাইটি সুনামগঞ্জ — রক্তদান ও জরুরি রক্তসেবা",
+  },
+  description: "Shantichakra Blood Society Sunamganj (শান্তিচক্র ব্লাড সোসাইটি সুনামগঞ্জ) is a community service blood donation organization in Bangladesh providing emergency blood assistance and blood donor support across Sunamganj and Sylhet. সুনামগঞ্জ ও সিলেট বিভাগে স্বেচ্ছায় রক্তদান, রক্তদাতা খোঁজা ও জরুরি রক্তসেবায় আমাদের সঙ্গে যুক্ত হন।",
   robots: { index: true, follow: true },
   alternates: { canonical: "https://shantichakrabloodsociety.rahatahmed.site/" },
   openGraph: {
-    title: "শান্তিচক্র ব্লাড সোসাইটি, সুনামগঞ্জ | রক্তদান ও জরুরি রক্তসেবা",
-    description: "সুনামগঞ্জ ও সিলেট বিভাগে স্বেচ্ছায় রক্তদান, রক্তদাতা খোঁজা ও জরুরি রক্তসেবা সমন্বয়ে শান্তিচক্র ব্লাড সোসাইটির সঙ্গে যুক্ত হন।",
+    title: "Shantichakra Blood Society Sunamganj | শান্তিচক্র ব্লাড সোসাইটি সুনামগঞ্জ — রক্তদান ও জরুরি রক্তসেবা",
+    description: "Shantichakra Blood Society Sunamganj (শান্তিচক্র ব্লাড সোসাইটি সুনামগঞ্জ) is a community service blood donation organization in Bangladesh providing emergency blood assistance and blood donor support across Sunamganj and Sylhet. সুনামগঞ্জ ও সিলেট বিভাগে স্বেচ্ছায় রক্তদান, রক্তদাতা খোঁজা ও জরুরি রক্তসেবায় আমাদের সঙ্গে যুক্ত হন।",
     url: "https://shantichakrabloodsociety.rahatahmed.site/",
     type: "website",
-    siteName: "শান্তিচক্র ব্লাড সোসাইটি, সুনামগঞ্জ",
+    siteName: "Shantichakra Blood Society Sunamganj",
   },
 };
 
@@ -77,12 +79,12 @@ export default async function Home() {
   const webPageJsonLd = {
     "@context": "https://schema.org",
     "@type": "WebPage",
-    name: "শান্তিচক্র ব্লাড সোসাইটি, সুনামগঞ্জ | রক্তদান ও জরুরি রক্তসেবা",
+    name: "Shantichakra Blood Society Sunamganj | শান্তিচক্র ব্লাড সোসাইটি সুনামগঞ্জ — রক্তদান ও জরুরি রক্তসেবা",
     url: "https://shantichakrabloodsociety.rahatahmed.site/",
     inLanguage: lang === "en" ? "en" : "bn",
-    isPartOf: { "@type": "WebSite", url: "https://shantichakrabloodsociety.rahatahmed.site", name: site.name },
-    about: { "@type": "NGO", name: site.name },
-    description: "সুনামগঞ্জ ও সিলেট বিভাগে স্বেচ্ছায় রক্তদান, রক্তদাতা খোঁজা ও জরুরি রক্তসেবা সমন্বয়ে শান্তিচক্র ব্লাড সোসাইটির সঙ্গে যুক্ত হন।",
+    isPartOf: { "@type": "WebSite", url: "https://shantichakrabloodsociety.rahatahmed.site", name: "Shantichakra Blood Society Sunamganj" },
+    about: { "@type": "Organization", name: "Shantichakra Blood Society Sunamganj", alternateName: "শান্তিচক্র ব্লাড সোসাইটি সুনামগঞ্জ" },
+    description: "Shantichakra Blood Society Sunamganj (শান্তিচক্র ব্লাড সোসাইটি সুনামগঞ্জ) is a community service blood donation organization in Bangladesh providing emergency blood assistance across Sunamganj and Sylhet.",
   };
 
   return (

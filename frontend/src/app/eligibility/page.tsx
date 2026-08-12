@@ -6,14 +6,14 @@ import { tr } from "@/lib/i18n";
 import { getLang } from "@/lib/i18n-server";
 
 export const metadata: Metadata = {
-  title: "রক্তদানের যোগ্যতা যাচাই | শান্তিচক্র ব্লাড সোসাইটি",
+  title: "রক্তদানের যোগ্যতা (Eligibility)",
   description:
-    "আপনি কি রক্তদানের যোগ্য? বয়স, ওজন, শেষ রক্তদান ও স্বাস্থ্য সংক্রান্ত প্রশ্নের মাধ্যমে তাৎক্ষণিকভাবে রক্তদানের যোগ্যতা যাচাই করুন।",
+    "Check your blood donation eligibility with Shantichakra Blood Society Sunamganj (শান্তিচক্র ব্লাড সোসাইটি সুনামগঞ্জ). বয়স, ওজন ও স্বাস্থ্য সংক্রান্ত প্রশ্নের মাধ্যমে তাৎক্ষণিকভাবে রক্তদানের যোগ্যতা যাচাই করুন।",
   alternates: { canonical: "/eligibility" },
   openGraph: {
-    title: "রক্তদানের যোগ্যতা যাচাই | শান্তিচক্র ব্লাড সোসাইটি",
+    title: "রক্তদানের যোগ্যতা (Eligibility) | Shantichakra Blood Society Sunamganj",
     description:
-      "আপনি কি রক্তদানের যোগ্য? বয়স, ওজন, শেষ রক্তদান ও স্বাস্থ্য সংক্রান্ত প্রশ্নের মাধ্যমে তাৎক্ষণিকভাবে রক্তদানের যোগ্যতা যাচাই করুন।",
+      "Check your blood donation eligibility with Shantichakra Blood Society Sunamganj (শান্তিচক্র ব্লাড সোসাইটি সুনামগঞ্জ). বয়স, ওজন ও স্বাস্থ্য সংক্রান্ত প্রশ্নের মাধ্যমে তাৎক্ষণিকভাবে রক্তদানের যোগ্যতা যাচাই করুন।",
     url: "https://shantichakrabloodsociety.rahatahmed.site/eligibility",
     type: "website",
   },
