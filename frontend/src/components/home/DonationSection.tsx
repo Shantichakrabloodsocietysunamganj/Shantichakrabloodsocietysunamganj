@@ -21,7 +21,7 @@ const WHY = [
 const WHAT_WE_DO = [
   { icon: "🩸", bn: "রক্তদাতা যুক্ত করি", en: "Connect Blood Donors", desc_bn: "সিলেট বিভাগ জুড়ে নিবন্ধিত দাতাদের এক ছাদে — রোগীর প্রয়োজনে তাৎক্ষণিক যুক্ত করি।", desc_en: "Registered donors across Sylhet — instantly connected to patients in need." },
   { icon: "🚨", bn: "জরুরি সেবা ২৪/৭", en: "24/7 Emergency Service", desc_bn: "মাঝরাতেও রক্তের প্রয়োজন হলে আমরা পাশে — কোনো বিরতি নেই।", desc_en: "Blood needed at midnight? We're there — no breaks." },
-  { icon: "📍", bn: "এলাকায় সক্রিয়", en: "Grassroots Presence", desc_bn: "৪ জেলার প্রতিটি উপজেলায় আমাদের স্বেচ্ছাসেবক ও দাতা নেটওয়ার্ক।", desc_en: "Volunteers & donors in every upazila of 4 districts." },
+  { icon: "📍", bn: "এলাকায় সক্রিয়", en: "Grassroots Presence", desc_bn: "সিলেট বিভাগের ৪ জেলা ও বিভিন্ন উপজেলায় আমাদের স্বেচ্ছাসেবী রক্তদাতা নেটওয়ার্ক বিস্তার লাভ করছে।", desc_en: "Growing volunteer & donor network across 4 districts of Sylhet." },
   { icon: "💯", bn: "সম্পূর্ণ ফ্রি", en: "100% Free Service", desc_bn: "কোনো অর্থের লেনদেন নেই — পুরোটাই মানবিক, স্বেচ্ছাসেবী।", desc_en: "No money involved — purely humanitarian & voluntary." },
 ];
 
@@ -33,13 +33,13 @@ const TIMELINE = [
   { icon: "❤️", bn: "একটি জীবন বাঁচে", en: "A Life is Saved" },
 ];
 
-export default function DonationSection({ lang }: { lang: Lang }) {
+export default function DonationSection({ lang, donorCount = 0 }: { lang: Lang; donorCount?: number }) {
   const en = lang === "en";
   const supabase = createClient();
   const [methods, setMethods] = useState<Method[]>([]);
   const [hasMethods, setHasMethods] = useState(false);
   const [copied, setCopied] = useState<string | null>(null);
-  const [stats, setStats] = useState({ donors: 0, completed: 0, units: 0, volunteers: 0 });
+  const [stats, setStats] = useState({ donors: donorCount, completed: 0, units: 0, volunteers: 0 });
 
   useEffect(() => {
     (async () => {
@@ -47,15 +47,20 @@ export default function DonationSection({ lang }: { lang: Lang }) {
         const { data } = await supabase.from("donation_methods").select("*").eq("is_active", true).order("order", { ascending: true });
         if (data && data.length) { setMethods(data); setHasMethods(true); }
         const { data: rpc } = await supabase.rpc("impact_stats");
-        if (rpc && rpc[0]) setStats(rpc[0]);
+        if (rpc && rpc[0]) {
+          setStats({
+            ...rpc[0],
+            donors: Math.max((rpc[0] as any).donors || 0, donorCount),
+          });
+        }
       } catch {}
     })();
-  }, [supabase]);
+  }, [supabase, donorCount]);
 
   const copy = (text: string) => { navigator.clipboard.writeText(text); setCopied(text); setTimeout(() => setCopied(null), 2000); };
 
   const trustItems = [
-    { value: stats.donors, label: en ? "Registered Donors" : "নিবন্ধিত দাতা" },
+    { value: Math.max(stats.donors, donorCount), label: en ? "Registered Donors" : "নিবন্ধিত দাতা" },
     { value: stats.completed, label: en ? "Patients Helped" : "সাহায্যপ্রাপ্ত রোগী" },
     { value: stats.units, label: en ? "Blood Units" : "রক্ত ইউনিট" },
     { value: stats.volunteers, label: en ? "Volunteers" : "স্বেচ্ছাসেবক" },

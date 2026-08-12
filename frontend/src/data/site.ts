@@ -4,11 +4,13 @@
 
 export const site = {
   name: "শান্তিচক্র ব্লাড সোসাইটি, সুনামগঞ্জ",
-  nameEn: "Shantichakra Blood Society",
+  nameEn: "Shantichakra Blood Society Sunamganj",
   shortName: "শান্তিচক্র",
   district: "সিলেট বিভাগ",
   tagline: "রক্ত দিন, জীবন বাঁচান",
   taglineEn: "Donate Blood, Save Lives",
+  url: "https://shanticakrabloodsocaiety.rahatahmed.site",
+  foundingYear: "2024",
 
   // 🔴 আসল তথ্য
   phone: "01626224878",

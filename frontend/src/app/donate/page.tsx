@@ -6,11 +6,20 @@ import CopyButton from "@/components/CopyButton";
 import Reveal from "@/components/Reveal";
 import { site } from "@/data/site";
 import { telHref } from "@/lib/format";
+import BreadcrumbJsonLd from "@/components/seo/BreadcrumbJsonLd";
 
 export const metadata: Metadata = {
-  title: "আর্থিক সহযোগিতা",
+  title: "আর্থিক সহযোগিতা | শান্তিচক্র ব্লাড সোসাইটি",
   description:
-    "শান্তিচক্র ব্লাড সোসাইতির রক্তদান শিবির ও মানবিক কার্যক্রমে আর্থিক সহযোগিতা করুন — bKash, Nagadসহ বিভিন্ন মাধ্যমে।",
+    "স্বেচ্ছাসেবী রক্তদান কার্যক্রম পরিচালনায় শান্তিচক্র ব্লাড সোসাইটিকে আর্থিক সহযোগিতা করুন।",
+  alternates: { canonical: "/donate" },
+  openGraph: {
+    title: "আর্থিক সহযোগিতা | শান্তিচক্র ব্লাড সোসাইটি",
+    description:
+      "স্বেচ্ছাসেবী রক্তদান কার্যক্রম পরিচালনায় শান্তিচক্র ব্লাড সোসাইটিকে আর্থিক সহযোগিতা করুন।",
+    url: "https://shanticakrabloodsocaiety.rahatahmed.site/donate",
+    type: "website",
+  },
 };
 
 export const revalidate = 60;
@@ -51,6 +60,12 @@ export default async function DonatePage() {
 
   return (
     <div className="container-page py-12">
+      <BreadcrumbJsonLd
+        items={[
+          { name: "হোম", url: "https://shanticakrabloodsocaiety.rahatahmed.site" },
+          { name: "আর্থিক সহযোগিতা", url: "https://shanticakrabloodsocaiety.rahatahmed.site/donate" },
+        ]}
+      />
       <SectionHeading
         eyebrow="সহযোগিতা"
         title="আপনার সহযোগিতায় এগিয়ে যাক এই উদ্যোগ"

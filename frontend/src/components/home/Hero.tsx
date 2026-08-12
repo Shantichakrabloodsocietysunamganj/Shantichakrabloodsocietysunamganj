@@ -45,15 +45,15 @@ export default function Hero({
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-blood-400 opacity-75" />
               <span className="relative inline-flex h-2 w-2 rounded-full bg-blood-500" />
             </span>
-            {heroBadge || (en ? "Sylhet Division Fully Covered" : t("hero.badge", lang))}
+            {heroBadge || (en ? "Active in 4 Districts of Sylhet" : "সিলেট বিভাগের ৪ জেলায় সক্রিয়")}
           </span>
 
           {/* Headline */}
           <h1 className="mt-5 font-display text-4xl font-extrabold leading-[1.08] tracking-tight text-white sm:text-5xl lg:text-[3.2rem]">
             {en ? (
-              <>Every Drop <span className="bg-gradient-to-r from-rose-300 via-white to-rose-200 bg-clip-text text-transparent">Saves a Life.</span></>
+              <>Shantichakra Blood Society Sunamganj — <span className="bg-gradient-to-r from-rose-300 via-white to-rose-200 bg-clip-text text-transparent">Every Drop Saves a Life</span></>
             ) : (
-              <>প্রতিটি ফোঁটায় <span className="bg-gradient-to-r from-rose-300 via-white to-rose-200 bg-clip-text text-transparent">লুকিয়ে আছে একটি জীবন</span></>
+              <>শান্তিচক্র ব্লাড সোসাইটি, সুনামগঞ্জ — <span className="bg-gradient-to-r from-rose-300 via-white to-rose-200 bg-clip-text text-transparent">প্রতিটি ফোঁটায় একটি জীবন</span></>
             )}
           </h1>
 
@@ -94,7 +94,7 @@ export default function Hero({
           <div className="mt-6 grid grid-cols-3 gap-3">
             <Stat value={num(donorCount)} label={en ? "Registered Donors" : "নিবন্ধিত দাতা"} />
             <Stat value={num(openRequestCount)} label={en ? "Blood Requests" : "অনুরোধ"} accent="text-rose-300" />
-            <Stat value="100%" label={en ? "Sylhet Coverage" : "সিলেট কভারেজ"} accent="text-emerald-300" />
+            <Stat value={en ? "4 Districts" : "৪ জেলা"} label={en ? "Sylhet Coverage" : "সিলেট কভারেজ"} accent="text-emerald-300" />
           </div>
         </div>
 

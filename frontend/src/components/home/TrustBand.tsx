@@ -4,7 +4,7 @@ import type { Lang } from "@/lib/i18n";
 export default function TrustBand({ lang, donorCount, requestCount }: { lang: Lang; donorCount: number; requestCount: number }) {
   const en = lang === "en";
   const items = [
-    { icon: "✅", title: en ? "Verified Organization" : "নিবন্ধিত সংগঠন", desc: en ? "Official voluntary blood network" : "পরিচিত স্বেচ্ছাসেবী রক্তদান নেটওয়ার্ক" },
+    { icon: "✅", title: en ? "Voluntary Blood Society" : "স্বেচ্ছাসেবী রক্তদান সংগঠন", desc: en ? "Official voluntary blood network" : "পরিচিত স্বেচ্ছাসেবী রক্তদান নেটওয়ার্ক" },
     { icon: "🕐", title: en ? "24/7 Emergency Support" : "২৪/৭ জরুরি সেবা", desc: en ? "Blood support any time, any day" : "যেকোনো সময় রক্তসেবা" },
     { icon: "🤝", title: en ? "Volunteer-Driven" : "স্বেচ্ছাসেবক নেতৃত্বে", desc: en ? "Run entirely by volunteers" : "সম্পূর্ণ স্বেচ্ছাসেবকদের দ্বারা পরিচালিত" },
     { icon: "🆓", title: en ? "100% Free Service" : "১০০% ফ্রি সেবা", desc: en ? "No money — purely humanitarian" : "কোনো অর্থ নয় — পুরোপুরি মানবিক" },

@@ -3,7 +3,8 @@ import type { MetadataRoute } from "next";
 export default function robots(): MetadataRoute.Robots {
   return {
     rules: { userAgent: "*", allow: "/" },
-    sitemap: "https://shantichakrabloodsocietysunamganj-g.vercel.app/sitemap.xml",
-    host: "https://shantichakrabloodsocietysunamganj-g.vercel.app",
+    sitemap: "https://shanticakrabloodsocaiety.rahatahmed.site/sitemap.xml",
+    host: "https://shanticakrabloodsocaiety.rahatahmed.site",
   };
 }
+

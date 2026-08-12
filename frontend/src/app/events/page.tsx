@@ -3,8 +3,21 @@ import { createClient } from "@/lib/supabase/server";
 import SectionHeading from "@/components/ui/SectionHeading";
 import Reveal from "@/components/Reveal";
 import { getLang } from "@/lib/i18n-server";
+import BreadcrumbJsonLd from "@/components/seo/BreadcrumbJsonLd";
 
-export const metadata: Metadata = { title: "ইভেন্ট ও কর্মসূচি" };
+export const metadata: Metadata = {
+  title: "রক্তদান কর্মসূচি ও ক্যাম্প | শান্তিচক্র ব্লাড সোসাইটি",
+  description:
+    "শান্তিচক্র ব্লাড সোসাইটির রক্তদান শিবির, বিনামূল্যে রক্তের গ্রুপ নির্ধারণ ও স্বাস্থ্য সচেতনতামূলক বিভিন্ন কর্মসূচির বিবরণ।",
+  alternates: { canonical: "/events" },
+  openGraph: {
+    title: "রক্তদান কর্মসূচি ও ক্যাম্প | শান্তিচক্র ব্লাড সোসাইটি",
+    description:
+      "শান্তিচক্র ব্লাডসম্পৃক্ত শিবির, বিনামূল্যে রক্তের গ্রুপ নির্ধারণ ও স্বাস্থ্য সচেতনতামূলক বিভিন্ন কর্মসূচির বিবরণ।",
+    url: "https://shanticakrabloodsocaiety.rahatahmed.site/events",
+    type: "website",
+  },
+};
 
 function fmt(d: string, en: boolean) {
   try { return new Date(d).toLocaleDateString("bn-BD", { day: "numeric", month: "long", year: "numeric" }); } catch { return d; }
@@ -25,6 +38,12 @@ export default async function EventsPage() {
 
   return (
     <div className="container-page py-12">
+      <BreadcrumbJsonLd
+        items={[
+          { name: "হোম", url: "https://shanticakrabloodsocaiety.rahatahmed.site" },
+          { name: "রক্তদান কর্মসূচি ও ক্যাম্প", url: "https://shanticakrabloodsocaiety.rahatahmed.site/events" },
+        ]}
+      />
       <SectionHeading eyebrow={en ? "Events" : "কর্মসূচি"} title={en ? "Events & Programs" : "ইভেন্ট ও কর্মসূচি"} subtitle={en ? "Blood donation camps, awareness programs and community events." : "রক্তদান শিবির, সচেতনতামূলক ও সামাজিক কর্মসূচি।"} />
 
       {/* Upcoming */}

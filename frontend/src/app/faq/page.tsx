@@ -1,12 +1,31 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import Faq from "@/components/home/Faq";
+import BreadcrumbJsonLd from "@/components/seo/BreadcrumbJsonLd";
 
-export const metadata: Metadata = { title: "সাধারণ প্রশ্ন" };
+export const metadata: Metadata = {
+  title: "সাধারণ জিজ্ঞাসা (FAQ) | শান্তিচক্র ব্লাড সোসাইটি",
+  description:
+    "রক্তদান, রক্তদাতা নিবন্ধন, জরুরি রক্তের অনুরোধ ও সংগঠনের কার্যক্রম সম্পর্কিত সাধারণ প্রশ্ন ও উত্তর।",
+  alternates: { canonical: "/faq" },
+  openGraph: {
+    title: "সাধারণ জিজ্ঞাসা (FAQ) | শান্তিচক্র ব্লাড সোসাইটি",
+    description:
+      "রক্তদান, রক্তদাতা নিবন্ধন, জরুরি রক্তের অনুরোধ ও সংগঠনের কার্যক্রম সম্পর্কিত সাধারণ প্রশ্ন ও উত্তর।",
+    url: "https://shanticakrabloodsocaiety.rahatahmed.site/faq",
+    type: "website",
+  },
+};
 
 export default function FaqPage() {
   return (
     <div className="container-page py-12">
+      <BreadcrumbJsonLd
+        items={[
+          { name: "হোম", url: "https://shanticakrabloodsocaiety.rahatahmed.site" },
+          { name: "সাধারণ জিজ্ঞাসা (FAQ)", url: "https://shanticakrabloodsocaiety.rahatahmed.site/faq" },
+        ]}
+      />
       <div className="mx-auto max-w-2xl text-center">
         <span className="eyebrow">FAQ</span>
         <h1 className="section-title mt-3">সাধারণ জিজ্ঞাসিত প্রশ্ন</h1>
