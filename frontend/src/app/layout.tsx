@@ -48,17 +48,23 @@ export async function generateMetadata(): Promise<Metadata> {
     description: desc,
     keywords,
     metadataBase: new URL("https://shantichakrabloodsociety.rahatahmed.site"),
+    robots: { index: true, follow: true, googleBot: { index: true, follow: true } },
     openGraph: {
       title,
       description: desc,
       type: "website",
       locale: "bn_BD",
       siteName: site.name,
-      url: "https://shantichakrabloodsociety.rahatahmed.site",
-      ...(settings.og_image ? { images: [{ url: settings.og_image }] } : {}),
+      url: "https://shantichakrabloodsociety.rahatahmed.site/",
+      images: [{ url: settings.og_image || "/opengraph-image", width: 1200, height: 630, alt: title }],
     },
-    twitter: { card: "summary_large_image", title, description: desc, ...(settings.og_image ? { images: [settings.og_image] } : {}) },
-    alternates: { canonical: "/" },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description: desc,
+      images: [settings.og_image || "/opengraph-image"],
+    },
+    alternates: { canonical: "https://shantichakrabloodsociety.rahatahmed.site/" },
     verification: { google: process.env.GOOGLE_SITE_VERIFICATION },
     category: "health",
   };
@@ -74,7 +80,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
   const SITE_URL = "https://shantichakrabloodsociety.rahatahmed.site";
   const orgJsonLd = {
     "@context": "https://schema.org",
-    "@type": "Organization",
+    "@type": ["Organization", "NGO"],
     name: site.name,
     alternateName: "Shantichakra Blood Society Sunamganj",
     url: SITE_URL,
@@ -100,6 +106,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
     name: site.name,
     alternateName: "Shantichakra Blood Society Sunamganj",
     url: SITE_URL,
+    inLanguage: lang === "en" ? "en" : "bn",
     description: "সুনামগঞ্জ ও সিলেট বিভাগে স্বেচ্ছায় রক্তদান, রক্তদাতা খোঁজা ও জরুরি রক্তসেবা সমন্বয়ে শান্তিচক্র ব্লাড সোসাইটি।",
     potentialAction: {
       "@type": "SearchAction",

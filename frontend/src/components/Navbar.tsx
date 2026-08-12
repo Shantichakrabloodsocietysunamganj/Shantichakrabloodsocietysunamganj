@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -177,10 +176,18 @@ export default function Navbar({
 }
 
 function Logo({ logoUrl }: { logoUrl?: string | null }) {
-  const { t: tx } = useTr();
   return (
     <span className="relative flex h-9 w-9 items-center justify-center overflow-hidden rounded-full bg-white shadow-sm ring-1 ring-zinc-100">
-      <Image src={logoUrl || "/images/logo.png"} alt={tx("শান্তিচক্র ব্লাড সোসাইটি লোগো - সুনামগঞ্জ স্বেচ্ছাসেবী রক্তদান সংগঠন")} width={36} height={36} sizes="36px" className="h-full w-full rounded-full object-cover" />
+      {/* Tiny 36px mark — a plain img keeps a real alt attribute in the DOM
+          (next/image has produced extra img nodes without alt in PSI). */}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={logoUrl || "/images/logo.png"}
+        alt="শান্তিচক্র ব্লাড সোসাইটি, সুনামগঞ্জ"
+        width={36}
+        height={36}
+        className="h-full w-full rounded-full object-cover"
+      />
     </span>
   );
 }

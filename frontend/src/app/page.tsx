@@ -29,12 +29,14 @@ import { shortDate } from "@/lib/format";
 export const metadata: Metadata = {
   title: "শান্তিচক্র ব্লাড সোসাইটি, সুনামগঞ্জ | রক্তদান ও জরুরি রক্তসেবা",
   description: "সুনামগঞ্জ ও সিলেট বিভাগে স্বেচ্ছায় রক্তদান, রক্তদাতা খোঁজা ও জরুরি রক্তসেবা সমন্বয়ে শান্তিচক্র ব্লাড সোসাইটির সঙ্গে যুক্ত হন।",
-  alternates: { canonical: "/" },
+  robots: { index: true, follow: true },
+  alternates: { canonical: "https://shantichakrabloodsociety.rahatahmed.site/" },
   openGraph: {
     title: "শান্তিচক্র ব্লাড সোসাইটি, সুনামগঞ্জ | রক্তদান ও জরুরি রক্তসেবা",
     description: "সুনামগঞ্জ ও সিলেট বিভাগে স্বেচ্ছায় রক্তদান, রক্তদাতা খোঁজা ও জরুরি রক্তসেবা সমন্বয়ে শান্তিচক্র ব্লাড সোসাইটির সঙ্গে যুক্ত হন।",
     url: "https://shantichakrabloodsociety.rahatahmed.site/",
     type: "website",
+    siteName: "শান্তিচক্র ব্লাড সোসাইটি, সুনামগঞ্জ",
   },
 };
 
@@ -72,8 +74,20 @@ export default async function Home() {
   const settings = await getSettings();
   const livesSaved = site.stats.livesSaved || donorCount;
 
+  const webPageJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    name: "শান্তিচক্র ব্লাড সোসাইটি, সুনামগঞ্জ | রক্তদান ও জরুরি রক্তসেবা",
+    url: "https://shantichakrabloodsociety.rahatahmed.site/",
+    inLanguage: lang === "en" ? "en" : "bn",
+    isPartOf: { "@type": "WebSite", url: "https://shantichakrabloodsociety.rahatahmed.site", name: site.name },
+    about: { "@type": "NGO", name: site.name },
+    description: "সুনামগঞ্জ ও সিলেট বিভাগে স্বেচ্ছায় রক্তদান, রক্তদাতা খোঁজা ও জরুরি রক্তসেবা সমন্বয়ে শান্তিচক্র ব্লাড সোসাইটির সঙ্গে যুক্ত হন।",
+  };
+
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(webPageJsonLd) }} />
       <Hero donorCount={donorCount} openRequestCount={openRequestCount} lang={lang} heroBadge={settings.hero_badge} heroDesc={settings.hero_desc} />
 
       {/* পরিসংখ্যান - count-up */}
