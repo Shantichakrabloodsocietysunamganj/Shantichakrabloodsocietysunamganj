@@ -8,14 +8,14 @@ import { tr } from "@/lib/i18n";
 import { getLang } from "@/lib/i18n-server";
 
 export const metadata: Metadata = {
-  title: "রক্তদান ও স্বাস্থ্য সচেতনতা ব্লগ | শান্তিচক্র ব্লাড সোসাইটি",
+  title: "রক্তদান ও স্বাস্থ্য সচেতনতা ব্লগ (Blog)",
   description:
-    "রক্তদানের উপকারিতা, যোগ্যতা, জরুরি রক্তের প্রয়োজনে করণীয় এবং স্বাস্থ্য সচেতনতামূলক বিভিন্ন নিবন্ধ ও তথ্য।",
+    "Articles on blood donation benefits, eligibility, and health awareness by Shantichakra Blood Society Sunamganj (শান্তিচক্র ব্লাড সোসাইটি সুনামগঞ্জ).",
   alternates: { canonical: "/blog" },
   openGraph: {
-    title: "রক্তদান ও স্বাস্থ্য সচেতনতা ব্লগ | শান্তিচক্র ব্লাড সোসাইটি",
+    title: "রক্তদান ও স্বাস্থ্য সচেতনতা ব্লগ (Blog) | Shantichakra Blood Society Sunamganj",
     description:
-      "রক্তদানের উপকারিতা, যোগ্যতা, জরুরি রক্তের প্রয়োজনে করণীয় এবং স্বাস্থ্য সচেতনতামূলক বিভিন্ন নিবন্ধ ও তথ্য।",
+      "Articles on blood donation benefits, eligibility, and health awareness by Shantichakra Blood Society Sunamganj (শান্তিচক্র ব্লাড সোসাইটি সুনামগঞ্জ).",
     url: "https://shantichakrabloodsociety.rahatahmed.site/blog",
     type: "website",
   },

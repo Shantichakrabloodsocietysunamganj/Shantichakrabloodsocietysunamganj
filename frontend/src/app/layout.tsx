@@ -17,15 +17,20 @@ import { getLang } from "@/lib/i18n-server";
 
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await getSettings();
-  const title = settings.meta_title || `${site.name} | রক্তদান ও জরুরি রক্তসেবা`;
-  const desc = settings.meta_description || "সুনামগঞ্জ ও সিলেট বিভাগে স্বেচ্ছায় রক্তদান, রক্তদাতা খোঁজা ও জরুরি রক্তসেবা সমন্বয়ে শান্তিচক্র ব্লাড সোসাইটির সঙ্গে যুক্ত হন।";
+  const title = settings.meta_title || "Shantichakra Blood Society Sunamganj | শান্তিচক্র ব্লাড সোসাইটি সুনামগঞ্জ — রক্তদান ও জরুরি রক্তসেবা";
+  const desc = settings.meta_description || "Shantichakra Blood Society Sunamganj (শান্তিচক্র ব্লাড সোসাইটি সুনামগঞ্জ) is a community service blood donation organization in Bangladesh providing emergency blood assistance across Sunamganj and Sylhet. সুনামগঞ্জ ও সিলেট বিভাগে স্বেচ্ছায় রক্তদান, রক্তদাতা খোঁজা ও জরুরি রক্তসেবায় আমাদের সঙ্গে যুক্ত হন।";
   const keywords = settings.meta_keywords
     ? settings.meta_keywords.split(",").map((s) => s.trim())
     : [
+        "Shantichakra Blood Society Sunamganj",
+        "Shantichakra Blood Society",
+        "Shantichakra Blood Society Bangladesh",
+        "Shantichakra blood donation",
+        "blood donation Sunamganj",
+        "blood donor Sunamganj",
+        "emergency blood support Sunamganj",
         "শান্তিচক্র ব্লাড সোসাইটি",
         "শান্তিচক্র ব্লাড সোসাইটি সুনামগঞ্জ",
-        "Shantichakra Blood Society",
-        "Shantichakra Blood Society Sunamganj",
         "সুনামগঞ্জ রক্তদান",
         "সুনামগঞ্জ রক্তদাতা",
         "সুনামগঞ্জ রক্তের প্রয়োজন",
@@ -44,7 +49,7 @@ export async function generateMetadata(): Promise<Metadata> {
       ];
 
   return {
-    title: { default: title, template: `%s | ${site.name}` },
+    title: { default: title, template: "%s | Shantichakra Blood Society Sunamganj" },
     description: desc,
     keywords,
     metadataBase: new URL("https://shantichakrabloodsociety.rahatahmed.site"),
@@ -54,7 +59,7 @@ export async function generateMetadata(): Promise<Metadata> {
       description: desc,
       type: "website",
       locale: "bn_BD",
-      siteName: site.name,
+      siteName: "Shantichakra Blood Society Sunamganj",
       url: "https://shantichakrabloodsociety.rahatahmed.site/",
       images: [{ url: settings.og_image || "/opengraph-image", width: 1200, height: 630, alt: title }],
     },
@@ -83,8 +88,8 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
   const orgJsonLd = {
     "@context": "https://schema.org",
     "@type": ["Organization", "NGO"],
-    name: site.name,
-    alternateName: "Shantichakra Blood Society Sunamganj",
+    name: "Shantichakra Blood Society Sunamganj",
+    alternateName: "শান্তিচক্র ব্লাড সোসাইটি সুনামগঞ্জ",
     url: SITE_URL,
     logo: settings.logo_url || `${SITE_URL}/images/logo.png`,
     description: site.mission.slice(0, 280),
@@ -105,11 +110,11 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
   const websiteJsonLd = {
     "@context": "https://schema.org",
     "@type": "WebSite",
-    name: site.name,
-    alternateName: "Shantichakra Blood Society Sunamganj",
+    name: "Shantichakra Blood Society Sunamganj",
+    alternateName: "শান্তিচক্র ব্লাড সোসাইটি সুনামগঞ্জ",
     url: SITE_URL,
     inLanguage: lang === "en" ? "en" : "bn",
-    description: "সুনামগঞ্জ ও সিলেট বিভাগে স্বেচ্ছায় রক্তদান, রক্তদাতা খোঁজা ও জরুরি রক্তসেবা সমন্বয়ে শান্তিচক্র ব্লাড সোসাইটি।",
+    description: "Shantichakra Blood Society Sunamganj (শান্তিচক্র ব্লাড সোসাইটি সুনামগঞ্জ) — রক্তদান ও জরুরি রক্তসেবা",
     potentialAction: {
       "@type": "SearchAction",
       target: {

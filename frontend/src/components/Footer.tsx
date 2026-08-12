@@ -23,11 +23,11 @@ export default function Footer({ settings, lang }: { settings: SiteSettings; lan
           <div className="flex items-center gap-2.5">
             <span className="flex h-9 w-9 items-center justify-center overflow-hidden rounded-full bg-white text-white ring-1 ring-white/15">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={settings.logo_url || "/images/logo.png"} alt={tx("শান্তিচক্র ব্লাড সোসাইটি লোগো, সুনামগঞ্জ")} className="h-full w-full rounded-full object-cover" />
+              <img src={settings.logo_url || "/images/logo.png"} alt="Shantichakra Blood Society Sunamganj (শান্তিচক্র ব্লাড সোসাইটি সুনামগঞ্জ)" className="h-full w-full rounded-full object-cover" />
             </span>
             <div>
-              <div className="font-display font-bold text-white">{tx(site.shortName)}</div>
-              <div className="text-xs text-slate-400">{site.taglineEn}</div>
+              <div className="font-display font-bold text-white">Shantichakra Blood Society Sunamganj</div>
+              <div className="text-xs text-slate-400">{site.name} • {site.taglineEn}</div>
             </div>
           </div>
           <p className="mt-4 line-clamp-4 text-sm leading-relaxed text-slate-400">{tx(site.mission)}</p>
@@ -44,26 +44,27 @@ export default function Footer({ settings, lang }: { settings: SiteSettings; lan
         <div>
           <h2 className="text-sm font-semibold text-white">{t("footer.quickLinks", lang)}</h2>
           <ul className="mt-4 space-y-1 text-sm text-slate-400">
-            <li><Link className="inline-flex min-h-11 items-center transition hover:text-white" href="/donors">{t("nav.donors", lang)}</Link></li>
-            <li><Link className="inline-flex min-h-11 items-center transition hover:text-white" href="/request-blood">{t("nav.needBlood", lang)}</Link></li>
+            <li><Link className="inline-flex min-h-11 items-center transition hover:text-white" href="/donors">{lang === "en" ? "Find a Blood Donor" : "রক্তদাতা খুঁজুন (Find a Blood Donor)"}</Link></li>
+            <li><Link className="inline-flex min-h-11 items-center transition hover:text-white" href="/request-blood">{lang === "en" ? "Emergency Blood Request" : "জরুরি রক্তের অনুরোধ (Emergency Request)"}</Link></li>
             <li><Link className="inline-flex min-h-11 items-center transition hover:text-white" href="/blood-seekers">{t("nav.seekers", lang)}</Link></li>
-            <li><Link className="inline-flex min-h-11 items-center transition hover:text-white" href="/become-donor">{t("nav.becomeDonor", lang)}</Link></li>
-            <li><Link className="inline-flex min-h-11 items-center transition hover:text-white" href="/eligibility">{t("nav.eligibility", lang)}</Link></li>
+            <li><Link className="inline-flex min-h-11 items-center transition hover:text-white" href="/become-donor">{lang === "en" ? "Become a Blood Donor" : "রক্তদাতা হিসেবে নিবন্ধন"}</Link></li>
+            <li><Link className="inline-flex min-h-11 items-center transition hover:text-white" href="/eligibility">{lang === "en" ? "Blood Donation Eligibility" : "রক্তদানের যোগ্যতা (Eligibility)"}</Link></li>
             <li><Link className="inline-flex min-h-11 items-center gap-2 transition hover:text-white" href="/emergency"><Ambulance className="h-4 w-4" /> {t("nav.emergency", lang)}</Link></li>
-            <li><Link className="inline-flex min-h-11 items-center transition hover:text-white" href="/donate">{t("nav.donate", lang)}</Link></li>
+            <li><Link className="inline-flex min-h-11 items-center transition hover:text-white" href="/donate">{lang === "en" ? "Donate to Shantichakra" : "আর্থিক সহযোগিতা"}</Link></li>
           </ul>
         </div>
 
         <div>
           <h2 className="text-sm font-semibold text-white">{t("footer.more", lang)}</h2>
           <ul className="mt-4 space-y-1 text-sm text-slate-400">
-            <li><Link className="inline-flex min-h-11 items-center transition hover:text-white" href="/about">{t("nav.about", lang)}</Link></li>
+            <li><Link className="inline-flex min-h-11 items-center transition hover:text-white" href="/about">{lang === "en" ? "About Shantichakra Blood Society" : "আমাদের সম্পর্কে (About Shantichakra)"}</Link></li>
+            <li><Link className="inline-flex min-h-11 items-center transition hover:text-white" href="/contact">{lang === "en" ? "Contact Shantichakra Blood Society" : "যোগাযোগ (Contact Shantichakra)"}</Link></li>
             <li><Link className="inline-flex min-h-11 items-center transition hover:text-white" href="/impact">{t("nav.impact", lang)}</Link></li>
             <li><Link className="inline-flex min-h-11 items-center transition hover:text-white" href="/media">{t("nav.media", lang)}</Link></li>
             <li><Link className="inline-flex min-h-11 items-center transition hover:text-white" href="/events">{t("nav.events", lang)}</Link></li>
             <li><Link className="inline-flex min-h-11 items-center transition hover:text-white" href="/gallery">{t("nav.gallery", lang)}</Link></li>
             <li><Link className="inline-flex min-h-11 items-center transition hover:text-white" href="/blog">{t("nav.blog", lang)}</Link></li>
-            <li><Link className="inline-flex min-h-11 items-center transition hover:text-white" href="/faq">{lang === "en" ? "FAQ" : "সাধারণ প্রশ্ন"}</Link></li>
+            <li><Link className="inline-flex min-h-11 items-center transition hover:text-white" href="/faq">{lang === "en" ? "FAQ" : "সাধারণ প্রশ্ন (FAQ)"}</Link></li>
           </ul>
         </div>
 
@@ -82,7 +83,7 @@ export default function Footer({ settings, lang }: { settings: SiteSettings; lan
 
       <div className="border-t border-white/10">
         <div className="container-page flex flex-col items-center justify-between gap-3 py-5 text-xs text-slate-500 sm:flex-row">
-          <p>© {new Date().getFullYear()} {tx(site.name)}। {t("footer.rights", lang)}</p>
+          <p>© {new Date().getFullYear()} Shantichakra Blood Society Sunamganj ({site.name})। {t("footer.rights", lang)}</p>
           <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1">
             <a href="https://www.rahatahmed.site/en" target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 font-semibold text-white hover:underline">
               <Code className="h-3.5 w-3.5" /> Developed by Rahat Ahmed

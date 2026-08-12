@@ -5,14 +5,14 @@ import { tr } from "@/lib/i18n";
 import { getLang } from "@/lib/i18n-server";
 
 export const metadata: Metadata = {
-  title: "ব্যবহারের শর্তাবলী (Terms of Use) | শান্তিচক্র ব্লাড সোসাইটি",
+  title: "ব্যবহারের শর্তাবলী (Terms of Use)",
   description:
-    "শান্তিচক্র ব্লাড সোসাইটির ওয়েবসাইট ও সেবা ব্যবহারের শর্তাবলী এবং নীতিমালা।",
+    "Terms of use of Shantichakra Blood Society Sunamganj (শান্তিচক্র ব্লাড সোসাইটি সুনামগঞ্জ). ওয়েবসাইট ও সেবা ব্যবহারের শর্তাবলী এবং নীতিমালা।",
   alternates: { canonical: "/terms" },
   openGraph: {
-    title: "ব্যবহারের শর্তাবলী (Terms of Use) | শান্তিচক্র ব্লাড সোসাইটি",
+    title: "ব্যবহারের শর্তাবলী (Terms of Use) | Shantichakra Blood Society Sunamganj",
     description:
-      "শান্তিচক্র ব্লাড সোসাইটির ওয়েবসাইট ও সেবা ব্যবহারের শর্তাবলী এবং নীতিমালা।",
+      "Terms of use of Shantichakra Blood Society Sunamganj (শান্তিচক্র ব্লাড সোসাইটি সুনামগঞ্জ). ওয়েবসাইট ও সেবা ব্যবহারের শর্তাবলী এবং নীতিমালা।",
     url: "https://shantichakrabloodsociety.rahatahmed.site/terms",
     type: "website",
   },

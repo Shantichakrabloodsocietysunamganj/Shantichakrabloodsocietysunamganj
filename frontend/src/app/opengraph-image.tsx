@@ -2,7 +2,7 @@ import { ImageResponse } from "next/og";
 import { readFile } from "fs/promises";
 import path from "path";
 
-export const alt = "Shantichakra Blood Society — Donate Blood, Save Lives";
+export const alt = "Shantichakra Blood Society Sunamganj (শান্তিচক্র ব্লাড সোসাইটি সুনামগঞ্জ)";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -74,14 +74,14 @@ export default async function OpenGraphImage() {
         </div>
 
         <div style={{ display: "flex", flexDirection: "column" }}>
-          <div style={{ fontSize: "84px", fontWeight: 800, lineHeight: "1.05" }}>
-            Shantichakra
+          <div style={{ fontSize: "78px", fontWeight: 800, lineHeight: "1.05" }}>
+            Shantichakra Blood Society
           </div>
-          <div style={{ fontSize: "84px", fontWeight: 800, lineHeight: "1.05", color: "#fecaca" }}>
-            Blood Society
+          <div style={{ fontSize: "78px", fontWeight: 800, lineHeight: "1.05", color: "#fecaca" }}>
+            Sunamganj
           </div>
-          <div style={{ fontSize: "38px", opacity: "0.92", marginTop: "20px" }}>
-            Donate Blood, Save Lives.
+          <div style={{ fontSize: "34px", opacity: "0.92", marginTop: "20px" }}>
+            Voluntary Blood Donation & Emergency Support
           </div>
         </div>
 

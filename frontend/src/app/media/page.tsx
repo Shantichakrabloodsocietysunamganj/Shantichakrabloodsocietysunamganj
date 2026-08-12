@@ -7,14 +7,14 @@ import BreadcrumbJsonLd from "@/components/seo/BreadcrumbJsonLd";
 import { tr } from "@/lib/i18n";
 
 export const metadata: Metadata = {
-  title: "মিডিয়া কভারেজ ও খবর | শান্তিচক্র ব্লাড সোসাইটি",
+  title: "মিডিয়া কভারেজ (Media Coverage & News)",
   description:
-    "জাতীয় ও স্থানীয় সংবাদমাধ্যমে শান্তিচক্র ব্লাড সোসাইটির স্বেচ্ছাসেবী রক্তদান কার্যক্রম ও খবরের সংগ্রহ।",
+    "Press coverage and news reports about Shantichakra Blood Society Sunamganj (শান্তিচক্র ব্লাড সোসাইটি সুনামগঞ্জ). সংবাদমাধ্যমে আমাদের স্বেচ্ছাসেবী রক্তদান কার্যক্রম।",
   alternates: { canonical: "/media" },
   openGraph: {
-    title: "মিডিয়া কভারেজ ও খবর | শান্তিচক্র ব্লাড সোসাইটি",
+    title: "মিডিয়া কভারেজ (Media Coverage & News) | Shantichakra Blood Society Sunamganj",
     description:
-      "জাতীয় ও স্থানীয় সংবাদমাধ্যমে শান্তিচক্র ব্লাড সোসাইটির স্বেচ্ছাসেবী রক্তদান কার্যক্রম ও খবরের সংগ্রহ।",
+      "Press coverage and news reports about Shantichakra Blood Society Sunamganj (শান্তিচক্র ব্লাড সোসাইটি সুনামগঞ্জ). সংবাদমাধ্যমে আমাদের স্বেচ্ছাসেবী রক্তদান কার্যক্রম।",
     url: "https://shantichakrabloodsociety.rahatahmed.site/media",
     type: "website",
   },

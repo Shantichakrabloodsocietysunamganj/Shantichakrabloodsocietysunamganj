@@ -54,6 +54,11 @@ export default function Hero({
             )}
           </h1>
 
+          {/* Bilingual Entity Name Relation */}
+          <p className="mt-2.5 font-display text-sm font-semibold tracking-wide text-brand-200 sm:text-base">
+            Shantichakra Blood Society Sunamganj (শান্তিচক্র ব্লাড সোসাইটি সুনামগঞ্জ)
+          </p>
+
           {/* Subheadline */}
           <p className="mt-5 max-w-xl text-base leading-relaxed text-brand-100/80 sm:text-lg">
             {heroDesc || t("hero.desc", lang)}

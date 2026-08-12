@@ -12,14 +12,14 @@ import LocalBusinessJsonLd from "@/components/seo/LocalBusinessJsonLd";
 import { t, tr, type Lang } from "@/lib/i18n";
 
 export const metadata: Metadata = {
-  title: "আমাদের সম্পর্কে | শান্তিচক্র ব্লাড সোসাইটি, সুনামগঞ্জ",
+  title: "আমাদের সম্পর্কে (About Us)",
   description:
-    "শান্তিচক্র ব্লাড সোসাইটির প্রতিষ্ঠা, উদ্দেশ্য, স্বেচ্ছাসেবী কার্যক্রম ও সিলেট বিভাগে রক্তসেবা নেটওয়ার্ক সম্পর্কে জানুন।",
+    "Shantichakra Blood Society Sunamganj (শান্তিচক্র ব্লাড সোসাইটি সুনামগঞ্জ) is a voluntary blood donation organization in Bangladesh. শান্তিচক্র ব্লাড সোসাইটির প্রতিষ্ঠা, উদ্দেশ্য ও স্বেচ্ছাসেবী রক্তসেবা কার্যক্রম সম্পর্কে জানুন।",
   alternates: { canonical: "/about" },
   openGraph: {
-    title: "আমাদের সম্পর্কে | শান্তিচক্র ব্লাড সোসাইটি, সুনামগঞ্জ",
+    title: "আমাদের সম্পর্কে (About Us) | Shantichakra Blood Society Sunamganj",
     description:
-      "শান্তিচক্র ব্লাড সোসাইটির প্রতিষ্ঠা, উদ্দেশ্য, স্বেচ্ছাসেবী কার্যক্রম ও সিলেট বিভাগে রক্তসেবা নেটওয়ার্ক সম্পর্কে জানুন।",
+      "Shantichakra Blood Society Sunamganj (শান্তিচক্র ব্লাড সোসাইটি সুনামগঞ্জ) is a voluntary blood donation organization in Bangladesh. শান্তিচক্র ব্লাড সোসাইটির প্রতিষ্ঠা, উদ্দেশ্য ও স্বেচ্ছাসেবী রক্তসেবা কার্যক্রম সম্পর্কে জানুন।",
     url: "https://shantichakrabloodsociety.rahatahmed.site/about",
     type: "website",
   },
@@ -63,7 +63,13 @@ export default async function AboutPage() {
         <div className="container-page relative max-w-3xl text-center">
           <span className="eyebrow">{t("about.eyebrow", lang)}</span>
           <h1 className="section-title mt-4 text-4xl sm:text-5xl">{tx(site.name)}</h1>
+          <p className="mt-2 font-display text-sm font-semibold tracking-wide text-brand-600 dark:text-brand-400 sm:text-base">
+            Shantichakra Blood Society Sunamganj (শান্তিচক্র ব্লাড সোসাইটি সুনামগঞ্জ)
+          </p>
           <span className="mx-auto mt-4 block h-1 w-16 rounded-full bg-gradient-to-r from-brand-600 to-blood-500" />
+          <p className="mx-auto mt-4 max-w-2xl text-base font-medium leading-relaxed text-ink/80 sm:text-lg">
+            Shantichakra Blood Society Sunamganj is a community-focused blood donation organization working to connect blood donors with people who need blood support in Sunamganj and surrounding areas.
+          </p>
           <p className="mx-auto mt-5 max-w-2xl text-lg leading-relaxed text-ink/60">{tx(site.mission)}</p>
           <div className="mt-7 flex flex-wrap justify-center gap-3">
             <Link href="/become-donor" className="btn-primary">{t("about.join", lang)}</Link>

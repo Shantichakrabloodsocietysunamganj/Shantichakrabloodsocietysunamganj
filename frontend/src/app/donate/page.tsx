@@ -12,14 +12,14 @@ import { tr } from "@/lib/i18n";
 import { getLang } from "@/lib/i18n-server";
 
 export const metadata: Metadata = {
-  title: "আর্থিক সহযোগিতা | শান্তিচক্র ব্লাড সোসাইটি",
+  title: "আর্থিক সহযোগিতা (Financial Support & Donate)",
   description:
-    "স্বেচ্ছাসেবী রক্তদান কার্যক্রম পরিচালনায় শান্তিচক্র ব্লাড সোসাইটিকে আর্থিক সহযোগিতা করুন।",
+    "Support voluntary blood donation campaigns and community services of Shantichakra Blood Society Sunamganj (শান্তিচক্র ব্লাড সোসাইটি সুনামগঞ্জ). স্বেচ্ছাসেবী রক্তদান কার্যক্রমে সহযোগিতা করুন।",
   alternates: { canonical: "/donate" },
   openGraph: {
-    title: "আর্থিক সহযোগিতা | শান্তিচক্র ব্লাড সোসাইটি",
+    title: "আর্থিক সহযোগিতা (Financial Support & Donate) | Shantichakra Blood Society Sunamganj",
     description:
-      "স্বেচ্ছাসেবী রক্তদান কার্যক্রম পরিচালনায় শান্তিচক্র ব্লাড সোসাইটিকে আর্থিক সহযোগিতা করুন।",
+      "Support voluntary blood donation campaigns and community services of Shantichakra Blood Society Sunamganj (শান্তিচক্র ব্লাড সোসাইটি সুনামগঞ্জ). স্বেচ্ছাসেবী রক্তদান কার্যক্রমে সহযোগিতা করুন।",
     url: "https://shantichakrabloodsociety.rahatahmed.site/donate",
     type: "website",
   },

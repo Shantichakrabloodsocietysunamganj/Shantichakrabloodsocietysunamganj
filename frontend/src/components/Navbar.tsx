@@ -183,7 +183,7 @@ function Logo({ logoUrl }: { logoUrl?: string | null }) {
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src={logoUrl || "/images/logo.png"}
-        alt="শান্তিচক্র ব্লাড সোসাইটি, সুনামগঞ্জ"
+        alt="Shantichakra Blood Society Sunamganj (শান্তিচক্র ব্লাড সোসাইটি সুনামগঞ্জ)"
         width={36}
         height={36}
         className="h-full w-full rounded-full object-cover"

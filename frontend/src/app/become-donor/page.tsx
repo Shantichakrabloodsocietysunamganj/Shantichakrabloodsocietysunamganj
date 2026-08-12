@@ -5,14 +5,14 @@ import { tr } from "@/lib/i18n";
 import { getLang } from "@/lib/i18n-server";
 
 export const metadata: Metadata = {
-  title: "রক্তদাতা হিসেবে নিবন্ধন করুন | শান্তিচক্র ব্লাড সোসাইটি",
+  title: "রক্তদাতা নিবন্ধন (Become a Blood Donor)",
   description:
-    "স্বেচ্ছায় রক্তদাতা হিসেবে নিবন্ধন করে শান্তিচক্র ব্লাড সোসাইটির জীবনরক্ষাকারী রক্তদান নেটওয়ার্কে যুক্ত হন।",
+    "Register as a volunteer blood donor with Shantichakra Blood Society Sunamganj (শান্তিচক্র ব্লাড সোসাইটি সুনামগঞ্জ). স্বেচ্ছায় রক্তদাতা হিসেবে নিবন্ধন করে আমাদের জীবনরক্ষাকারী নেটওয়ার্কে যুক্ত হন।",
   alternates: { canonical: "/become-donor" },
   openGraph: {
-    title: "রক্তদাতা হিসেবে নিবন্ধন করুন | শান্তিচক্র ব্লাড সোসাইটি",
+    title: "রক্তদাতা নিবন্ধন (Become a Blood Donor) | Shantichakra Blood Society Sunamganj",
     description:
-      "স্বেচ্ছায় রক্তদাতা হিসেবে নিবন্ধন করে শান্তিচক্র ব্লাড সোসাইটির জীবনরক্ষাকারী রক্তদান নেটওয়ার্কে যুক্ত হন।",
+      "Register as a volunteer blood donor with Shantichakra Blood Society Sunamganj (শান্তিচক্র ব্লাড সোসাইটি সুনামগঞ্জ). স্বেচ্ছায় রক্তদাতা হিসেবে নিবন্ধন করে আমাদের জীবনরক্ষাকারী নেটওয়ার্কে যুক্ত হন।",
     url: "https://shantichakrabloodsociety.rahatahmed.site/become-donor",
     type: "website",
   },

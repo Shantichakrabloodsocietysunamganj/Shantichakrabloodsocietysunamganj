@@ -5,14 +5,14 @@ import { tr } from "@/lib/i18n";
 import { getLang } from "@/lib/i18n-server";
 
 export const metadata: Metadata = {
-  title: "রক্তের অনুরোধ করুন | জরুরি রক্তসেবা | শান্তিচক্র",
+  title: "জরুরি রক্তের অনুরোধ (Emergency Blood Request)",
   description:
-    "জরুরি রক্তের প্রয়োজন হলে রোগীর প্রয়োজনীয় তথ্য দিয়ে রক্তের অনুরোধ পাঠান এবং উপযুক্ত রক্তদাতার সঙ্গে যোগাযোগের সুযোগ নিন।",
+    "Submit an emergency blood request in Sunamganj and Sylhet Division through Shantichakra Blood Society Sunamganj (শান্তিচক্র ব্লাড সোসাইটি সুনামগঞ্জ). জরুরি রক্তের প্রয়োজনে রোগীর তথ্য দিয়ে অনুরোধ পাঠান।",
   alternates: { canonical: "/request-blood" },
   openGraph: {
-    title: "রক্তের অনুরোধ করুন | জরুরি রক্তসেবা | শান্তিচক্র",
+    title: "জরুরি রক্তের অনুরোধ (Emergency Blood Request) | Shantichakra Blood Society Sunamganj",
     description:
-      "জরুরি রক্তের প্রয়োজন হলে রোগীর প্রয়োজনীয় তথ্য দিয়ে রক্তের অনুরোধ পাঠান এবং উপযুক্ত রক্তদাতার সঙ্গে যোগাযোগের সুযোগ নিন।",
+      "Submit an emergency blood request in Sunamganj and Sylhet Division through Shantichakra Blood Society Sunamganj (শান্তিচক্র ব্লাড সোসাইটি সুনামগঞ্জ). জরুরি রক্তের প্রয়োজনে রোগীর তথ্য দিয়ে অনুরোধ পাঠান।",
     url: "https://shantichakrabloodsociety.rahatahmed.site/request-blood",
     type: "website",
   },
