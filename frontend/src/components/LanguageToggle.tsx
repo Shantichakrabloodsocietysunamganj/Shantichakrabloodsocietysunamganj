@@ -17,16 +17,20 @@ export default function LanguageToggle({ lang }: { lang: Lang }) {
   return (
     <div className="inline-flex items-center rounded-lg bg-zinc-100 p-0.5 text-xs font-bold dark:bg-white/10">
       <button
+        type="button"
         onClick={() => set("bn")}
-        className={`rounded-md px-2 py-1 transition ${lang === "bn" ? "bg-white text-brand-700 shadow-sm dark:bg-brand-600 dark:text-white" : "text-ink/60 dark:text-brand-100/60"}`}
+        className={`min-h-11 min-w-11 rounded-md px-3 transition ${lang === "bn" ? "bg-white text-brand-700 shadow-sm dark:bg-brand-600 dark:text-white" : "text-ink/60 dark:text-brand-100/60"}`}
         aria-pressed={lang === "bn"}
+        aria-label="বাংলা"
       >
         {tx("বাং")}
       </button>
       <button
+        type="button"
         onClick={() => set("en")}
-        className={`rounded-md px-2 py-1 transition ${lang === "en" ? "bg-white text-brand-700 shadow-sm dark:bg-brand-600 dark:text-white" : "text-ink/60 dark:text-brand-100/60"}`}
+        className={`min-h-11 min-w-11 rounded-md px-3 transition ${lang === "en" ? "bg-white text-brand-700 shadow-sm dark:bg-brand-600 dark:text-white" : "text-ink/60 dark:text-brand-100/60"}`}
         aria-pressed={lang === "en"}
+        aria-label="English"
       >
         EN
       </button>

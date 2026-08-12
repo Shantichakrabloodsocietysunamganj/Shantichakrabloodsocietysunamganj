@@ -29,7 +29,7 @@ export default function CookieBanner() {
         <p className="flex flex-1 items-center justify-center gap-2 text-center text-sm text-ink/70 sm:justify-start sm:text-left">
           <Cookie className="h-4 w-4 shrink-0 text-amber-500" />
           <span>{tx("এই সাইট আপনার অভিজ্ঞতা উন্নত করতে কুকি ব্যবহার করে। চালিয়ে যাওয়া মানে আপনি এতে সম্মত।")}{" "}
-          <Link href="/privacy" className="font-medium text-brand-600 hover:underline">{tx("বিস্তারিত")}</Link></span>
+          <Link href="/privacy" className="font-medium text-brand-600 hover:underline">{tx("গোপনীয়তা নীতি পড়ুন")}</Link></span>
         </p>
         <button onClick={accept} className="btn-primary shrink-0 !px-4 !py-2 text-xs">{tx("ঠিক আছে")}</button>
       </div>

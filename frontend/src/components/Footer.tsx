@@ -32,10 +32,10 @@ export default function Footer({ settings, lang }: { settings: SiteSettings; lan
           </div>
           <p className="mt-4 line-clamp-4 text-sm leading-relaxed text-slate-400">{tx(site.mission)}</p>
           <div className="mt-5 flex gap-2">
-            <a href={facebook} target="_blank" rel="noreferrer" aria-label="Facebook" className="flex h-9 w-9 items-center justify-center rounded-lg bg-white/5 text-slate-300 ring-1 ring-white/10 transition hover:bg-brand-600 hover:text-white">
+            <a href={facebook} target="_blank" rel="noreferrer" aria-label="Facebook" className="flex h-12 w-12 items-center justify-center rounded-lg bg-white/5 text-slate-300 ring-1 ring-white/10 transition hover:bg-brand-600 hover:text-white">
               <svg viewBox="0 0 24 24" className="h-4 w-4" fill="currentColor"><path d="M22 12a10 10 0 1 0-11.56 9.88v-6.99H7.9V12h2.54V9.8c0-2.5 1.49-3.89 3.77-3.89 1.09 0 2.24.2 2.24.2v2.46h-1.26c-1.24 0-1.63.77-1.63 1.56V12h2.78l-.44 2.89h-2.34v6.99A10 10 0 0 0 22 12z" /></svg>
             </a>
-            <a href={whatsapp} target="_blank" rel="noreferrer" aria-label="WhatsApp" className="flex h-9 w-9 items-center justify-center rounded-lg bg-white/5 text-slate-300 ring-1 ring-white/10 transition hover:bg-success-600 hover:text-white">
+            <a href={whatsapp} target="_blank" rel="noreferrer" aria-label="WhatsApp" className="flex h-12 w-12 items-center justify-center rounded-lg bg-white/5 text-slate-300 ring-1 ring-white/10 transition hover:bg-success-600 hover:text-white">
               <svg viewBox="0 0 24 24" className="h-4 w-4" fill="currentColor"><path d="M.057 24l1.687-6.163a11.867 11.867 0 0 1-1.587-5.945C.16 5.335 5.495 0 12.05 0a11.82 11.82 0 0 1 8.413 3.488 11.82 11.82 0 0 1 3.48 8.414c-.003 6.557-5.338 11.892-11.893 11.892a11.9 11.9 0 0 1-5.688-1.448L.057 24z" /></svg>
             </a>
           </div>
@@ -43,27 +43,27 @@ export default function Footer({ settings, lang }: { settings: SiteSettings; lan
 
         <div>
           <h2 className="text-sm font-semibold text-white">{t("footer.quickLinks", lang)}</h2>
-          <ul className="mt-4 space-y-2.5 text-sm text-slate-400">
-            <li><Link className="transition hover:text-white" href="/donors">{t("nav.donors", lang)}</Link></li>
-            <li><Link className="transition hover:text-white" href="/request-blood">{t("nav.needBlood", lang)}</Link></li>
-            <li><Link className="transition hover:text-white" href="/blood-seekers">{t("nav.seekers", lang)}</Link></li>
-            <li><Link className="transition hover:text-white" href="/become-donor">{t("nav.becomeDonor", lang)}</Link></li>
-            <li><Link className="transition hover:text-white" href="/eligibility">{t("nav.eligibility", lang)}</Link></li>
-            <li><Link className="inline-flex items-center gap-2 transition hover:text-white" href="/emergency"><Ambulance className="h-4 w-4" /> {t("nav.emergency", lang)}</Link></li>
-            <li><Link className="transition hover:text-white" href="/donate">{t("nav.donate", lang)}</Link></li>
+          <ul className="mt-4 space-y-1 text-sm text-slate-400">
+            <li><Link className="inline-flex min-h-11 items-center transition hover:text-white" href="/donors">{t("nav.donors", lang)}</Link></li>
+            <li><Link className="inline-flex min-h-11 items-center transition hover:text-white" href="/request-blood">{t("nav.needBlood", lang)}</Link></li>
+            <li><Link className="inline-flex min-h-11 items-center transition hover:text-white" href="/blood-seekers">{t("nav.seekers", lang)}</Link></li>
+            <li><Link className="inline-flex min-h-11 items-center transition hover:text-white" href="/become-donor">{t("nav.becomeDonor", lang)}</Link></li>
+            <li><Link className="inline-flex min-h-11 items-center transition hover:text-white" href="/eligibility">{t("nav.eligibility", lang)}</Link></li>
+            <li><Link className="inline-flex min-h-11 items-center gap-2 transition hover:text-white" href="/emergency"><Ambulance className="h-4 w-4" /> {t("nav.emergency", lang)}</Link></li>
+            <li><Link className="inline-flex min-h-11 items-center transition hover:text-white" href="/donate">{t("nav.donate", lang)}</Link></li>
           </ul>
         </div>
 
         <div>
           <h2 className="text-sm font-semibold text-white">{t("footer.more", lang)}</h2>
-          <ul className="mt-4 space-y-2.5 text-sm text-slate-400">
-            <li><Link className="transition hover:text-white" href="/about">{t("nav.about", lang)}</Link></li>
-            <li><Link className="transition hover:text-white" href="/impact">{t("nav.impact", lang)}</Link></li>
-            <li><Link className="transition hover:text-white" href="/media">{t("nav.media", lang)}</Link></li>
-            <li><Link className="transition hover:text-white" href="/events">{t("nav.events", lang)}</Link></li>
-            <li><Link className="transition hover:text-white" href="/gallery">{t("nav.gallery", lang)}</Link></li>
-            <li><Link className="transition hover:text-white" href="/blog">{t("nav.blog", lang)}</Link></li>
-            <li><Link className="transition hover:text-white" href="/faq">{lang === "en" ? "FAQ" : "সাধারণ প্রশ্ন"}</Link></li>
+          <ul className="mt-4 space-y-1 text-sm text-slate-400">
+            <li><Link className="inline-flex min-h-11 items-center transition hover:text-white" href="/about">{t("nav.about", lang)}</Link></li>
+            <li><Link className="inline-flex min-h-11 items-center transition hover:text-white" href="/impact">{t("nav.impact", lang)}</Link></li>
+            <li><Link className="inline-flex min-h-11 items-center transition hover:text-white" href="/media">{t("nav.media", lang)}</Link></li>
+            <li><Link className="inline-flex min-h-11 items-center transition hover:text-white" href="/events">{t("nav.events", lang)}</Link></li>
+            <li><Link className="inline-flex min-h-11 items-center transition hover:text-white" href="/gallery">{t("nav.gallery", lang)}</Link></li>
+            <li><Link className="inline-flex min-h-11 items-center transition hover:text-white" href="/blog">{t("nav.blog", lang)}</Link></li>
+            <li><Link className="inline-flex min-h-11 items-center transition hover:text-white" href="/faq">{lang === "en" ? "FAQ" : "সাধারণ প্রশ্ন"}</Link></li>
           </ul>
         </div>
 

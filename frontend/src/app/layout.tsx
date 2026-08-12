@@ -64,7 +64,9 @@ export async function generateMetadata(): Promise<Metadata> {
       description: desc,
       images: [settings.og_image || "/opengraph-image"],
     },
-    alternates: { canonical: "https://shantichakrabloodsociety.rahatahmed.site/" },
+    alternates: {
+      canonical: "/",
+    },
     verification: { google: process.env.GOOGLE_SITE_VERIFICATION },
     category: "health",
   };
