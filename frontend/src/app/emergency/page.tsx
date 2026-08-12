@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import SectionHeading from "@/components/ui/SectionHeading";
 import Reveal from "@/components/Reveal";
+import BreadcrumbJsonLd from "@/components/seo/BreadcrumbJsonLd";
 import { site } from "@/data/site";
 import {
   nationalHotlines,
@@ -15,9 +16,17 @@ import {
 import { telHref } from "@/lib/format";
 
 export const metadata: Metadata = {
-  title: "জরুরি নম্বর ও হাসপাতাল",
+  title: "জরুরি ডিরেক্টরি ও রক্তসেবা | শান্তিচক্র ব্লাড সোসাইটি",
   description:
-    "সুনামগঞ্জ ও সিলেটের হাসপাতাল, ব্লাড ব্যাংক এবং জাতীয় জরুরি হটলাইনের তালিকা — এক ক্লিকে কল করুন।",
+    "সুনামগঞ্জ ও সিলেট বিভাগের জরুরি হাসপাতাল, ব্লাড ব্যাংক ও হটলাইন নম্বর এবং তাৎক্ষণিক রক্তসেবা যোগাযোগ ডিরেক্টরি।",
+  alternates: { canonical: "/emergency" },
+  openGraph: {
+    title: "জরুরি ডিরেক্টরি ও রক্তসেবা | শান্তিচক্র ব্লাড সোসাইটি",
+    description:
+      "সুনামগঞ্জ ও সিলেট বিভাগের জরুরি হাসপাতাল, ব্লাড ব্যাংক ও হটলাইন নম্বর এবং তাৎক্ষণিক রক্তসেবা যোগাযোগ ডিরেক্টরি।",
+    url: "https://shanticakrabloodsocaiety.rahatahmed.site/emergency",
+    type: "website",
+  },
 };
 
 function FacilityCard({ f }: { f: Facility }) {
@@ -51,6 +60,12 @@ function FacilityCard({ f }: { f: Facility }) {
 export default function EmergencyPage() {
   return (
     <div className="container-page py-12">
+      <BreadcrumbJsonLd
+        items={[
+          { name: "হোম", url: "https://shanticakrabloodsocaiety.rahatahmed.site" },
+          { name: "জরুরি ডিরেক্টরি", url: "https://shanticakrabloodsocaiety.rahatahmed.site/emergency" },
+        ]}
+      />
       <SectionHeading
         eyebrow="জরুরি ডিরেক্টরি"
         title="জরুরি নম্বর, হাসপাতাল ও ব্লাড ব্যাংক"

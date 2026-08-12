@@ -10,14 +10,38 @@ export const BLOOD_COMPATIBILITY: Record<
   string,
   { canDonateTo: string[]; canReceiveFrom: string[] }
 > = {
-  "O-": { canDonateTo: ["সব গ্রুপ (Universal Donor)"], canReceiveFrom: ["O-"] },
-  "O+": { canDonateTo: ["O+", "A+", "B+", "AB+"], canReceiveFrom: ["O+", "O-"] },
-  "A-": { canDonateTo: ["A+", "A-", "AB+", "AB-"], canReceiveFrom: ["A-", "O-"] },
-  "A+": { canDonateTo: ["A+", "AB+"], canReceiveFrom: ["A+", "A-", "O+", "O-"] },
-  "B-": { canDonateTo: ["B+", "B-", "AB+", "AB-"], canReceiveFrom: ["B-", "O-"] },
-  "B+": { canDonateTo: ["B+", "AB+"], canReceiveFrom: ["B+", "B-", "O+", "O-"] },
-  "AB-": { canDonateTo: ["AB+", "AB-"], canReceiveFrom: ["AB-", "A-", "B-", "O-"] },
-  "AB+": { canDonateTo: ["AB+ (Universal Recipient)"], canReceiveFrom: ["সব গ্রুপ"] },
+  "O-": {
+    canDonateTo: ["O-", "O+", "A-", "A+", "B-", "B+", "AB-", "AB+"],
+    canReceiveFrom: ["O-"],
+  },
+  "O+": {
+    canDonateTo: ["O+", "A+", "B+", "AB+"],
+    canReceiveFrom: ["O+", "O-"],
+  },
+  "A-": {
+    canDonateTo: ["A-", "A+", "AB-", "AB+"],
+    canReceiveFrom: ["A-", "O-"],
+  },
+  "A+": {
+    canDonateTo: ["A+", "AB+"],
+    canReceiveFrom: ["A+", "A-", "O+", "O-"],
+  },
+  "B-": {
+    canDonateTo: ["B-", "B+", "AB-", "AB+"],
+    canReceiveFrom: ["B-", "O-"],
+  },
+  "B+": {
+    canDonateTo: ["B+", "AB+"],
+    canReceiveFrom: ["B+", "B-", "O+", "O-"],
+  },
+  "AB-": {
+    canDonateTo: ["AB-", "AB+"],
+    canReceiveFrom: ["AB-", "A-", "B-", "O-"],
+  },
+  "AB+": {
+    canDonateTo: ["AB+"],
+    canReceiveFrom: ["O-", "O+", "A-", "A+", "B-", "B+", "AB-", "AB+"],
+  },
 };
 
 // গ্রুপ অনুযায়ী রঙ

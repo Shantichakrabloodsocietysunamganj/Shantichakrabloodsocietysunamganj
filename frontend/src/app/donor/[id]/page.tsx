@@ -4,7 +4,31 @@ import BloodGroupBadge from "@/components/BloodGroupBadge";
 import { site } from "@/data/site";
 import { notFound } from "next/navigation";
 
-export const metadata: Metadata = { title: "রক্তদাতা যাচাই" };
+export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
+  const supabase = createClient();
+  const { data: donor } = await supabase
+    .from("donors")
+    .select("full_name, blood_group, district, upazila")
+    .eq("id", params.id)
+    .maybeSingle();
+
+  if (!donor) return { title: "রক্তদাতা যাচাই | শান্তিচক্র ব্লাড সোসাইটি" };
+
+  const title = `${donor.full_name} (${donor.blood_group}) - রক্তদাতা যাচাই | শান্তিচক্র ব্লাড সোসাইটি`;
+  const description = `${donor.district}, ${donor.upazila} এলাকার নিবন্ধিত রক্তদাতা ${donor.full_name} (${donor.blood_group}) এর তথ্য যাচাই করুন।`;
+
+  return {
+    title,
+    description,
+    alternates: { canonical: `/donor/${params.id}` },
+    openGraph: {
+      title,
+      description,
+      url: `https://shanticakrabloodsocaiety.rahatahmed.site/donor/${params.id}`,
+      type: "profile",
+    },
+  };
+}
 
 export default async function DonorVerifyPage({ params }: { params: { id: string } }) {
   const supabase = createClient();
@@ -21,15 +45,20 @@ export default async function DonorVerifyPage({ params }: { params: { id: string
     .select("*", { count: "exact", head: true })
     .eq("donor_id", donor.id);
 
-  const nextEligible = donor.last_donation_date
+  const isFutureDonationDate = donor.last_donation_date
+    ? new Date(donor.last_donation_date) > new Date()
+    : false;
+
+  const nextEligible = donor.last_donation_date && !isFutureDonationDate
     ? new Date(new Date(donor.last_donation_date).getTime() + 90 * 24 * 3600 * 1000)
     : null;
-  const nextEligibleText =
-    nextEligible && nextEligible.getTime() > Date.now()
+  const nextEligibleText = isFutureDonationDate
+    ? "যাচাই প্রয়োজন"
+    : nextEligible && nextEligible.getTime() > Date.now()
       ? nextEligible.toLocaleDateString("bn-BD", { day: "numeric", month: "short", year: "numeric" })
       : "এখন প্রস্তুত";
 
-  const pageUrl = `https://shantichakrabloodsocietysunamganj-g.vercel.app/donor/${donor.id}`;
+  const pageUrl = `https://shanticakrabloodsocaiety.rahatahmed.site/donor/${donor.id}`;
   const qr = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&margin=8&data=${encodeURIComponent(pageUrl)}`;
 
   return (
@@ -61,7 +90,7 @@ export default async function DonorVerifyPage({ params }: { params: { id: string
                 </div>
                 <div className="grid grid-cols-2 gap-2 text-sm">
                   <Info label="এলাকা" value={`${donor.district}, ${donor.upazila}`} />
-                  <Info label="সর্বশেষ দান" value={donor.last_donation_date ? new Date(donor.last_donation_date).toLocaleDateString("bn-BD", { day: "numeric", month: "short", year: "numeric" }) : "—"} />
+                  <Info label="সর্বশেষ দান" value={isFutureDonationDate ? "যাচাই প্রয়োজন (ভবিষ্যৎ তারিখ)" : donor.last_donation_date ? new Date(donor.last_donation_date).toLocaleDateString("bn-BD", { day: "numeric", month: "short", year: "numeric" }) : "—"} />
                   <Info label="মোট রক্তদান" value={`${donationCount ?? 0} বার`} />
                   <Info label="পরবর্তী উপযুক্ত" value={nextEligibleText} />
                   <Info label="প্রস্তুততা" value={donor.is_available ? "প্রস্তুত" : "অনুপস্থিত"} />
