@@ -35,6 +35,10 @@ export type LiveRequestsState = {
   live: boolean;
   /** সর্বশেষ আপডেটের সময় */
   lastUpdated: number;
+  /** পেজ খোলার পরে কতগুলো নতুন অনুরোধ realtime-এ এসেছে (ইউজারকে জানানোর জন্য) */
+  newCount: number;
+  /** নতুন-অনুরোধ কাউন্টার রিসেট (ইউজার দেখার পর) */
+  resetNew: () => void;
   refresh: () => Promise<void>;
 };
 
@@ -50,6 +54,8 @@ export function useLiveRequests(options: UseLiveRequestsOptions = {}): LiveReque
   const [freshIds, setFreshIds] = useState<Set<string>>(new Set());
   const [live, setLive] = useState(false);
   const [lastUpdated, setLastUpdated] = useState(() => Date.now());
+  const [newCount, setNewCount] = useState(0);
+  const loadedOnceRef = useRef(false);
 
   const timersRef = useRef<Record<string, ReturnType<typeof setTimeout>>>({});
   const optsRef = useRef({ limit, group, upazila, includeClosed });
@@ -107,6 +113,11 @@ export function useLiveRequests(options: UseLiveRequestsOptions = {}): LiveReque
       setRequests(sortList((data as BloodRequest[]) ?? []));
       setError(null);
       setLastUpdated(Date.now());
+      // প্রথম লোড শেষে কাউন্টার শূন্য — তারপর realtime-এ যা আসবে তাই গোনা হবে
+      if (!loadedOnceRef.current) {
+        loadedOnceRef.current = true;
+        setNewCount(0);
+      }
     } catch (e: any) {
       setError(e?.message ?? "error");
     } finally {
@@ -132,6 +143,7 @@ export function useLiveRequests(options: UseLiveRequestsOptions = {}): LiveReque
           return sortList([row, ...prev]).slice(0, optsRef.current.limit);
         });
         markFresh(row.id);
+        setNewCount((c) => c + 1);
         setLastUpdated(Date.now());
       })
       .on("postgres_changes", { event: "UPDATE", schema: "public", table: "blood_requests" }, (payload) => {
@@ -188,5 +200,5 @@ export function useLiveRequests(options: UseLiveRequestsOptions = {}): LiveReque
     };
   }, []);
 
-  return { requests, loading, error, freshIds, live, lastUpdated, refresh: load };
+  return { requests, loading, error, freshIds, live, lastUpdated, newCount, resetNew: () => setNewCount(0), refresh: load };
 }
