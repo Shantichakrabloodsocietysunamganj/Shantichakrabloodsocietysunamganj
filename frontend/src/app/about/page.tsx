@@ -48,12 +48,13 @@ export default async function AboutPage() {
   const advisors = ok ? list.filter((m) => m.category === "advisor") : [];
   const members = ok ? list.filter((m) => m.category === "member") : site.volunteers.map((v) => ({ ...v, id: v.name, photo_url: null }));
 
+  const en = lang === "en";
   return (
     <div>
       <BreadcrumbJsonLd
         items={[
-          { name: "হোম", url: "https://shanticakrabloodsocaiety.rahatahmed.site" },
-          { name: "আমাদের সম্পর্কে", url: "https://shanticakrabloodsocaiety.rahatahmed.site/about" },
+          { name: en ? "Home" : "হোম", url: "https://shanticakrabloodsocaiety.rahatahmed.site" },
+          { name: en ? "About Us" : "আমাদের সম্পর্কে", url: "https://shanticakrabloodsocaiety.rahatahmed.site/about" },
         ]}
       />
       <LocalBusinessJsonLd />
@@ -61,9 +62,9 @@ export default async function AboutPage() {
         <div className="pointer-events-none absolute -top-24 right-0 h-64 w-64 rounded-full bg-blood-200/40 blur-3xl" />
         <div className="container-page relative max-w-3xl text-center">
           <span className="eyebrow">{t("about.eyebrow", lang)}</span>
-          <h1 className="section-title mt-4 text-4xl sm:text-5xl">{site.name}</h1>
+          <h1 className="section-title mt-4 text-4xl sm:text-5xl">{en ? site.nameEn : site.name}</h1>
           <span className="mx-auto mt-4 block h-1 w-16 rounded-full bg-gradient-to-r from-brand-600 to-blood-500" />
-          <p className="mx-auto mt-5 max-w-2xl text-lg leading-relaxed text-ink/60">{site.mission}</p>
+          <p className="mx-auto mt-5 max-w-2xl text-lg leading-relaxed text-ink/60">{en ? "Shantichakra Blood Society, Sunamganj is a voluntary and non-profit blood donation organization. Founded in 2024, its main goal is to encourage safe voluntary blood donation, stand by people in emergency blood needs and build an aware cooperative society through humanitarian service. Currently expanding across 4 districts of Sylhet Division." : site.mission}</p>
           <div className="mt-7 flex flex-wrap justify-center gap-3">
             <Link href="/become-donor" className="btn-primary">{t("about.join", lang)}</Link>
             <Link href="/donors" className="btn-outline">{t("hero.findDonors", lang)}</Link>
@@ -76,12 +77,12 @@ export default async function AboutPage() {
           <Reveal><div className="card h-full p-8">
             <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-brand-50 text-brand-600"><Target className="h-6 w-6" strokeWidth={1.8} /></div>
             <h2 className="mt-4 text-xl font-bold text-zinc-900">{t("about.mission", lang)}</h2>
-            <p className="mt-2 leading-relaxed text-zinc-600">{site.mission}</p>
+            <p className="mt-2 leading-relaxed text-zinc-600">{en ? "Shantichakra Blood Society, Sunamganj is a voluntary and non-profit blood donation organization. Founded in 2024, its main goal is to encourage safe voluntary blood donation, stand by people in emergency blood needs and build an aware cooperative society through humanitarian service. Currently expanding across 4 districts of Sylhet Division." : site.mission}</p>
           </div></Reveal>
           <Reveal delay={120}><div className="card h-full p-8">
             <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-amber-50 text-amber-600"><Star className="h-6 w-6" strokeWidth={1.8} /></div>
             <h2 className="mt-4 text-xl font-bold text-zinc-900">{t("about.vision", lang)}</h2>
-            <p className="mt-2 leading-relaxed text-zinc-600">{site.vision}</p>
+            <p className="mt-2 leading-relaxed text-zinc-600">{en ? "To build a Sylhet division where no one is deprived of treatment due to lack of blood." : site.vision}</p>
           </div></Reveal>
         </div>
       </section>
@@ -90,12 +91,19 @@ export default async function AboutPage() {
         <div className="container-page">
           <Reveal><SectionHeading eyebrow={t("about.values.eyebrow", lang)} title={t("about.values.title", lang)} /></Reveal>
           <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {VALUES.map((v, i) => (
-              <Reveal key={v.title} delay={i * 80}>
+            {[
+              { icon: "handshake", titleKey: "about.values.humanity", descKey: "about.values.humanityDesc" },
+              { icon: "zap", titleKey: "about.values.speed", descKey: "about.values.speedDesc" },
+              { icon: "lock", titleKey: "about.values.security", descKey: "about.values.securityDesc" },
+              { icon: "gem", titleKey: "about.values.volunteerism", descKey: "about.values.volunteerismDesc" },
+              { icon: "map-pin", titleKey: "about.values.locality", descKey: "about.values.localityDesc" },
+              { icon: "refresh-cw", titleKey: "about.values.continuity", descKey: "about.values.continuityDesc" },
+            ].map((v, i) => (
+              <Reveal key={v.titleKey} delay={i * 80}>
                 <div className="card h-full p-6">
                   <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-brand-50 text-brand-600"><Icon name={v.icon} className="h-6 w-6" strokeWidth={1.8} /></div>
-                  <h3 className="mt-3 font-semibold text-zinc-900">{v.title}</h3>
-                  <p className="mt-1.5 text-sm leading-relaxed text-zinc-600">{v.desc}</p>
+                  <h3 className="mt-3 font-semibold text-zinc-900">{t(v.titleKey, lang)}</h3>
+                  <p className="mt-1.5 text-sm leading-relaxed text-zinc-600">{t(v.descKey, lang)}</p>
                 </div>
               </Reveal>
             ))}
@@ -300,15 +308,6 @@ function PeopleGroup({ title, people }: { title: string; people: { id: string; n
     </div>
   );
 }
-
-const VALUES = [
-  { icon: "handshake", title: "মানবিকতা", desc: "ধর্ম, বর্ণ বা পেশা ভেদে নয় — প্রতিটি জীবনের পাশে দাঁড়াই।" },
-  { icon: "zap", title: "দ্রুততা", desc: "জরুরি মুহূর্তে সবচেয়ে কম সময়ে সঠিক দাতায় পৌঁছাই।" },
-  { icon: "lock", title: "নিরাপত্তা", desc: "দাতা ও গ্রহীতার তথ্য সুরক্ষিত ও দায়িত্বশীলভাবে ব্যবহৃত হয়।" },
-  { icon: "gem", title: "স্বেচ্ছাসেবা", desc: "কোনো আর্থিক লেনদেশন নেই — পুরোপুরি স্বেচ্ছাসেবী নেটওয়ার্ক।" },
-  { icon: "map-pin", title: "স্থানীয়তা", desc: "সিলেট বিভাগের মানুষের জন্য, সিলেটের মানুষের দ্বারা।" },
-  { icon: "refresh-cw", title: "নিরবচ্ছিন্নতা", desc: "২৪/৭ অনুরোধ গ্রহণ ও সমন্বয় — কখনো থামি না।" },
-];
 
 // গণমাধ্যমে প্রকাশিত প্রতিবেদন (verified)
 const PRESS = [

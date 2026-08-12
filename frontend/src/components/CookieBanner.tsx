@@ -3,10 +3,11 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Cookie } from "lucide-react";
+import { t, useLangClient } from "@/lib/i18n";
 
-// Cookie consent banner
 export default function CookieBanner() {
   const [show, setShow] = useState(false);
+  const lang = useLangClient();
 
   useEffect(() => {
     try {
@@ -26,10 +27,10 @@ export default function CookieBanner() {
       <div className="mx-auto flex max-w-3xl flex-col items-center gap-3 rounded-2xl border border-zinc-200 bg-white/90 p-4 shadow-glow backdrop-blur-md sm:flex-row">
         <p className="flex flex-1 items-center justify-center gap-2 text-center text-sm text-ink/70 sm:justify-start sm:text-left">
           <Cookie className="h-4 w-4 shrink-0 text-amber-500" />
-          <span>এই সাইট আপনার অভিজ্ঞতা উন্নত করতে কুকি ব্যবহার করে। চালিয়ে যাওয়া মানে আপনি এতে সম্মত।{" "}
-          <Link href="/privacy" className="font-medium text-brand-600 hover:underline">বিস্তারিত</Link></span>
+          <span>{t("cookie.msg", lang)}{" "}
+          <Link href="/privacy" className="font-medium text-brand-600 hover:underline">{t("cookie.details", lang)}</Link></span>
         </p>
-        <button onClick={accept} className="btn-primary shrink-0 !px-4 !py-2 text-xs">ঠিক আছে</button>
+        <button onClick={accept} className="btn-primary shrink-0 !px-4 !py-2 text-xs">{t("cookie.ok", lang)}</button>
       </div>
     </div>
   );

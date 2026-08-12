@@ -8,7 +8,7 @@ export type Eligibility = {
   nextEligibleText: string;
 };
 
-export function getEligibility(lastDonationDate: string | null): Eligibility {
+export function getEligibility(lastDonationDate: string | null, en = false): Eligibility {
   if (!lastDonationDate) {
     return { eligible: true, daysRemaining: 0, nextEligibleDate: null, nextEligibleText: "" };
   }
@@ -17,7 +17,7 @@ export function getEligibility(lastDonationDate: string | null): Eligibility {
   const now = new Date();
   const eligible = next <= now;
   const daysRemaining = eligible ? 0 : Math.ceil((next.getTime() - now.getTime()) / (24 * 3600 * 1000));
-  const nextEligibleText = next.toLocaleDateString("bn-BD", { day: "numeric", month: "short", year: "numeric" });
+  const nextEligibleText = next.toLocaleDateString(en ? "en-US" : "bn-BD", { day: "numeric", month: "short", year: "numeric" });
   return { eligible, daysRemaining, nextEligibleDate: next, nextEligibleText };
 }
 
@@ -27,7 +27,7 @@ export function getDonorStatus(
   lastDonationDate: string | null,
   en = false,
 ): { label: string; color: string; dot: string } {
-  const elig = getEligibility(lastDonationDate);
+  const elig = getEligibility(lastDonationDate, en);
   if (!isAvailable) {
     return {
       label: en ? "Unavailable" : "এই মুহূর্তে অনুপস্থিত",

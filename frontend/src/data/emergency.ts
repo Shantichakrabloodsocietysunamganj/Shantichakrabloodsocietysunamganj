@@ -5,8 +5,10 @@
 
 export type Hotline = {
   name: string;
+  nameEn?: string;
   number: string;
   desc: string;
+  descEn?: string;
   icon: string;
 };
 
@@ -24,10 +26,10 @@ export type Facility = {
 
 // --- জাতীয় জরুরি হটলাইন ---
 export const nationalHotlines: Hotline[] = [
-  { name: "জাতীয় জরুরি সেবা", number: "999", desc: "পুলিশ, ফায়ার সার্ভিস ও অ্যাম্বুলেন্স — ২৪ ঘণ্টা", icon: "🚨" },
-  { name: "শাস্থ্য বাতায়ন", number: "16263", desc: "সরকারি স্বাস্থ্য সেবা ও ডাক্তারের তথ্য", icon: "🩺" },
-  { name: "আইইডিসিআর", number: "10655", desc: "রোগতত্ত্ব, রোগ নিয়ন্ত্রণ ও গবেষণা প্রতিষ্ঠান", icon: "🧫" },
-  { name: "জরুরি সহায়তা", number: "109", desc: "নারী ও শিশু নির্যাতন প্রতিরোধ হেল্পলাইন", icon: "🛡️" },
+  { name: "জাতীয় জরুরি সেবা", nameEn: "National Emergency Service", number: "999", desc: "পুলিশ, ফায়ার সার্ভিস ও অ্যাম্বুলেন্স — ২৪ ঘণ্টা", descEn: "Police, Fire Service & Ambulance — 24/7", icon: "🚨" },
+  { name: "শাস্থ্য বাতায়ন", nameEn: "Health Helpline", number: "16263", desc: "সরকারি স্বাস্থ্য সেবা ও ডাক্তারের তথ্য", descEn: "Govt. health service & doctor info", icon: "🩺" },
+  { name: "আইইডিসিআর", nameEn: "IEDCR", number: "10655", desc: "রোগতত্ত্ব, রোগ নিয়ন্ত্রণ ও গবেষণা প্রতিষ্ঠান", descEn: "Institute of Epidemiology & Research", icon: "🧫" },
+  { name: "জরুরি সহায়তা", nameEn: "Emergency Help", number: "109", desc: "নারী ও শিশু নির্যাতন প্রতিরোধ হেল্পলাইন", descEn: "Women & child abuse prevention helpline", icon: "🛡️" },
 ];
 
 // --- সুনামগঞ্জ জেলা ---
@@ -44,6 +46,9 @@ export const sunamganjFacilities: Facility[] = [
 
 export const sunamganjNote =
   "সুনামগঞ্জের প্রতিটি উপজেলায় রয়েছে উপজেলা স্বাস্থ্য কমপ্লেক্স — সেখানে জরুরি ও প্রাথমিক চিকিৎসা পাওয়া যায়। রক্তের জরুরি প্রয়োজনে রোগীকে সাধারণত সদর হাসপাতাল বা সিলেটের বড় হাসপাতালে রেফার করা হয়।";
+
+export const sunamganjNoteEn =
+  "Every upazila in Sunamganj has an Upazila Health Complex — emergency and primary care available. For urgent blood, patients are usually referred to Sadar Hospital or larger Sylhet hospitals.";
 
 // --- সিলেটের হাসপাতাল ও ব্লাড ব্যাংক ---
 export const sylhetFacilities: Facility[] = [
@@ -116,18 +121,24 @@ export const sylhetFacilities: Facility[] = [
 ];
 
 // --- অ্যাম্বুলেন্স সংক্রান্ত তথ্য ---
-export const ambulanceSteps: { title: string; desc: string }[] = [
+export const ambulanceSteps: { title: string; titleEn: string; desc: string; descEn: string }[] = [
   {
     title: "প্রথমে ৯৯৯ ডায়াল করুন",
+    titleEn: "First, dial 999",
     desc: "প্রাণঘাতী জরুরিতে সরকারি জাতীয় জরুরি সেবা সবচেয়ে দ্রুত সাড়া দেয় — ফায়ার সার্ভিস ও পুলিশের অ্যাম্বুলেন্সসহ।",
+    descEn: "In life-threatening emergencies, national emergency service responds fastest — including fire service and police ambulances.",
   },
   {
     title: "নিকটস্থ হাসপাতালে কল করুন",
+    titleEn: "Call the nearest hospital",
     desc: "প্রায় সব বড় হাসপাতালের নিজস্ব অ্যাম্বুলেন্স সার্ভিস আছে। উপরের তালিকার হাসপাতালে সরাসরি কল করুন।",
+    descEn: "Almost all large hospitals have their own ambulance service. Call directly from the list above.",
   },
   {
     title: "উপজেলা স্বাস্থ্য কমপ্লেক্স",
+    titleEn: "Upazila Health Complex",
     desc: "সরকারি হাসপাতালের অ্যাম্বুলেন্সে (এসি/নন-এসি) রোগী সরকার-নির্ধারিত ভাড়ায় জেলা সদর হাসপাতালে নেওয়া যায়।",
+    descEn: "Govt. hospital ambulances (AC/Non-AC) carry patients to district hospital at govt.-fixed fare.",
   },
 ];
 
@@ -135,4 +146,10 @@ export const facilityTypeLabel: Record<FacilityType, string> = {
   govt: "🏥 সরকারি",
   private: "🏨 বেসরকারি",
   org: "🤝 সংগঠন",
+};
+
+export const facilityTypeLabelEn: Record<FacilityType, string> = {
+  govt: "🏥 Government",
+  private: "🏨 Private",
+  org: "🤝 Organization",
 };

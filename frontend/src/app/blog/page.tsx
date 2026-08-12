@@ -4,6 +4,8 @@ import { createClient } from "@/lib/supabase/server";
 import SectionHeading from "@/components/ui/SectionHeading";
 import { STATIC_BLOG_ARTICLES } from "@/data/blog-articles";
 import BreadcrumbJsonLd from "@/components/seo/BreadcrumbJsonLd";
+import { getLang } from "@/lib/i18n-server";
+import { t } from "@/lib/i18n";
 
 export const metadata: Metadata = {
   title: "রক্তদান ও স্বাস্থ্য সচেতনতা ব্লগ | শান্তিচক্র ব্লাড সোসাইটি",
@@ -21,6 +23,8 @@ export const metadata: Metadata = {
 
 export default async function BlogPage() {
   const supabase = createClient();
+  const lang = await getLang();
+  const en = lang === "en";
   let dbPosts: any[] = [];
   try {
     const { data, error } = await supabase.from("blogs").select("*").order("created_at", { ascending: false });
@@ -29,7 +33,6 @@ export default async function BlogPage() {
     }
   } catch {}
 
-  // Combine database blog posts and static educational articles without duplication by slug
   const allPosts = [
     ...dbPosts,
     ...STATIC_BLOG_ARTICLES.filter(
@@ -41,14 +44,14 @@ export default async function BlogPage() {
     <div className="container-page py-12">
       <BreadcrumbJsonLd
         items={[
-          { name: "হোম", url: "https://shanticakrabloodsocaiety.rahatahmed.site" },
-          { name: "ব্লগ ও খবর", url: "https://shanticakrabloodsocaiety.rahatahmed.site/blog" },
+          { name: en ? "Home" : "হোম", url: "https://shanticakrabloodsocaiety.rahatahmed.site" },
+          { name: en ? "Blog & News" : "ব্লগ ও খবর", url: "https://shanticakrabloodsocaiety.rahatahmed.site/blog" },
         ]}
       />
       <SectionHeading
-        eyebrow="ব্লগ ও খবর"
-        title="রক্তদান ও স্বাস্থ্য সচেতনতা ব্লগ"
-        subtitle="রক্তদান, স্বাস্থ্য ও সমিতির কার্যক্রম সম্পর্কে প্রয়োজনীয় নিবন্ধ ও খবর।"
+        eyebrow={t("blog.eyebrow", lang)}
+        title={t("blog.title", lang)}
+        subtitle={t("blog.sub", lang)}
       />
 
       <div className="mt-10">
@@ -70,7 +73,7 @@ export default async function BlogPage() {
               )}
               <div className="p-5">
                 <p className="text-xs text-ink/40">
-                  {new Date(p.created_at).toLocaleDateString("bn-BD", {
+                  {new Date(p.created_at).toLocaleDateString(en ? "en-US" : "bn-BD", {
                     day: "numeric",
                     month: "long",
                     year: "numeric",

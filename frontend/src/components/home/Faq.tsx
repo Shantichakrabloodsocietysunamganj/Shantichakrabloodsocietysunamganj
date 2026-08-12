@@ -1,19 +1,20 @@
 "use client";
 
 import { useState } from "react";
+import { t, type Lang } from "@/lib/i18n";
 
-const DEFAULT_FAQS = [
-  { question: "রক্তদাতা হিসেবে নিবন্ধন করতে কী লাগে?", answer: "শুধু আপনার নাম, সক্রিয় মোবাইল নম্বর, রক্তের গ্রুপ ও এলাকা প্রয়োজন। 'রক্তদাতা হোন' ফর্ম পূরণ করলেই হবে। সম্পূর্ণ ফ্রি।" },
-  { question: "রক্ত দিতে বয়সের সীমা কত?", answer: "সাধারণত ১৮ থেকে ৬০ বছর, ওজন কমপক্ষে ৪৫ কেজি এবং সুস্থ থাকলে রক্ত দেওয়া নিরাপদ।" },
-  { question: "কতদিন পর পর রক্ত দেওয়া যায়?", answer: "সুস্থ পুরুষ ৩ মাস এবং নারী ৪ মাস পর পর রক্ত দিতে পারেন। বছরে সর্বোচ্চ ৪ বার।" },
-  { question: "জরুরি রক্ত লাগলে কীভাবে অনুরোধ করব?", answer: "'রক্ত লাগবে?' পেজে রোগীর তথ্য দিয়ে অনুরোধ পোস্ট করুন। তাৎক্ষণিকভাবে সারা সিলেটের দাতাদের কাছে তা পৌঁছে যাবে।" },
-  { question: "আমার তথ্য কি নিরাপদ?", answer: "হ্যাঁ। শুধু রক্তদান সমন্বয়ের জন্য আপনার তথ্য ব্যবহৃত হয়। কেউ আপনার তথ্য মুছতে বা পরিবর্তন করতে পারবে না।" },
-  { question: "এই পরিষেবা কি ফ্রি?", answer: "সম্পূর্ণ ফ্রি ও স্বেচ্ছাসেবী। কোনো আর্থিক লেনদেশ এই প্ল্যাটফর্মে নেই।" },
+const getDefaultFAQs = (lang: Lang) => [
+  { question: t("faq.q1", lang), answer: t("faq.a1", lang) },
+  { question: t("faq.q2", lang), answer: t("faq.a2", lang) },
+  { question: t("faq.q3", lang), answer: t("faq.a3", lang) },
+  { question: t("faq.q4", lang), answer: t("faq.a4", lang) },
+  { question: t("faq.q5", lang), answer: t("faq.a5", lang) },
+  { question: t("faq.q6", lang), answer: t("faq.a6", lang) },
 ];
 
-export default function Faq({ items }: { items?: { question: string; answer: string }[] }) {
+export default function Faq({ items, lang = "bn" }: { items?: { question: string; answer: string }[]; lang?: Lang }) {
   const [open, setOpen] = useState<number | null>(0);
-  const faqs = items && items.length > 0 ? items : DEFAULT_FAQS;
+  const faqs = items && items.length > 0 ? items : getDefaultFAQs(lang);
 
   return (
     <div className="mx-auto max-w-3xl space-y-3">

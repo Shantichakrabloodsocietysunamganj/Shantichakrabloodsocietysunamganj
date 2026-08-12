@@ -102,7 +102,7 @@ export default function Navbar({
           {profile ? (
             <div className="flex items-center gap-2">
               {(profile.role === "admin" || profile.role === "moderator") && (
-                <Link href="/admin" className="btn-ghost inline-flex items-center gap-1.5 !px-3 !py-2 text-xs"><Shield className="h-3.5 w-3.5" /> {profile.role === "admin" ? t("nav.admin", lang) : "মডারেটর"}</Link>
+                <Link href="/admin" className="btn-ghost inline-flex items-center gap-1.5 !px-3 !py-2 text-xs"><Shield className="h-3.5 w-3.5" /> {profile.role === "admin" ? t("nav.admin", lang) : t("moderator", lang)}</Link>
               )}
               <Link href="/dashboard" className="btn-ghost inline-flex items-center gap-1.5 !px-3 !py-2 text-xs"><LayoutDashboard className="h-3.5 w-3.5" /> {t("nav.dashboard", lang)}</Link>
               <NotificationBell />
@@ -125,7 +125,7 @@ export default function Navbar({
         </div>
 
         <button
-          aria-label="মেনু"
+          aria-label={t("menu", lang)}
           className="inline-flex h-10 w-10 items-center justify-center rounded-lg text-ink hover:bg-zinc-100 xl:hidden"
           onClick={() => setOpen((v) => !v)}
         >

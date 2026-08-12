@@ -53,7 +53,7 @@ export default function RequestCard({ req, lang = "bn" }: { req: BloodRequest; l
           <div>
             <span className="block text-[11px] uppercase tracking-wide text-ink/35">{en ? "Needed" : "লাগবে তারিখ"}</span>
             <span className="font-medium text-ink/80">
-              {new Date(req.needed_date).toLocaleDateString("bn-BD", { day: "numeric", month: "short", year: "numeric" })}
+              {new Date(req.needed_date).toLocaleDateString(en ? "en-US" : "bn-BD", { day: "numeric", month: "short", year: "numeric" })}
             </span>
           </div>
           {req.hemoglobin && (

@@ -2,10 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { scrollToPageTop } from "@/lib/motion";
+import { t, useLangClient } from "@/lib/i18n";
 
-// নিচের দিকে স্ক্রল করলে উপরে ওঠার বোতাম
 export default function BackToTop() {
   const [show, setShow] = useState(false);
+  const lang = useLangClient();
 
   useEffect(() => {
     let frame = 0;
@@ -30,7 +31,7 @@ export default function BackToTop() {
     <button
       type="button"
       onClick={scrollToPageTop}
-      aria-label="উপরে যান"
+      aria-label={t("backToTop", lang)}
       aria-hidden={!show}
       tabIndex={show ? 0 : -1}
       className={`fixed bottom-24 right-6 z-40 flex h-12 w-12 items-center justify-center rounded-full bg-brand-600 text-white shadow-glow transition-[opacity,transform,background-color] duration-300 ease-out-expo hover:-translate-y-1 hover:bg-brand-700 ${

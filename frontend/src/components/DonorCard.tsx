@@ -44,7 +44,7 @@ export default function DonorCard({ donor, lang = "bn" }: { donor: Donor; lang?:
         </div>
         <div className="col-span-2">
           <span className="block text-[11px] uppercase tracking-wide text-ink/35">{en ? "Last donation" : "সর্বশেষ রক্তদান"}</span>
-          <span className="font-medium text-ink/80">{donor.last_donation_date ? formatDate(donor.last_donation_date) : en ? "Never" : "এখনো নেই"}</span>
+          <span className="font-medium text-ink/80">{donor.last_donation_date ? formatDate(donor.last_donation_date, en) : en ? "Never" : "এখনো নেই"}</span>
         </div>
       </div>
 
@@ -65,9 +65,9 @@ export default function DonorCard({ donor, lang = "bn" }: { donor: Donor; lang?:
   );
 }
 
-function formatDate(d: string) {
+function formatDate(d: string, en?: boolean) {
   try {
-    return new Date(d).toLocaleDateString("bn-BD", { year: "numeric", month: "short", day: "numeric" });
+    return new Date(d).toLocaleDateString(en ? "en-US" : "bn-BD", { year: "numeric", month: "short", day: "numeric" });
   } catch {
     return d;
   }

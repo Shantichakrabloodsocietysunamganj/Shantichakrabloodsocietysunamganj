@@ -2,15 +2,19 @@
 
 import { useState } from "react";
 import { Check, Copy } from "lucide-react";
+import { useLangClient } from "@/lib/i18n";
 
-export default function CopyButton({ text, label = "কপি করুন" }: { text: string; label?: string }) {
+export default function CopyButton({ text, label }: { text: string; label?: string }) {
   const [copied, setCopied] = useState(false);
+  const lang = useLangClient();
+  const en = lang === "en";
+  const defaultLabel = en ? "Copy" : "কপি করুন";
+  const copiedLabel = en ? "Copied" : "কপি হয়েছে";
 
   const copy = async () => {
     try {
       await navigator.clipboard.writeText(text);
     } catch {
-      // পুরনো ব্রাউজারের জন্য fallback
       const ta = document.createElement("textarea");
       ta.value = text;
       document.body.appendChild(ta);
@@ -32,7 +36,7 @@ export default function CopyButton({ text, label = "কপি করুন" }: {
           : "bg-brand-600 text-white hover:bg-brand-700"
       }`}
     >
-      {copied ? <><Check className="h-3.5 w-3.5" /> কপি হয়েছে</> : <><Copy className="h-3.5 w-3.5" /> {label}</>}
+      {copied ? <><Check className="h-3.5 w-3.5" /> {copiedLabel}</> : <><Copy className="h-3.5 w-3.5" /> {label ?? defaultLabel}</>}
     </button>
   );
 }

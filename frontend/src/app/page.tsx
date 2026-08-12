@@ -145,7 +145,15 @@ export default async function Home() {
               title={lang === "en" ? "Which groups match?" : "কোন গ্রুপ কার সাথে মেলে?"}
               subtitle={lang === "en" ? "Matching blood correctly is critical — wrong group blood can be fatal." : "সঠিক রক্ত মিলানো জরুরি — ভুল গ্রুপের রক্ত প্রাণঘাতী হতে পারে।"} />
             <div className="mt-6 grid gap-3 sm:grid-cols-2">
-              {site.highlights.map((h) => (
+              {(lang === "en"
+                ? [
+                    { icon: "handshake", title: "Humanity", desc: "Standing by every life regardless of religion or caste." },
+                    { icon: "zap", title: "Speed", desc: "We reach the right donor in shortest time during emergency." },
+                    { icon: "lock", title: "Security", desc: "Donor-recipient info kept secure." },
+                    { icon: "gem", title: "Voluntary", desc: "No financial transactions — fully voluntary." },
+                  ]
+                : site.highlights
+              ).map((h) => (
                 <div key={h.title} className="flex items-start gap-3 rounded-xl bg-canvas p-4">
                   <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand-50 text-brand-600">
                     <Icon name={h.icon} className="h-5 w-5" />
@@ -224,7 +232,7 @@ export default async function Home() {
       <section className="bg-white py-16 sm:py-20">
         <div className="container-page">
           <Reveal><SectionHeading eyebrow={lang === "en" ? "FAQ" : "সাধারণ প্রশ্ন"} title={lang === "en" ? "Frequently Asked Questions" : "প্রায়শই জিজ্ঞাসিত প্রশ্ন"} /></Reveal>
-          <div className="mt-10"><Faq items={faqs.length > 0 ? faqs : undefined} /></div>
+          <div className="mt-10"><Faq items={faqs.length > 0 ? faqs : undefined} lang={lang} /></div>
         </div>
       </section>
 
@@ -290,6 +298,7 @@ function Step({ n, title, desc, href, cta }: { n: string; title: string; desc: s
 }
 
 function EventCard({ event, lang }: { event: any; lang: string }) {
+  const en = lang === "en";
   return (
     <div className="card-hover overflow-hidden">
       {event.cover_url && (
@@ -298,7 +307,7 @@ function EventCard({ event, lang }: { event: any; lang: string }) {
       )}
       <div className="p-5">
         <span className="inline-flex items-center gap-1.5 rounded-full bg-brand-50 px-2.5 py-1 text-xs font-semibold text-brand-600">
-          <CalendarDays className="h-3.5 w-3.5" /> {new Date(event.event_date).toLocaleDateString("bn-BD", { day: "numeric", month: "short", year: "numeric" })}
+          <CalendarDays className="h-3.5 w-3.5" /> {new Date(event.event_date).toLocaleDateString(en ? "en-US" : "bn-BD", { day: "numeric", month: "short", year: "numeric" })}
         </span>
         <h3 className="mt-3 font-display text-lg font-bold text-ink">{event.title}</h3>
         {event.location && <p className="mt-1 flex items-center gap-1 text-sm text-ink/50"><MapPin className="h-3.5 w-3.5" /> {event.location}</p>}

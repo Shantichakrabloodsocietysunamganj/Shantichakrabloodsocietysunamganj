@@ -3,6 +3,8 @@ import { createClient } from "@/lib/supabase/server";
 import SectionHeading from "@/components/ui/SectionHeading";
 import GalleryGrid from "@/components/GalleryGrid";
 import BreadcrumbJsonLd from "@/components/seo/BreadcrumbJsonLd";
+import { getLang } from "@/lib/i18n-server";
+import { t } from "@/lib/i18n";
 
 export const metadata: Metadata = {
   title: "রক্তদান কর্মসূচির ছবি | শান্তিচক্র ব্লাড সোসাইটি",
@@ -20,6 +22,8 @@ export const metadata: Metadata = {
 
 export default async function GalleryPage() {
   const supabase = createClient();
+  const lang = await getLang();
+  const en = lang === "en";
   let images: any[] = [];
   let ok = false;
   try {
@@ -31,21 +35,21 @@ export default async function GalleryPage() {
     <div className="container-page py-12">
       <BreadcrumbJsonLd
         items={[
-          { name: "হোম", url: "https://shanticakrabloodsocaiety.rahatahmed.site" },
-          { name: "গ্যালারি", url: "https://shanticakrabloodsocaiety.rahatahmed.site/gallery" },
+          { name: en ? "Home" : "হোম", url: "https://shanticakrabloodsocaiety.rahatahmed.site" },
+          { name: en ? "Gallery" : "গ্যালারি", url: "https://shanticakrabloodsocaiety.rahatahmed.site/gallery" },
         ]}
       />
-      <SectionHeading eyebrow="গ্যালারি" title="আমাদের মুহূর্তগুলো"
-        subtitle="রক্তদান শিবির, কর্মসূচি ও সমিতির কার্যক্রমের ছবি।" />
+      <SectionHeading eyebrow={t("gallery.eyebrow", lang)} title={t("gallery.title", lang)}
+        subtitle={t("gallery.sub", lang)} />
 
       <div className="mt-10">
         {!ok ? (
-          <p className="text-center text-sm text-ink/50">গ্যালারি লোড করা যায়নি।</p>
+          <p className="text-center text-sm text-ink/50">{t("gallery.loadFail", lang)}</p>
         ) : images.length === 0 ? (
           <div className="card p-12 text-center">
             <p className="text-3xl">🖼️</p>
-            <p className="mt-2 font-medium text-ink">এখনো কোনো ছবি যোগ করা হয়নি</p>
-            <p className="mt-1 text-sm text-ink/60">অ্যাডমিন ড্যাশবোর্ড থেকে ছবি যোগ করা হবে।</p>
+            <p className="mt-2 font-medium text-ink">{t("gallery.noPhoto", lang)}</p>
+            <p className="mt-1 text-sm text-ink/60">{t("gallery.adminAdd", lang)}</p>
           </div>
         ) : (
           <GalleryGrid images={images} />
