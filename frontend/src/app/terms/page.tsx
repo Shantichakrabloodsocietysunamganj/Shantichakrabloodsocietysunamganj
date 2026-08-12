@@ -13,7 +13,7 @@ export const metadata: Metadata = {
     title: "ব্যবহারের শর্তাবলী (Terms of Use) | শান্তিচক্র ব্লাড সোসাইটি",
     description:
       "শান্তিচক্র ব্লাড সোসাইটির ওয়েবসাইট ও সেবা ব্যবহারের শর্তাবলী এবং নীতিমালা।",
-    url: "https://shanticakrabloodsocaiety.rahatahmed.site/terms",
+    url: "https://shantichakrabloodsociety.rahatahmed.site/terms",
     type: "website",
   },
 };
@@ -25,8 +25,8 @@ export default async function TermsPage() {
     <div className="container-page max-w-3xl py-12">
       <BreadcrumbJsonLd
         items={[
-          { name: tx("হোম"), url: "https://shanticakrabloodsocaiety.rahatahmed.site" },
-          { name: tx("শর্তাবলী"), url: "https://shanticakrabloodsocaiety.rahatahmed.site/terms" },
+          { name: tx("হোম"), url: "https://shantichakrabloodsociety.rahatahmed.site" },
+          { name: tx("শর্তাবলী"), url: "https://shantichakrabloodsociety.rahatahmed.site/terms" },
         ]}
       />
       <span className="eyebrow">Terms</span>

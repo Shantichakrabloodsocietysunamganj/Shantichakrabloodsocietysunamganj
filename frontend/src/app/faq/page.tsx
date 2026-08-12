@@ -14,7 +14,7 @@ export const metadata: Metadata = {
     title: "সাধারণ জিজ্ঞাসা (FAQ) | শান্তিচক্র ব্লাড সোসাইটি",
     description:
       "রক্তদান, রক্তদাতা নিবন্ধন, জরুরি রক্তের অনুরোধ ও সংগঠনের কার্যক্রম সম্পর্কিত সাধারণ প্রশ্ন ও উত্তর।",
-    url: "https://shanticakrabloodsocaiety.rahatahmed.site/faq",
+    url: "https://shantichakrabloodsociety.rahatahmed.site/faq",
     type: "website",
   },
 };
@@ -26,8 +26,8 @@ export default async function FaqPage() {
     <div className="container-page py-12">
       <BreadcrumbJsonLd
         items={[
-          { name: tx("হোম"), url: "https://shanticakrabloodsocaiety.rahatahmed.site" },
-          { name: tx("সাধারণ জিজ্ঞাসা (FAQ)"), url: "https://shanticakrabloodsocaiety.rahatahmed.site/faq" },
+          { name: tx("হোম"), url: "https://shantichakrabloodsociety.rahatahmed.site" },
+          { name: tx("সাধারণ জিজ্ঞাসা (FAQ)"), url: "https://shantichakrabloodsociety.rahatahmed.site/faq" },
         ]}
       />
       <div className="mx-auto max-w-2xl text-center">

@@ -20,7 +20,7 @@ export const metadata: Metadata = {
     title: "আর্থিক সহযোগিতা | শান্তিচক্র ব্লাড সোসাইটি",
     description:
       "স্বেচ্ছাসেবী রক্তদান কার্যক্রম পরিচালনায় শান্তিচক্র ব্লাড সোসাইটিকে আর্থিক সহযোগিতা করুন।",
-    url: "https://shanticakrabloodsocaiety.rahatahmed.site/donate",
+    url: "https://shantichakrabloodsociety.rahatahmed.site/donate",
     type: "website",
   },
 };
@@ -67,8 +67,8 @@ export default async function DonatePage() {
     <div className="container-page py-12">
       <BreadcrumbJsonLd
         items={[
-          { name: tx("হোম"), url: "https://shanticakrabloodsocaiety.rahatahmed.site" },
-          { name: tx("আর্থিক সহযোগিতা"), url: "https://shanticakrabloodsocaiety.rahatahmed.site/donate" },
+          { name: tx("হোম"), url: "https://shantichakrabloodsociety.rahatahmed.site" },
+          { name: tx("আর্থিক সহযোগিতা"), url: "https://shantichakrabloodsociety.rahatahmed.site/donate" },
         ]}
       />
       <SectionHeading

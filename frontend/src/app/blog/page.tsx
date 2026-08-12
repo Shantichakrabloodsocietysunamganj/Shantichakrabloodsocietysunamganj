@@ -16,7 +16,7 @@ export const metadata: Metadata = {
     title: "রক্তদান ও স্বাস্থ্য সচেতনতা ব্লগ | শান্তিচক্র ব্লাড সোসাইটি",
     description:
       "রক্তদানের উপকারিতা, যোগ্যতা, জরুরি রক্তের প্রয়োজনে করণীয় এবং স্বাস্থ্য সচেতনতামূলক বিভিন্ন নিবন্ধ ও তথ্য।",
-    url: "https://shanticakrabloodsocaiety.rahatahmed.site/blog",
+    url: "https://shantichakrabloodsociety.rahatahmed.site/blog",
     type: "website",
   },
 };
@@ -45,8 +45,8 @@ export default async function BlogPage() {
     <div className="container-page py-12">
       <BreadcrumbJsonLd
         items={[
-          { name: tx("হোম"), url: "https://shanticakrabloodsocaiety.rahatahmed.site" },
-          { name: tx("ব্লগ ও খবর"), url: "https://shanticakrabloodsocaiety.rahatahmed.site/blog" },
+          { name: tx("হোম"), url: "https://shantichakrabloodsociety.rahatahmed.site" },
+          { name: tx("ব্লগ ও খবর"), url: "https://shantichakrabloodsociety.rahatahmed.site/blog" },
         ]}
       />
       <SectionHeading

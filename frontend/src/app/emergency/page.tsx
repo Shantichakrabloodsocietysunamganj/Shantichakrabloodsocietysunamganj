@@ -26,7 +26,7 @@ export const metadata: Metadata = {
     title: "জরুরি ডিরেক্টরি ও রক্তসেবা | শান্তিচক্র ব্লাড সোসাইটি",
     description:
       "সুনামগঞ্জ ও সিলেট বিভাগের জরুরি হাসপাতাল, ব্লাড ব্যাংক ও হটলাইন নম্বর এবং তাৎক্ষণিক রক্তসেবা যোগাযোগ ডিরেক্টরি।",
-    url: "https://shanticakrabloodsocaiety.rahatahmed.site/emergency",
+    url: "https://shantichakrabloodsociety.rahatahmed.site/emergency",
     type: "website",
   },
 };
@@ -67,8 +67,8 @@ export default async function EmergencyPage() {
     <div className="container-page py-12">
       <BreadcrumbJsonLd
         items={[
-          { name: tx("হোম"), url: "https://shanticakrabloodsocaiety.rahatahmed.site" },
-          { name: tx("জরুরি ডিরেক্টরি"), url: "https://shanticakrabloodsocaiety.rahatahmed.site/emergency" },
+          { name: tx("হোম"), url: "https://shantichakrabloodsociety.rahatahmed.site" },
+          { name: tx("জরুরি ডিরেক্টরি"), url: "https://shantichakrabloodsociety.rahatahmed.site/emergency" },
         ]}
       />
       <SectionHeading

@@ -15,7 +15,7 @@ export const metadata: Metadata = {
     title: "মিডিয়া কভারেজ ও খবর | শান্তিচক্র ব্লাড সোসাইটি",
     description:
       "জাতীয় ও স্থানীয় সংবাদমাধ্যমে শান্তিচক্র ব্লাড সোসাইটির স্বেচ্ছাসেবী রক্তদান কার্যক্রম ও খবরের সংগ্রহ।",
-    url: "https://shanticakrabloodsocaiety.rahatahmed.site/media",
+    url: "https://shantichakrabloodsociety.rahatahmed.site/media",
     type: "website",
   },
 };
@@ -54,8 +54,8 @@ export default async function MediaPage() {
     <div className="container-page py-12">
       <BreadcrumbJsonLd
         items={[
-          { name: tx("হোম"), url: "https://shanticakrabloodsocaiety.rahatahmed.site" },
-          { name: tx("মিডিয়া কভারেজ"), url: "https://shanticakrabloodsocaiety.rahatahmed.site/media" },
+          { name: tx("হোম"), url: "https://shantichakrabloodsociety.rahatahmed.site" },
+          { name: tx("মিডিয়া কভারেজ"), url: "https://shantichakrabloodsociety.rahatahmed.site/media" },
         ]}
       />
       <SectionHeading eyebrow={en ? "Media" : "মিডিয়া"} title={en ? "Media Coverage" : "মিডিয়া কভারেজ"} subtitle={en ? "Where the press has covered our work." : "বিভিন্ন গণমাধ্যমে আমাদের কার্যক্রমের প্রতিবেদন।"} />

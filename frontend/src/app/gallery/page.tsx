@@ -15,7 +15,7 @@ export const metadata: Metadata = {
     title: "রক্তদান কর্মসূচির ছবি | শান্তিচক্র ব্লাড সোসাইটি",
     description:
       "সুনামগঞ্জ ও সিলেট বিভাগের বিভিন্ন রক্তদান ক্যাম্প, স্বেচ্ছাসেবী কার্যক্রম ও সচেতনতামূলক কর্মসূচির ছবির গ্যালারি।",
-    url: "https://shanticakrabloodsocaiety.rahatahmed.site/gallery",
+    url: "https://shantichakrabloodsociety.rahatahmed.site/gallery",
     type: "website",
   },
 };
@@ -35,8 +35,8 @@ export default async function GalleryPage() {
     <div className="container-page py-12">
       <BreadcrumbJsonLd
         items={[
-          { name: tx("হোম"), url: "https://shanticakrabloodsocaiety.rahatahmed.site" },
-          { name: tx("গ্যালারি"), url: "https://shanticakrabloodsocaiety.rahatahmed.site/gallery" },
+          { name: tx("হোম"), url: "https://shantichakrabloodsociety.rahatahmed.site" },
+          { name: tx("গ্যালারি"), url: "https://shantichakrabloodsociety.rahatahmed.site/gallery" },
         ]}
       />
       <SectionHeading eyebrow={tx("গ্যালারি")} title={tx("আমাদের মুহূর্তগুলো")}

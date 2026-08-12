@@ -13,7 +13,7 @@ export const metadata: Metadata = {
     title: "জরুরি রক্তের অনুরোধ তালিকা | শান্তিচক্র ব্লাড সোসাইটি",
     description:
       "সুনামগঞ্জ ও সিলেট বিভাগে রক্তের জরুরি অনুরোধসমূহ দেখুন এবং রোগীর জীবন বাঁচাতে উপযুক্ত রক্তের গ্রুপ নিয়ে এগিয়ে আসুন।",
-    url: "https://shanticakrabloodsocaiety.rahatahmed.site/requests",
+    url: "https://shantichakrabloodsociety.rahatahmed.site/requests",
     type: "website",
   },
 };
@@ -25,8 +25,8 @@ export default async function RequestsPage() {
     <>
       <BreadcrumbJsonLd
         items={[
-          { name: tx("হোম"), url: "https://shanticakrabloodsocaiety.rahatahmed.site" },
-          { name: tx("জরুরি অনুরোধ তালিকা"), url: "https://shanticakrabloodsocaiety.rahatahmed.site/requests" },
+          { name: tx("হোম"), url: "https://shantichakrabloodsociety.rahatahmed.site" },
+          { name: tx("জরুরি অনুরোধ তালিকা"), url: "https://shantichakrabloodsociety.rahatahmed.site/requests" },
         ]}
       />
       <RequestsClient />

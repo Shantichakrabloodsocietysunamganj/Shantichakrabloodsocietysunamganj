@@ -27,7 +27,7 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
     openGraph: {
       title,
       description,
-      url: `https://shanticakrabloodsocaiety.rahatahmed.site/donor/${params.id}`,
+      url: `https://shantichakrabloodsociety.rahatahmed.site/donor/${params.id}`,
       type: "profile",
     },
   };
@@ -63,7 +63,7 @@ export default async function DonorVerifyPage({ params }: { params: { id: string
       ? shortDate(nextEligible, lang)
       : "এখন প্রস্তুত";
 
-  const pageUrl = `https://shanticakrabloodsocaiety.rahatahmed.site/donor/${donor.id}`;
+  const pageUrl = `https://shantichakrabloodsociety.rahatahmed.site/donor/${donor.id}`;
   const qr = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&margin=8&data=${encodeURIComponent(pageUrl)}`;
 
   return (

@@ -19,7 +19,7 @@ export const metadata: Metadata = {
     title: "আমাদের প্রভাব ও অর্জন | শান্তিচক্র ব্লাড সোসাইটি",
     description:
       "শান্তিচক্র ব্লাড সোসাইটির স্বচ্ছতা, রক্তদানের পরিসংখ্যান, অর্জিত সাফল্য ও সামাজিক প্রভাবের বিস্তারিত বিবরণ।",
-    url: "https://shanticakrabloodsocaiety.rahatahmed.site/impact",
+    url: "https://shantichakrabloodsociety.rahatahmed.site/impact",
     type: "website",
   },
 };
@@ -60,8 +60,8 @@ export default async function ImpactPage() {
     <div className="container-page py-12">
       <BreadcrumbJsonLd
         items={[
-          { name: tx("হোম"), url: "https://shanticakrabloodsocaiety.rahatahmed.site" },
-          { name: tx("আমাদের অর্জন"), url: "https://shanticakrabloodsocaiety.rahatahmed.site/impact" },
+          { name: tx("হোম"), url: "https://shantichakrabloodsociety.rahatahmed.site" },
+          { name: tx("আমাদের অর্জন"), url: "https://shantichakrabloodsociety.rahatahmed.site/impact" },
         ]}
       />
       <SectionHeading eyebrow={en ? "Transparency" : "স্বচ্ছতা"} title={en ? "Our Impact" : "আমাদের অর্জন"} subtitle={en ? "Real numbers, real lives saved — fully transparent." : "প্রকৃত সংখ্যা, বাঁচানো জীবন — সম্পূর্ণ স্বচ্ছতায়।"} />

@@ -13,7 +13,7 @@ export const metadata: Metadata = {
     title: "গোপনীয়তা নীতি (Privacy Policy) | শান্তিচক্র ব্লাড সোসাইটি",
     description:
       "শান্তিচক্র ব্লাড সোসাইটির ওয়েবসাইট ব্যবহারকারীদের তথ্য সংগ্রহ, সুরক্ষা ও ব্যবহার সম্পর্কিত গোপনীয়তা নীতি।",
-    url: "https://shanticakrabloodsocaiety.rahatahmed.site/privacy",
+    url: "https://shantichakrabloodsociety.rahatahmed.site/privacy",
     type: "website",
   },
 };
@@ -25,8 +25,8 @@ export default async function PrivacyPage() {
     <div className="container-page max-w-3xl py-12">
       <BreadcrumbJsonLd
         items={[
-          { name: tx("হোম"), url: "https://shanticakrabloodsocaiety.rahatahmed.site" },
-          { name: tx("গোপনীয়তা নীতি"), url: "https://shanticakrabloodsocaiety.rahatahmed.site/privacy" },
+          { name: tx("হোম"), url: "https://shantichakrabloodsociety.rahatahmed.site" },
+          { name: tx("গোপনীয়তা নীতি"), url: "https://shantichakrabloodsociety.rahatahmed.site/privacy" },
         ]}
       />
       <span className="eyebrow">Privacy</span>

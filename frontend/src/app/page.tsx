@@ -33,7 +33,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "শান্তিচক্র ব্লাড সোসাইটি, সুনামগঞ্জ | রক্তদান ও জরুরি রক্তসেবা",
     description: "সুনামগঞ্জ ও সিলেট বিভাগে স্বেচ্ছায় রক্তদান, রক্তদাতা খোঁজা ও জরুরি রক্তসেবা সমন্বয়ে শান্তিচক্র ব্লাড সোসাইটির সঙ্গে যুক্ত হন।",
-    url: "https://shanticakrabloodsocaiety.rahatahmed.site/",
+    url: "https://shantichakrabloodsociety.rahatahmed.site/",
     type: "website",
   },
 };

@@ -19,7 +19,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   const p = post as any;
   const title = p.title;
   const description = p.excerpt ?? "";
-  const url = `https://shanticakrabloodsocaiety.rahatahmed.site/blog/${params.slug}`;
+  const url = `https://shantichakrabloodsociety.rahatahmed.site/blog/${params.slug}`;
 
   return {
     title,
@@ -56,7 +56,7 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
     "@type": "BlogPosting",
     headline: p.title,
     description: p.excerpt || "",
-    image: p.cover_url || "https://shanticakrabloodsocaiety.rahatahmed.site/images/logo.png",
+    image: p.cover_url || "https://shantichakrabloodsociety.rahatahmed.site/images/logo.png",
     datePublished: new Date(p.created_at).toISOString(),
     dateModified: new Date(p.created_at).toISOString(),
     author: {
@@ -68,12 +68,12 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
       name: "শান্তিচক্র ব্লাড সোসাইটি, সুনামগঞ্জ",
       logo: {
         "@type": "ImageObject",
-        url: "https://shanticakrabloodsocaiety.rahatahmed.site/images/logo.png",
+        url: "https://shantichakrabloodsociety.rahatahmed.site/images/logo.png",
       },
     },
     mainEntityOfPage: {
       "@type": "WebPage",
-      "@id": `https://shanticakrabloodsocaiety.rahatahmed.site/blog/${params.slug}`,
+      "@id": `https://shantichakrabloodsociety.rahatahmed.site/blog/${params.slug}`,
     },
   };
 
@@ -87,9 +87,9 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
     <div className="container-page py-10">
       <BreadcrumbJsonLd
         items={[
-          { name: tx("হোম"), url: "https://shanticakrabloodsocaiety.rahatahmed.site" },
-          { name: tx("ব্লগ ও খবর"), url: "https://shanticakrabloodsocaiety.rahatahmed.site/blog" },
-          { name: p.title, url: `https://shanticakrabloodsocaiety.rahatahmed.site/blog/${params.slug}` },
+          { name: tx("হোম"), url: "https://shantichakrabloodsociety.rahatahmed.site" },
+          { name: tx("ব্লগ ও খবর"), url: "https://shantichakrabloodsociety.rahatahmed.site/blog" },
+          { name: p.title, url: `https://shantichakrabloodsociety.rahatahmed.site/blog/${params.slug}` },
         ]}
       />
       <script
