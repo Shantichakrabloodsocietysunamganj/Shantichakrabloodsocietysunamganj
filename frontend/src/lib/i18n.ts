@@ -36,6 +36,7 @@ export const DICT: Record<string, { bn: string; en: string }> = {
   "hero.desc": { bn: "জরুরি মুহূর্তে সঠিক রক্তদাতা খুঁজে পাওয়া কঠিন। শান্তিচক্র ব্লাড সোসাইটি সিলেট বিভাগের নিবন্ধিত রক্তদাতাদের এক ছাদে এনে রক্তের অভাবে যেন কেউ প্রাণ হারায় না — তা নিশ্চিত করছে।", en: "Finding the right donor in an emergency is hard. Shantichakra Blood Society unites registered donors across Sylhet so no one loses a life for lack of blood." },
   "hero.selectGroup": { bn: "রক্তের গ্রুপ বেছে নিন", en: "Select blood group" },
   "hero.findDonors": { bn: "রক্তদাতা খুঁজুন", en: "Find Donors" },
+  "hero.needBlood": { bn: "রক্তের অনুরোধ করুন", en: "Need Blood?" },
   "hero.emergency": { bn: "🚨 জরুরি রক্তের অনুরোধ", en: "🚨 Emergency Blood Request" },
   "hero.join": { bn: "রক্তদাতা হিসেবে যুক্ত হোন →", en: "Join as a Donor →" },
   "hero.donors": { bn: "নিবন্ধিত দাতা", en: "Registered Donors" },
@@ -129,6 +130,8 @@ export const DICT: Record<string, { bn: string; en: string }> = {
     en: "Just like donors — requesters appear live here the moment they post.",
   },
   "seekers.viewAll": { bn: "সব রক্তপ্রার্থী দেখুন →", en: "View all seekers →" },
+  "seekers.postRequest": { bn: "রক্তের অনুরোধ করুন", en: "Post Blood Request" },
+  "seekers.gotIt": { bn: "দেখলাম ✓", en: "Got it ✓" },
 };
 
 export function t(key: string, lang: Lang): string {

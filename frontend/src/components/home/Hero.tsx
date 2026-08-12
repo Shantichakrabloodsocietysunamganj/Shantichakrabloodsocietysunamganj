@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Search, UserPlus } from "lucide-react";
+import { Droplet, Search, UserPlus } from "lucide-react";
 import { BLOOD_GROUPS } from "@/data/constants";
 import { t, type Lang } from "@/lib/i18n";
 import BloodDrops from "./BloodDrops";
@@ -63,9 +63,12 @@ export default function Hero({
             {heroDesc || t("hero.desc", lang)}
           </p>
 
-          {/* CTA Buttons */}
+          {/* CTA Buttons — প্রথমেই রক্তের অনুরোধ */}
           <div className="mt-7 flex flex-wrap gap-3">
-            <Link href="/donors" className="btn-blood shadow-glow-red inline-flex items-center gap-2">
+            <Link href="/request-blood" className="btn-blood shadow-glow-red inline-flex items-center gap-2">
+              <Droplet className="h-4 w-4" /> {t("hero.needBlood", lang)}
+            </Link>
+            <Link href="/donors" className="btn inline-flex items-center gap-2 border border-white/25 bg-white/5 text-white backdrop-blur-sm transition hover:bg-white/15">
               <Search className="h-4 w-4" /> {t("hero.findDonors", lang)}
             </Link>
             <Link href="/become-donor" className="btn inline-flex items-center gap-2 border border-white/25 bg-white/5 text-white backdrop-blur-sm transition hover:bg-white/15">
