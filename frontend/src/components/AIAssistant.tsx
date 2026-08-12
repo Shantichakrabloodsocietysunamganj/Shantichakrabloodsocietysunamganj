@@ -49,8 +49,8 @@ const KB: Entry[] = [
     en: "Phone: 01626224878\nEmail: shantichakrabloodsociety@gmail.com",
     cta: { bn: "যোগাযোগ →", en: "Contact →", href: "/contact" }, followUp: ["contact"] },
   { keys: ["টাকা", "দান", "ডোনেশন", "সাহায্য করব", "donate", "support", "contribute"],
-    bn: "আমাদের মিশনে সহযোগিতা করুন! হোমপেজে 'Support Our Mission' সেকশনে bKash/Nagad/Rocket/Bank আছে।",
-    en: "Support our mission! Homepage has bKash/Nagad/Rocket/Bank options.", followUp: ["donate"] },
+    bn: "আমাদের মিশনে সহযোগিতা করুন! হোমপেজের 'সহযোগিতা করুন' সেকশনে বিস্তারিত আছে — সেখানে সরাসরি কল/WhatsApp করে স্বেচ্ছাসেবকদের কাছ থেকে সহায়তার মাধ্যম জেনে নিতে পারবেন।",
+    en: "Support our mission! Check the 'Support Us' section on the homepage — call or WhatsApp us and our volunteers will guide you.", followUp: ["donate"] },
   { keys: ["কী", "কি এটা", "কে", "সংগঠন", "about", "shantichakra", "পরিচয়", "what"],
     bn: "শান্তিচক্র ব্লাড সোসাইটি, সুনামগঞ্জ — ২০২৪ সালে প্রতিষ্ঠিত স্বেচ্ছাসেবী রক্তদান নেটওয়ার্ক। সিলেটের ৪ জেলায় সক্রিয়। সম্পূর্ণ ফ্রি, ২৪/৭।",
     en: "Shantichakra Blood Society, Sunamganj — voluntary blood network since 2024. Active in 4 Sylhet districts. 100% free, 24/7.",
@@ -508,7 +508,7 @@ export default function AIAssistant() {
     <>
       {/* Floating AI button */}
       <div className="group fixed bottom-6 right-6 z-[55] flex items-center">
-        <span className="pointer-events-none mr-2 whitespace-nowrap rounded-full bg-white px-3 py-1.5 text-xs font-bold text-violet-700 opacity-0 shadow-glow transition-opacity duration-200 group-hover:opacity-100 dark:bg-slate-800 dark:text-violet-300">{en ? "Shanti" : "শান্তি"}</span>
+        <span className="pointer-events-none mr-2 max-w-[15rem] whitespace-normal rounded-full bg-white px-3 py-1.5 text-xs font-bold text-violet-700 opacity-0 shadow-glow transition-opacity duration-200 group-hover:opacity-100 dark:bg-slate-800 dark:text-violet-300">{en ? "Shanti AI — ask about blood, donors & emergencies" : "শান্তি AI — রক্ত, দাতা ও জরুরি সেবা নিয়ে প্রশ্ন করুন"}</span>
         <button onClick={() => setOpen((v) => !v)} aria-label={en ? "Shanti" : "শান্তি"} className="relative flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-violet-600 via-fuchsia-600 to-brand-600 text-white shadow-[0_14px_34px_-8px_rgba(124,58,237,0.6)] transition-transform hover:scale-105">
           <span className="absolute -right-1 -top-1 flex h-3.5 w-3.5"><span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-fuchsia-300 opacity-70" /><span className="relative inline-flex h-3.5 w-3.5 rounded-full bg-fuchsia-400 ring-2 ring-violet-700" /></span>
           <span className="absolute -left-1.5 -top-1.5 rounded-md bg-white px-1 text-[8px] font-extrabold tracking-wide text-fuchsia-600 shadow-sm">AI</span>
@@ -524,8 +524,8 @@ export default function AIAssistant() {
             <div className="flex items-center gap-3">
               <span className="flex h-9 w-9 items-center justify-center rounded-full bg-white/15">🤖</span>
               <div>
-                <p className="text-sm font-bold leading-tight">{en ? "Shanti" : "শান্তি"}</p>
-                <p className="text-[10px] text-white/60">{en ? "AI Helper • Female Voice (bn-BD) • / for shortcuts" : "AI সহকারী • মহিলা ভয়েস (bn-BD) • / দিয়ে শর্টকাট"}</p>
+                <p className="text-sm font-bold leading-tight">{en ? "Shanti AI" : "শান্তি AI"}</p>
+                <p className="text-[10px] text-white/60">{en ? "Ask about blood, donors & emergencies • / for shortcuts" : "রক্ত, দাতা, জরুরি সেবা নিয়ে প্রশ্ন করুন • / দিয়ে শর্টকাট"}</p>
               </div>
             </div>
             <div className="flex items-center gap-1">

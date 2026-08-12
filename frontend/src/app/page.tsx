@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { CalendarDays, Droplets, Handshake, MapPin } from "lucide-react";
 import Hero from "@/components/home/Hero";
 import HeartbeatLine from "@/components/home/HeartbeatLine";
 import BloodGroupFinder from "@/components/home/BloodGroupFinder";
@@ -8,6 +9,7 @@ import Leaderboard from "@/components/home/Leaderboard";
 import CompatibilityChart from "@/components/home/CompatibilityChart";
 import Faq from "@/components/home/Faq";
 import SectionHeading from "@/components/ui/SectionHeading";
+import Icon from "@/components/ui/Icon";
 import Reveal from "@/components/Reveal";
 import CountUp from "@/components/CountUp";
 import Newsletter from "@/components/Newsletter";
@@ -144,7 +146,9 @@ export default async function Home() {
             <div className="mt-6 grid gap-3 sm:grid-cols-2">
               {site.highlights.map((h) => (
                 <div key={h.title} className="flex items-start gap-3 rounded-xl bg-canvas p-4">
-                  <span className="text-2xl">{h.icon}</span>
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand-50 text-brand-600">
+                    <Icon name={h.icon} className="h-5 w-5" />
+                  </span>
                   <div><p className="font-semibold text-ink">{h.title}</p><p className="text-sm text-ink/60">{h.desc}</p></div>
                 </div>
               ))}
@@ -168,7 +172,9 @@ export default async function Home() {
             </div>
           ) : ok && featuredDonors.length === 0 ? (
             <div className="card p-12 text-center">
-              <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-brand-50 text-2xl">🩸</div>
+              <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-brand-50 text-brand-600">
+                <Droplets className="h-7 w-7" />
+              </div>
               <p className="font-medium text-ink">{lang === "en" ? "No donors registered yet" : "এখনো কেউ নিবন্ধন করেননি"}</p>
               <p className="mt-1 text-sm text-ink/60">{lang === "en" ? "Be the first to join!" : "প্রথম রক্তদাতা হিসেবে যুক্ত হোন!"}</p>
               <Link href="/become-donor" className="btn-primary mt-5">{t("nav.becomeDonor", lang)}</Link>
@@ -227,7 +233,7 @@ export default async function Home() {
               {partners.map((p: any, i: number) => (
                 <div key={i} className="flex items-center gap-2 text-lg font-bold text-ink/30">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  {p.logo_url ? <img src={p.logo_url} alt={`${p.name} - সহযোগী প্রতিষ্ঠান লোগো, শান্তিচক্র ব্লাড সোসাইটি`} className="h-8 w-8 object-contain opacity-60" /> : <span className="text-2xl">🤝</span>}
+                  {p.logo_url ? <img src={p.logo_url} alt={`${p.name} - সহযোগী প্রতিষ্ঠান লোগো, শান্তিচক্র ব্লাড সোসাইটি`} className="h-8 w-8 object-contain opacity-60" /> : <Handshake className="h-6 w-6 opacity-70" strokeWidth={1.8} />}
                   {p.name}
                 </div>
               ))}
@@ -288,10 +294,10 @@ function EventCard({ event, lang }: { event: any; lang: string }) {
       )}
       <div className="p-5">
         <span className="inline-flex items-center gap-1.5 rounded-full bg-brand-50 px-2.5 py-1 text-xs font-semibold text-brand-600">
-          📅 {new Date(event.event_date).toLocaleDateString("bn-BD", { day: "numeric", month: "short", year: "numeric" })}
+          <CalendarDays className="h-3.5 w-3.5" /> {new Date(event.event_date).toLocaleDateString("bn-BD", { day: "numeric", month: "short", year: "numeric" })}
         </span>
         <h3 className="mt-3 font-display text-lg font-bold text-ink">{event.title}</h3>
-        {event.location && <p className="mt-1 flex items-center gap-1 text-sm text-ink/50">📍 {event.location}</p>}
+        {event.location && <p className="mt-1 flex items-center gap-1 text-sm text-ink/50"><MapPin className="h-3.5 w-3.5" /> {event.location}</p>}
         {event.description && <p className="mt-2 line-clamp-2 text-sm text-ink/60">{event.description}</p>}
       </div>
     </div>

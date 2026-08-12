@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { Search, UserPlus } from "lucide-react";
 import { BLOOD_GROUPS } from "@/data/constants";
 import { t, type Lang } from "@/lib/i18n";
 import BloodDrops from "./BloodDrops";
@@ -64,11 +65,11 @@ export default function Hero({
 
           {/* CTA Buttons */}
           <div className="mt-7 flex flex-wrap gap-3">
-            <Link href="/donors" className="btn-blood shadow-glow-red">
-              🔴 {t("hero.findDonors", lang)}
+            <Link href="/donors" className="btn-blood shadow-glow-red inline-flex items-center gap-2">
+              <Search className="h-4 w-4" /> {t("hero.findDonors", lang)}
             </Link>
-            <Link href="/become-donor" className="btn border border-white/25 bg-white/5 text-white backdrop-blur-sm transition hover:bg-white/15">
-              ⚪ {en ? "Become a Donor" : t("nav.becomeDonor", lang)}
+            <Link href="/become-donor" className="btn inline-flex items-center gap-2 border border-white/25 bg-white/5 text-white backdrop-blur-sm transition hover:bg-white/15">
+              <UserPlus className="h-4 w-4" /> {en ? "Become a Donor" : t("nav.becomeDonor", lang)}
             </Link>
           </div>
 

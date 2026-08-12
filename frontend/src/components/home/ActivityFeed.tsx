@@ -1,11 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { Droplets, Siren, Users, type LucideIcon } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import type { Lang } from "@/lib/i18n";
 import Reveal from "@/components/Reveal";
 
-type Item = { icon: string; text: string; at: number; group: string };
+type Item = { icon: LucideIcon; text: string; at: number; group: string };
 
 function rel(ts: number, en: boolean) {
   const d = Date.now() - ts;
@@ -33,13 +34,13 @@ export default function ActivityFeed({ lang }: { lang: Lang }) {
       ]);
       const list: Item[] = [];
       (reqs.data ?? []).forEach((r: any) =>
-        list.push({ icon: "🆘", group: "request", at: new Date(r.created_at).getTime(), text: en ? `Blood request: ${r.patient_name} (${r.blood_group}) — ${r.upazila}` : `রক্তের অনুরোধ: ${r.patient_name} (${r.blood_group}) — ${r.upazila}` }),
+        list.push({ icon: Siren, group: "request", at: new Date(r.created_at).getTime(), text: en ? `Blood request: ${r.patient_name} (${r.blood_group}) — ${r.upazila}` : `রক্তের অনুরোধ: ${r.patient_name} (${r.blood_group}) — ${r.upazila}` }),
       );
       (donors.data ?? []).forEach((d: any) =>
-        list.push({ icon: "🩸", group: "donor", at: new Date(d.created_at).getTime(), text: en ? `New donor: ${d.full_name} (${d.blood_group})` : `নতুন দাতা: ${d.full_name} (${d.blood_group})` }),
+        list.push({ icon: Droplets, group: "donor", at: new Date(d.created_at).getTime(), text: en ? `New donor: ${d.full_name} (${d.blood_group})` : `নতুন দাতা: ${d.full_name} (${d.blood_group})` }),
       );
       (vols.data ?? []).forEach((v: any) =>
-        list.push({ icon: "🙋", group: "volunteer", at: new Date(v.created_at).getTime(), text: en ? `Volunteer joined: ${v.full_name}${v.upazila ? " — " + v.upazila : ""}` : `স্বেচ্ছাসেবক যোগ দিয়েছেন: ${v.full_name}${v.upazila ? " — " + v.upazila : ""}` }),
+        list.push({ icon: Users, group: "volunteer", at: new Date(v.created_at).getTime(), text: en ? `Volunteer joined: ${v.full_name}${v.upazila ? " — " + v.upazila : ""}` : `স্বেচ্ছাসেবক যোগ দিয়েছেন: ${v.full_name}${v.upazila ? " — " + v.upazila : ""}` }),
       );
       list.sort((a, b) => b.at - a.at);
       setItems(list.slice(0, 8));
@@ -57,6 +58,9 @@ export default function ActivityFeed({ lang }: { lang: Lang }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // কোনো কার্যকলাপ না থাকলে পুরো সেকশনটি লুকানো থাকে
+  if (!loading && items.length === 0) return null;
+
   return (
     <section className="bg-white py-14 dark:bg-slate-950/40">
       <div className="container-page">
@@ -73,12 +77,12 @@ export default function ActivityFeed({ lang }: { lang: Lang }) {
         <div className="space-y-2">
           {loading ? (
             Array.from({ length: 5 }).map((_, i) => <div key={i} className="h-12 animate-pulse rounded-xl bg-zinc-100 dark:bg-white/5" />)
-          ) : items.length === 0 ? (
-            <p className="text-sm text-ink/50">{en ? "No recent activity." : "কোনো সাম্প্রতিক কার্যকলাপ নেই।"}</p>
           ) : (
             items.map((it, i) => (
               <div key={i} className="flex items-center gap-3 rounded-xl border border-zinc-100 bg-white px-4 py-2.5 dark:border-white/5 dark:bg-white/5">
-                <span className="text-lg">{it.icon}</span>
+                <span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${it.group === "request" ? "bg-blood-50 text-blood-600" : it.group === "donor" ? "bg-brand-50 text-brand-600" : "bg-emerald-50 text-emerald-600"}`}>
+                  <it.icon className="h-4 w-4" strokeWidth={1.8} />
+                </span>
                 <p className="min-w-0 flex-1 truncate text-sm text-ink/80">{it.text}</p>
                 <span className="shrink-0 text-[11px] text-ink/40">{rel(it.at, en)}</span>
               </div>

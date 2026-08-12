@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Mail } from "lucide-react";
 import { useToast } from "@/components/Toast";
 
 export default function Newsletter() {
@@ -24,7 +25,7 @@ export default function Newsletter() {
       <div className="card overflow-hidden">
         <div className="grid items-center gap-6 p-8 sm:p-10 md:grid-cols-2">
           <div>
-            <h2 className="font-display text-2xl font-extrabold tracking-tight text-ink">📬 আপডেট পেতে চান?</h2>
+            <h2 className="flex items-center gap-2.5 font-display text-2xl font-extrabold tracking-tight text-ink"><span className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-50 text-brand-600"><Mail className="h-5 w-5" /></span> আপডেট পেতে চান?</h2>
             <p className="mt-2 text-ink/60">রক্তদান শিবির, জরুরি অনুরোধ ও সমিতির খবর সরাসরি আপনার ইনবক্সে পান।</p>
           </div>
           <form onSubmit={submit} className="flex flex-col gap-3 sm:flex-row">
