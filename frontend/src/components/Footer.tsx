@@ -23,7 +23,7 @@ export default function Footer({ settings, lang }: { settings: SiteSettings; lan
           <div className="flex items-center gap-2.5">
             <span className="flex h-9 w-9 items-center justify-center overflow-hidden rounded-full bg-white text-white ring-1 ring-white/15">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={settings.logo_url || "/images/logo.png"} alt="logo" className="h-full w-full rounded-full object-cover" />
+              <img src={settings.logo_url || "/images/logo.png"} alt="শান্তিচক্র ব্লাড সোসাইটি লোগো, সুনামগঞ্জ" className="h-full w-full rounded-full object-cover" />
             </span>
             <div>
               <div className="font-display font-bold text-white">{site.shortName}</div>

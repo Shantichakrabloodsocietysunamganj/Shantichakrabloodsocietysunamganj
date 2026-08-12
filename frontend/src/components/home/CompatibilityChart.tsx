@@ -34,6 +34,17 @@ export default function CompatibilityChart({ lang = "bn" }: { lang?: Lang }) {
         ))}
       </div>
 
+      {group === "O-" && (
+        <div className="mx-5 mb-4 rounded-xl bg-amber-50 p-3 text-xs font-semibold text-amber-800 ring-1 ring-amber-200">
+          ⭐ {en ? "Universal Donor — Can donate red blood cells to all groups." : "সর্বজনীন দাতা (Universal Donor) — যেকোনো গ্রুপের রোগীকে রক্ত দিতে পারে।"}
+        </div>
+      )}
+      {group === "AB+" && (
+        <div className="mx-5 mb-4 rounded-xl bg-brand-50 p-3 text-xs font-semibold text-brand-800 ring-1 ring-brand-200">
+          ⭐ {en ? "Universal Recipient — Can receive red blood cells from all groups." : "সর্বজনীন গ্রহীতা (Universal Recipient) — যেকোনো গ্রুপের রক্ত গ্রহণ করতে পারে।"}
+        </div>
+      )}
+
       <div className="grid gap-4 p-5 pt-0 sm:grid-cols-2">
         <div className="rounded-2xl bg-success-50 p-5">
           <div className="flex items-center gap-2 text-success-700">

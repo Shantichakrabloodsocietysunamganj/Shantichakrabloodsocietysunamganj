@@ -173,10 +173,10 @@ export default function Navbar({
 }
 
 function Logo({ logoUrl }: { logoUrl?: string | null }) {
-  // eslint-disable-next-line @next/next/no-img-element
   return (
     <span className="relative flex h-9 w-9 items-center justify-center overflow-hidden rounded-full bg-white shadow-sm ring-1 ring-zinc-100">
-      <img src={logoUrl || "/images/logo.png"} alt="লোগো" className="h-full w-full rounded-full object-cover" />
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src={logoUrl || "/images/logo.png"} alt="শান্তিচক্র ব্লাড সোসাইটি লোগো - সুনামগঞ্জ স্বেচ্ছাসেবী রক্তদান সংগঠন" className="h-full w-full rounded-full object-cover" />
     </span>
   );
 }

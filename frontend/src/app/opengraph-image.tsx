@@ -38,6 +38,7 @@ export default async function OpenGraphImage() {
             // eslint-disable-next-line @next/next/no-img-element
             <img
               src={logoSrc}
+              alt="Shantichakra Blood Society Logo"
               width="76"
               height="76"
               style={{

@@ -6,10 +6,21 @@ import CountUp from "@/components/CountUp";
 import DonutChart from "@/components/DonutChart";
 import { site } from "@/data/site";
 import { getLang } from "@/lib/i18n-server";
-import { Target } from "lucide-react";
-import { BarChart3, Droplets, HandHeart, Heart, Siren, Syringe } from "@/components/icons";
+import BreadcrumbJsonLd from "@/components/seo/BreadcrumbJsonLd";
 
-export const metadata: Metadata = { title: "স্বচ্ছতা ও অর্জন" };
+export const metadata: Metadata = {
+  title: "আমাদের প্রভাব ও অর্জন | শান্তিচক্র ব্লাড সোসাইটি",
+  description:
+    "শান্তিচক্র ব্লাড সোসাইটির স্বচ্ছতা, রক্তদানের পরিসংখ্যান, অর্জিত সাফল্য ও সামাজিক প্রভাবের বিস্তারিত বিবরণ।",
+  alternates: { canonical: "/impact" },
+  openGraph: {
+    title: "আমাদের প্রভাব ও অর্জন | শান্তিচক্র ব্লাড সোসাইটি",
+    description:
+      "শান্তিচক্র ব্লাড সোসাইটির স্বচ্ছতা, রক্তদানের পরিসংখ্যান, অর্জিত সাফল্য ও সামাজিক প্রভাবের বিস্তারিত বিবরণ।",
+    url: "https://shanticakrabloodsocaiety.rahatahmed.site/impact",
+    type: "website",
+  },
+};
 
 export default async function ImpactPage() {
   const lang = await getLang();
@@ -22,6 +33,9 @@ export default async function ImpactPage() {
     const { data: rpc } = await supabase.rpc("impact_stats");
     if (rpc && rpc[0]) s = rpc[0] as any;
     const { data: dons } = await supabase.from("donors").select("blood_group").eq("approved", true);
+    if (dons && dons.length > s.donors) {
+      s.donors = dons.length;
+    }
     const map = new Map<string, number>();
     (dons ?? []).forEach((d: any) => map.set(d.blood_group, (map.get(d.blood_group) ?? 0) + 1));
     groups = Array.from(map, ([label, value]) => ({ label, value })).sort((a, b) => b.value - a.value);
@@ -41,6 +55,12 @@ export default async function ImpactPage() {
 
   return (
     <div className="container-page py-12">
+      <BreadcrumbJsonLd
+        items={[
+          { name: "হোম", url: "https://shanticakrabloodsocaiety.rahatahmed.site" },
+          { name: "আমাদের অর্জন", url: "https://shanticakrabloodsocaiety.rahatahmed.site/impact" },
+        ]}
+      />
       <SectionHeading eyebrow={en ? "Transparency" : "স্বচ্ছতা"} title={en ? "Our Impact" : "আমাদের অর্জন"} subtitle={en ? "Real numbers, real lives saved — fully transparent." : "প্রকৃত সংখ্যা, বাঁচানো জীবন — সম্পূর্ণ স্বচ্ছতায়।"} />
 
       <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">

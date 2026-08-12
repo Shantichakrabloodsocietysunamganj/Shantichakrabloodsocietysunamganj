@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import Hero from "@/components/home/Hero";
 import HeartbeatLine from "@/components/home/HeartbeatLine";
@@ -21,6 +22,18 @@ import { Calendar, DataIcon, Droplets, Handshake, MapPin, Star } from "@/compone
 import { getLang } from "@/lib/i18n-server";
 import { getSettings } from "@/lib/settings";
 import type { Donor } from "@/lib/types";
+
+export const metadata: Metadata = {
+  title: "শান্তিচক্র ব্লাড সোসাইটি, সুনামগঞ্জ | রক্তদান ও জরুরি রক্তসেবা",
+  description: "সুনামগঞ্জ ও সিলেট বিভাগে স্বেচ্ছায় রক্তদান, রক্তদাতা খোঁজা ও জরুরি রক্তসেবা সমন্বয়ে শান্তিচক্র ব্লাড সোসাইটির সঙ্গে যুক্ত হন।",
+  alternates: { canonical: "/" },
+  openGraph: {
+    title: "শান্তিচক্র ব্লাড সোসাইটি, সুনামগঞ্জ | রক্তদান ও জরুরি রক্তসেবা",
+    description: "সুনামগঞ্জ ও সিলেট বিভাগে স্বেচ্ছায় রক্তদান, রক্তদাতা খোঁজা ও জরুরি রক্তসেবা সমন্বয়ে শান্তিচক্র ব্লাড সোসাইটির সঙ্গে যুক্ত হন।",
+    url: "https://shanticakrabloodsocaiety.rahatahmed.site/",
+    type: "website",
+  },
+};
 
 async function getData() {
   const supabase = createClient();
@@ -120,7 +133,7 @@ export default async function Home() {
       <TrustBand lang={lang} donorCount={donorCount} requestCount={openRequestCount} />
 
       {/* Premium Donation Section */}
-      <DonationSection lang={lang} />
+      <DonationSection lang={lang} donorCount={donorCount} />
 
       {/* রক্ত সামঞ্জস্যতা */}
       <section className="bg-white py-16 sm:py-20">
@@ -214,7 +227,8 @@ export default async function Home() {
             <div className="mt-5 flex flex-wrap items-center justify-center gap-x-8 gap-y-4">
               {partners.map((p: any, i: number) => (
                 <div key={i} className="flex items-center gap-2 text-lg font-bold text-ink/30">
-                  {p.logo_url ? <img src={p.logo_url} alt={p.name} className="h-8 w-8 object-contain opacity-60" /> : <Handshake className="h-6 w-6 text-ink/30" />}
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  {p.logo_url ? <img src={p.logo_url} alt={`${p.name} - সহযোগী প্রতিষ্ঠান লোগো, শান্তিচক্র ব্লাড সোসাইটি`} className="h-8 w-8 object-contain opacity-60" /> : <span className="text-2xl">🤝</span>}
                   {p.name}
                 </div>
               ))}
@@ -271,7 +285,7 @@ function EventCard({ event, lang }: { event: any; lang: string }) {
     <div className="card-hover overflow-hidden">
       {event.cover_url && (
         // eslint-disable-next-line @next/next/no-img-element
-        <img src={event.cover_url} alt={event.title} className="h-40 w-full object-cover" />
+        <img src={event.cover_url} alt={`${event.title} - রক্তদান কর্মসূচি, সুনামগঞ্জ`} className="h-40 w-full object-cover" />
       )}
       <div className="p-5">
         <span className="inline-flex items-center gap-1.5 rounded-full bg-brand-50 px-2.5 py-1 text-xs font-semibold text-brand-600">

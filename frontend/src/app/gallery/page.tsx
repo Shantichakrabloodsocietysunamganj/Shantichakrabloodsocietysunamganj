@@ -2,9 +2,21 @@ import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
 import SectionHeading from "@/components/ui/SectionHeading";
 import GalleryGrid from "@/components/GalleryGrid";
-import { ImageIcon } from "@/components/icons";
+import BreadcrumbJsonLd from "@/components/seo/BreadcrumbJsonLd";
 
-export const metadata: Metadata = { title: "গ্যালারি" };
+export const metadata: Metadata = {
+  title: "রক্তদান কর্মসূচির ছবি | শান্তিচক্র ব্লাড সোসাইটি",
+  description:
+    "সুনামগঞ্জ ও সিলেট বিভাগের বিভিন্ন রক্তদান ক্যাম্প, স্বেচ্ছাসেবী কার্যক্রম ও সচেতনতামূলক কর্মসূচির ছবির গ্যালারি।",
+  alternates: { canonical: "/gallery" },
+  openGraph: {
+    title: "রক্তদান কর্মসূচির ছবি | শান্তিচক্র ব্লাড সোসাইটি",
+    description:
+      "সুনামগঞ্জ ও সিলেট বিভাগের বিভিন্ন রক্তদান ক্যাম্প, স্বেচ্ছাসেবী কার্যক্রম ও সচেতনতামূলক কর্মসূচির ছবির গ্যালারি।",
+    url: "https://shanticakrabloodsocaiety.rahatahmed.site/gallery",
+    type: "website",
+  },
+};
 
 export default async function GalleryPage() {
   const supabase = createClient();
@@ -17,6 +29,12 @@ export default async function GalleryPage() {
 
   return (
     <div className="container-page py-12">
+      <BreadcrumbJsonLd
+        items={[
+          { name: "হোম", url: "https://shanticakrabloodsocaiety.rahatahmed.site" },
+          { name: "গ্যালারি", url: "https://shanticakrabloodsocaiety.rahatahmed.site/gallery" },
+        ]}
+      />
       <SectionHeading eyebrow="গ্যালারি" title="আমাদের মুহূর্তগুলো"
         subtitle="রক্তদান শিবির, কর্মসূচি ও সমিতির কার্যক্রমের ছবি।" />
 

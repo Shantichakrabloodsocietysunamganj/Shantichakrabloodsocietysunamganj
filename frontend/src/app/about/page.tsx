@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import SectionHeading from "@/components/ui/SectionHeading";
 import Reveal from "@/components/Reveal";
@@ -5,10 +6,22 @@ import { createClient } from "@/lib/supabase/server";
 import { site } from "@/data/site";
 import { t } from "@/lib/i18n";
 import { getLang } from "@/lib/i18n-server";
-import { DataIcon, Droplets, ImageIcon, MapPin, Newspaper, Sparkles } from "@/components/icons";
-import { Briefcase, Code2, Globe, GraduationCap, Target } from "lucide-react";
+import BreadcrumbJsonLd from "@/components/seo/BreadcrumbJsonLd";
+import LocalBusinessJsonLd from "@/components/seo/LocalBusinessJsonLd";
 
-export const metadata = { title: "আমাদের সম্পর্কে" };
+export const metadata: Metadata = {
+  title: "আমাদের সম্পর্কে | শান্তিচক্র ব্লাড সোসাইটি, সুনামগঞ্জ",
+  description:
+    "শান্তিচক্র ব্লাড সোসাইটির প্রতিষ্ঠা, উদ্দেশ্য, স্বেচ্ছাসেবী কার্যক্রম ও সিলেট বিভাগে রক্তসেবা নেটওয়ার্ক সম্পর্কে জানুন।",
+  alternates: { canonical: "/about" },
+  openGraph: {
+    title: "আমাদের সম্পর্কে | শান্তিচক্র ব্লাড সোসাইটি, সুনামগঞ্জ",
+    description:
+      "শান্তিচক্র ব্লাড সোসাইটির প্রতিষ্ঠা, উদ্দেশ্য, স্বেচ্ছাসেবী কার্যক্রম ও সিলেট বিভাগে রক্তসেবা নেটওয়ার্ক সম্পর্কে জানুন।",
+    url: "https://shanticakrabloodsocaiety.rahatahmed.site/about",
+    type: "website",
+  },
+};
 
 type Member = { id: string; name: string; role: string; photo_url: string | null };
 
@@ -35,6 +48,13 @@ export default async function AboutPage() {
 
   return (
     <div>
+      <BreadcrumbJsonLd
+        items={[
+          { name: "হোম", url: "https://shanticakrabloodsocaiety.rahatahmed.site" },
+          { name: "আমাদের সম্পর্কে", url: "https://shanticakrabloodsocaiety.rahatahmed.site/about" },
+        ]}
+      />
+      <LocalBusinessJsonLd />
       <section className="relative overflow-hidden bg-gradient-to-b from-brand-50/70 to-white py-16 dark:from-slate-950 dark:to-slate-900">
         <div className="pointer-events-none absolute -top-24 right-0 h-64 w-64 rounded-full bg-blood-200/40 blur-3xl" />
         <div className="container-page relative max-w-3xl text-center">

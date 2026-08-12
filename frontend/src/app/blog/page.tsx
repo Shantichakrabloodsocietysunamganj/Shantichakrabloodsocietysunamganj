@@ -3,50 +3,88 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import SectionHeading from "@/components/ui/SectionHeading";
 import { FileText } from "@/components/icons";
+import { STATIC_BLOG_ARTICLES } from "@/data/blog-articles";
+import BreadcrumbJsonLd from "@/components/seo/BreadcrumbJsonLd";
 
-export const metadata: Metadata = { title: "ব্লগ ও খবর" };
+export const metadata: Metadata = {
+  title: "রক্তদান ও স্বাস্থ্য সচেতনতা ব্লগ | শান্তিচক্র ব্লাড সোসাইটি",
+  description:
+    "রক্তদানের উপকারিতা, যোগ্যতা, জরুরি রক্তের প্রয়োজনে করণীয় এবং স্বাস্থ্য সচেতনতামূলক বিভিন্ন নিবন্ধ ও তথ্য।",
+  alternates: { canonical: "/blog" },
+  openGraph: {
+    title: "রক্তদান ও স্বাস্থ্য সচেতনতা ব্লগ | শান্তিচক্র ব্লাড সোসাইটি",
+    description:
+      "রক্তদানের উপকারিতা, যোগ্যতা, জরুরি রক্তের প্রয়োজনে করণীয় এবং স্বাস্থ্য সচেতনতামূলক বিভিন্ন নিবন্ধ ও তথ্য।",
+    url: "https://shanticakrabloodsocaiety.rahatahmed.site/blog",
+    type: "website",
+  },
+};
 
 export default async function BlogPage() {
   const supabase = createClient();
-  let posts: any[] = [];
-  let ok = false;
+  let dbPosts: any[] = [];
   try {
     const { data, error } = await supabase.from("blogs").select("*").order("created_at", { ascending: false });
-    if (!error) { posts = data ?? []; ok = true; }
+    if (!error) {
+      dbPosts = data ?? [];
+    }
   } catch {}
+
+  // Combine database blog posts and static educational articles without duplication by slug
+  const allPosts = [
+    ...dbPosts,
+    ...STATIC_BLOG_ARTICLES.filter(
+      (sa) => !dbPosts.some((dp: any) => (dp.slug || dp.id) === sa.slug),
+    ),
+  ];
 
   return (
     <div className="container-page py-12">
-      <SectionHeading eyebrow="ব্লগ ও খবর" title="সর্বশেষ আপডেট"
-        subtitle="রক্তদান, স্বাস্থ্য ও সমিতির কার্যক্রম সম্পর্কে খবর।" />
+      <BreadcrumbJsonLd
+        items={[
+          { name: "হোম", url: "https://shanticakrabloodsocaiety.rahatahmed.site" },
+          { name: "ব্লগ ও খবর", url: "https://shanticakrabloodsocaiety.rahatahmed.site/blog" },
+        ]}
+      />
+      <SectionHeading
+        eyebrow="ব্লগ ও খবর"
+        title="রক্তদান ও স্বাস্থ্য সচেতনতা ব্লগ"
+        subtitle="রক্তদান, স্বাস্থ্য ও সমিতির কার্যক্রম সম্পর্কে প্রয়োজনীয় নিবন্ধ ও খবর।"
+      />
 
       <div className="mt-10">
-        {!ok ? (
-          <p className="text-center text-sm text-ink/50">ব্লগ লোড করা যায়নি।</p>
-        ) : posts.length === 0 ? (
-          <div className="card p-12 text-center">
-            <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-brand-50 text-brand-600"><FileText className="h-6 w-6" /></span>
-            <p className="mt-2 font-medium text-ink">এখনো কোনো পোস্ট নেই</p>
-            <p className="mt-1 text-sm text-ink/60">শীঘ্রই নতুন খবর যোগ হবে।</p>
-            <Link href="/" className="btn-outline mt-4">হোমে যান</Link>
-          </div>
-        ) : (
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {posts.map((p) => (
-              <Link key={p.id} href={`/blog/${p.slug || p.id}`} className="card-hover block overflow-hidden">
-                {p.cover_url && (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img src={p.cover_url} alt={p.title} className="h-44 w-full object-cover" loading="lazy" />
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {allPosts.map((p) => (
+            <Link
+              key={p.id || p.slug}
+              href={`/blog/${p.slug || p.id}`}
+              className="card-hover block overflow-hidden"
+            >
+              {p.cover_url && (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={p.cover_url}
+                  alt={p.title}
+                  className="h-44 w-full object-cover"
+                  loading="lazy"
+                />
+              )}
+              <div className="p-5">
+                <p className="text-xs text-ink/40">
+                  {new Date(p.created_at).toLocaleDateString("bn-BD", {
+                    day: "numeric",
+                    month: "long",
+                    year: "numeric",
+                  })}
+                </p>
+                <h3 className="mt-1 font-bold text-ink">{p.title}</h3>
+                {p.excerpt && (
+                  <p className="mt-2 text-sm text-ink/60">{p.excerpt}</p>
                 )}
-                <div className="p-5">
-                  <p className="text-xs text-ink/40">{new Date(p.created_at).toLocaleDateString("bn-BD", { day: "numeric", month: "long", year: "numeric" })}</p>
-                  <h3 className="mt-1 font-bold text-ink">{p.title}</h3>
-                  {p.excerpt && <p className="mt-2 text-sm text-ink/60">{p.excerpt}</p>}
-                </div>
-              </Link>
-            ))}
-          </div>
-        )}
+              </div>
+            </Link>
+          ))}
+        </div>
       </div>
     </div>
   );

@@ -34,13 +34,13 @@ const TIMELINE: { icon: LucideIcon; bn: string; en: string }[] = [
   { icon: Heart, bn: "একটি জীবন বাঁচে", en: "A Life is Saved" },
 ];
 
-export default function DonationSection({ lang }: { lang: Lang }) {
+export default function DonationSection({ lang, donorCount = 0 }: { lang: Lang; donorCount?: number }) {
   const en = lang === "en";
   const supabase = createClient();
   const [methods, setMethods] = useState<Method[]>([]);
   const [hasMethods, setHasMethods] = useState(false);
   const [copied, setCopied] = useState<string | null>(null);
-  const [stats, setStats] = useState({ donors: 0, completed: 0, units: 0, volunteers: 0 });
+  const [stats, setStats] = useState({ donors: donorCount, completed: 0, units: 0, volunteers: 0 });
 
   useEffect(() => {
     (async () => {
@@ -48,15 +48,20 @@ export default function DonationSection({ lang }: { lang: Lang }) {
         const { data } = await supabase.from("donation_methods").select("*").eq("is_active", true).order("order", { ascending: true });
         if (data && data.length) { setMethods(data); setHasMethods(true); }
         const { data: rpc } = await supabase.rpc("impact_stats");
-        if (rpc && rpc[0]) setStats(rpc[0]);
+        if (rpc && rpc[0]) {
+          setStats({
+            ...rpc[0],
+            donors: Math.max((rpc[0] as any).donors || 0, donorCount),
+          });
+        }
       } catch {}
     })();
-  }, [supabase]);
+  }, [supabase, donorCount]);
 
   const copy = (text: string) => { navigator.clipboard.writeText(text); setCopied(text); setTimeout(() => setCopied(null), 2000); };
 
   const trustItems = [
-    { value: stats.donors, label: en ? "Registered Donors" : "নিবন্ধিত দাতা" },
+    { value: Math.max(stats.donors, donorCount), label: en ? "Registered Donors" : "নিবন্ধিত দাতা" },
     { value: stats.completed, label: en ? "Patients Helped" : "সাহায্যপ্রাপ্ত রোগী" },
     { value: stats.units, label: en ? "Blood Units" : "রক্ত ইউনিট" },
     { value: stats.volunteers, label: en ? "Volunteers" : "স্বেচ্ছাসেবক" },

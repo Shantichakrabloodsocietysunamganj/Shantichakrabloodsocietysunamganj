@@ -3,9 +3,21 @@ import { createClient } from "@/lib/supabase/server";
 import SectionHeading from "@/components/ui/SectionHeading";
 import Reveal from "@/components/Reveal";
 import { getLang } from "@/lib/i18n-server";
-import { Newspaper } from "@/components/icons";
+import BreadcrumbJsonLd from "@/components/seo/BreadcrumbJsonLd";
 
-export const metadata: Metadata = { title: "মিডিয়া কভারেজ" };
+export const metadata: Metadata = {
+  title: "মিডিয়া কভারেজ ও খবর | শান্তিচক্র ব্লাড সোসাইটি",
+  description:
+    "জাতীয় ও স্থানীয় সংবাদমাধ্যমে শান্তিচক্র ব্লাড সোসাইটির স্বেচ্ছাসেবী রক্তদান কার্যক্রম ও খবরের সংগ্রহ।",
+  alternates: { canonical: "/media" },
+  openGraph: {
+    title: "মিডিয়া কভারেজ ও খবর | শান্তিচক্র ব্লাড সোসাইটি",
+    description:
+      "জাতীয় ও স্থানীয় সংবাদমাধ্যমে শান্তিচক্র ব্লাড সোসাইটির স্বেচ্ছাসেবী রক্তদান কার্যক্রম ও খবরের সংগ্রহ।",
+    url: "https://shanticakrabloodsocaiety.rahatahmed.site/media",
+    type: "website",
+  },
+};
 
 const FALLBACK = [
   { title: "শান্তিচক্র ব্লাড সোসাইটির প্রতিষ্ঠাবার্ষিকীতে নতুন কমিটি ঘোষণা", source: "Online Sylhet", url: "https://onlinesylhet.com/2026/06/27/11-1704/", published_date: "2026-06-27", category: "online" },
@@ -38,6 +50,12 @@ export default async function MediaPage() {
 
   return (
     <div className="container-page py-12">
+      <BreadcrumbJsonLd
+        items={[
+          { name: "হোম", url: "https://shanticakrabloodsocaiety.rahatahmed.site" },
+          { name: "মিডিয়া কভারেজ", url: "https://shanticakrabloodsocaiety.rahatahmed.site/media" },
+        ]}
+      />
       <SectionHeading eyebrow={en ? "Media" : "মিডিয়া"} title={en ? "Media Coverage" : "মিডিয়া কভারেজ"} subtitle={en ? "Where the press has covered our work." : "বিভিন্ন গণমাধ্যমে আমাদের কার্যক্রমের প্রতিবেদন।"} />
       <div className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {items.map((m: any, i: number) => (

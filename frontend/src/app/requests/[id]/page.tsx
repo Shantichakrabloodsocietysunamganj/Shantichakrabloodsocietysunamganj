@@ -6,7 +6,26 @@ import { notFound } from "next/navigation";
 import { site } from "@/data/site";
 import { Check, FacebookIcon, Phone, Siren, WhatsAppIcon, X } from "@/components/icons";
 
-export const metadata: Metadata = { title: "রক্তের অনুরোধ" };
+export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
+  const supabase = createClient();
+  const { data: req } = await supabase.from("blood_requests").select("patient_name, blood_group, hospital, district").eq("id", params.id).maybeSingle();
+  if (!req) return { title: "রক্তের অনুরোধ | শান্তিচক্র ব্লাড সোসাইটি" };
+
+  const title = `জরুরি ${req.blood_group} রক্তের প্রয়োজন - ${req.hospital} | শান্তিচক্র ব্লাড সোসাইটি`;
+  const description = `${req.district} এলাকায় ${req.hospital} হাসপাতালে রোগীর জন্য জরুরি ${req.blood_group} রক্ত প্রয়োজন। সাহায্য করতে যোগাযোগ করুন।`;
+
+  return {
+    title,
+    description,
+    alternates: { canonical: `/requests/${params.id}` },
+    openGraph: {
+      title,
+      description,
+      url: `https://shanticakrabloodsocaiety.rahatahmed.site/requests/${params.id}`,
+      type: "article",
+    },
+  };
+}
 
 function fmt(d: string) {
   try { return new Date(d).toLocaleDateString("bn-BD", { day: "numeric", month: "long", year: "numeric" }); } catch { return d; }
