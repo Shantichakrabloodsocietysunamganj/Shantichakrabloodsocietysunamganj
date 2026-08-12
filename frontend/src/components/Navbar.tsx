@@ -16,6 +16,7 @@ const navLinks = [
   { href: "/donors", key: "nav.donors" },
   { href: "/request-blood", key: "nav.needBlood" },
   { href: "/requests", key: "nav.urgent" },
+  { href: "/blood-seekers", key: "nav.seekers" },
   { href: "/gallery", key: "nav.gallery" },
   { href: "/blog", key: "nav.blog" },
   { href: "/about", key: "nav.about" },

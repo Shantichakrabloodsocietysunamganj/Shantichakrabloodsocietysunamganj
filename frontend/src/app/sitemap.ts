@@ -8,6 +8,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/donors",
     "/request-blood",
     "/requests",
+    "/blood-seekers",
     "/become-donor",
     "/eligibility",
     "/emergency",

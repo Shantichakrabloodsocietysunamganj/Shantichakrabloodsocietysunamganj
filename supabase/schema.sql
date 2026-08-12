@@ -675,4 +675,45 @@ drop policy if exists "Staff donation methods delete" on public.donation_methods
 create policy "Staff donation methods delete" on public.donation_methods for delete using (public.is_staff());
 alter table public.donation_methods add column if not exists deleted_at timestamptz;
 
+-- =====================================================================
+-- 21) REALTIME — লাইভ রক্তপ্রার্থী (blood seekers) সিস্টেম
+--     ওয়েবসাইটে কেউ রক্তের অনুরোধ দিলে সেটি যেন সাথে সাথে (live)
+--     সব ইউজারের স্ক্রিনে চলে আসে, তার জন্য realtime publication দরকার।
+--     Supabase Dashboard > Database > Replication থেকেও চালু করা যায়।
+-- =====================================================================
+
+-- DELETE ইভেন্টে পুরো row পাওয়ার জন্য (ক্লায়েন্ট কার্ড সরাতে পারে)
+alter table public.blood_requests replica identity full;
+alter table public.donors         replica identity full;
+
+do $$
+begin
+  -- publication না থাকলে তৈরি করি
+  if not exists (select 1 from pg_publication where pubname = 'supabase_realtime') then
+    create publication supabase_realtime;
+  end if;
+
+  -- blood_requests টেবিল realtime-এ যোগ করি (যদি আগে থেকে না থাকে)
+  if not exists (
+    select 1 from pg_publication_tables
+    where pubname = 'supabase_realtime' and schemaname = 'public' and tablename = 'blood_requests'
+  ) then
+    alter publication supabase_realtime add table public.blood_requests;
+  end if;
+
+  -- donors টেবিলও লাইভ (নতুন দাতা সাথে সাথে দেখা যাবে)
+  if not exists (
+    select 1 from pg_publication_tables
+    where pubname = 'supabase_realtime' and schemaname = 'public' and tablename = 'donors'
+  ) then
+    alter publication supabase_realtime add table public.donors;
+  end if;
+end $$;
+
+-- দ্রুত লাইভ কুয়েরির জন্য ইনডেক্স
+create index if not exists blood_requests_live_idx
+  on public.blood_requests (status, needed_date desc, created_at desc);
+create index if not exists blood_requests_group_idx
+  on public.blood_requests (blood_group);
+
 -- DONE

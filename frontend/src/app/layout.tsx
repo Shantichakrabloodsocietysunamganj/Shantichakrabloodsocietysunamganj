@@ -9,6 +9,7 @@ import FloatingActions from "@/components/FloatingActions";
 import CookieBanner from "@/components/CookieBanner";
 import AIAssistant from "@/components/AIAssistant";
 import EmergencyBanner from "@/components/EmergencyBanner";
+import LiveRequestAlert from "@/components/LiveRequestAlert";
 import { ToastProvider } from "@/components/Toast";
 import { getSession } from "@/lib/auth";
 import { getSettings } from "@/lib/settings";
@@ -138,6 +139,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
           <Footer settings={settings} lang={lang} />
           <BackToTop />
           <FloatingActions />
+          <LiveRequestAlert />
           <AIAssistant />
           <CookieBanner />
         </ToastProvider>

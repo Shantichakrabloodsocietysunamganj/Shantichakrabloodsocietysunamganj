@@ -1,43 +1,61 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 
-// জরুরি রক্তের অনুরোধ থাকলে উপরে পালসিং ব্যানার দেখায়
+// জরুরি রক্তের অনুরোধ থাকলে উপরে পালসিং ব্যানার দেখায় — এখন রিয়েল-টাইম
 export default function EmergencyBanner() {
-  const supabase = createClient();
+  const supabase = useMemo(() => createClient(), []);
   const [count, setCount] = useState(0);
   const [show, setShow] = useState(false);
+  const [flash, setFlash] = useState(false);
 
   useEffect(() => {
     const load = async () => {
       try {
-        const dayAgo = new Date(Date.now() - 24 * 3600 * 1000).toISOString();
         const { count: c } = await supabase
           .from("blood_requests")
           .select("*", { count: "exact", head: true })
+          .is("deleted_at", null)
           .in("status", ["pending", "approved"])
           .gte("needed_date", new Date().toISOString().slice(0, 10));
-        if (c && c > 0) { setCount(c); setShow(true); }
+        setCount(c ?? 0);
+        setShow(!!c && c > 0);
       } catch {}
     };
     load();
+
+    // নতুন অনুরোধ এলে সাথে সাথে গণনা বাড়ে (realtime)
+    const channel = supabase
+      .channel("emergency-banner-requests")
+      .on("postgres_changes", { event: "*", schema: "public", table: "blood_requests" }, () => {
+        setFlash(true);
+        setTimeout(() => setFlash(false), 2500);
+        load();
+      })
+      .subscribe();
+
     const id = setInterval(load, 60000);
-    return () => clearInterval(id);
+    return () => {
+      clearInterval(id);
+      supabase.removeChannel(channel);
+    };
   }, [supabase]);
 
   if (!show) return null;
 
   return (
     <a
-      href="/requests"
-      className="fixed inset-x-0 top-16 z-[50] flex items-center justify-center gap-2 bg-blood-600 px-4 py-1.5 text-center text-xs font-bold text-white shadow-md transition-transform hover:bg-blood-700 lg:top-16"
+      href="/blood-seekers"
+      className={`fixed inset-x-0 top-16 z-[50] flex items-center justify-center gap-2 px-4 py-1.5 text-center text-xs font-bold text-white shadow-md transition-all lg:top-16 ${
+        flash ? "bg-blood-700 animate-pulse" : "bg-blood-600 hover:bg-blood-700"
+      }`}
     >
       <span className="relative flex h-2 w-2">
         <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-white opacity-75" />
         <span className="relative inline-flex h-2 w-2 rounded-full bg-white" />
       </span>
-      🚨 {count} টি জরুরি রক্তের অনুরোধ অপেক্ষমাণ — দেখুন →
+      🚨 {count.toLocaleString("bn-BD")} টি জরুরি রক্তের অনুরোধ অপেক্ষমাণ — দেখুন →
     </a>
   );
 }
