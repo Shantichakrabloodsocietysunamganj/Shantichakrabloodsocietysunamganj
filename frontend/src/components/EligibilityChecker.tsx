@@ -6,7 +6,7 @@ import { bn, bnDate } from "@/lib/format";
 import { scrollToPageTop } from "@/lib/motion";
 import type { Lang } from "@/lib/i18n";
 
-type Gender = "" | "পুরুষ" | "নারী" | "অন্যান্য";
+type Gender = "" | "পুরুষ" | "নারী" | "অন্যান্য" | "Male" | "Female" | "Other";
 type Tri = "yes" | "no" | null;
 
 type Verdict = {
@@ -296,8 +296,8 @@ export default function EligibilityChecker({ lang = "bn" }: { lang?: Lang }) {
             <div className="sm:col-span-2">
               <label className="label">{en ? "Gender *" : "লিঙ্গ *"} <span className="font-normal text-ink/40">{en ? "(safe interval depends)" : "(রক্তদানের নিরাপদ ব্যবধান নির্ভর করে)"}</span></label>
               <div className="flex flex-wrap gap-2">
-                {(en ? ["Male", "Female", "Other"] : ["পুরুষ", "নারী", "অন্যান্য"] as unknown as const).map((g: any) => (
-                  <ChoiceBtn key={g} active={gender as any === g || (en && ((g === "Male" && gender === "পুরুষ") || (g === "Female" && gender === "নারী")))} onClick={() => setGender(g as Gender)}>{g}</ChoiceBtn>
+                {(en ? ["Male", "Female", "Other"] : ["পুরুষ", "নারী", "অন্যান্য"]).map((g) => (
+                  <ChoiceBtn key={g} active={gender === g} onClick={() => setGender(g as Gender)}>{g}</ChoiceBtn>
                 ))}
               </div>
             </div>
