@@ -1,12 +1,14 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/client";
 import { BLOOD_GROUPS, DISTRICTS, upazilasOf } from "@/data/constants";
 import { useLangClient } from "@/lib/i18n";
 import { scrollToPageTop } from "@/lib/motion";
+import { rememberRecentlyPostedRequest } from "@/lib/useLiveRequests";
+import type { BloodRequest } from "@/lib/types";
 
 const schema = z.object({
   patient_name: z.string().min(2),
@@ -27,7 +29,7 @@ const schema = z.object({
 });
 
 export default function RequestBloodPage() {
-  const supabase = createClient();
+  const supabase = useMemo(() => createClient(), []);
   const lang = useLangClient();
   const en = lang === "en";
   const [form, setForm] = useState<Record<string, any>>({
@@ -52,17 +54,42 @@ export default function RequestBloodPage() {
     if (!parsed.success) { const errs: Record<string, string> = {}; for (const issue of parsed.error.issues) errs[issue.path[0] as string] = issue.message; setErrors(errs); return; }
     setSubmitting(true);
     try {
-      const { error } = await supabase.from("blood_requests").insert({
-        ...parsed.data,
-        requested_by: userId,
+      // Supplying the id and status ourselves lets us reliably carry this exact
+      // row to the list page instead of waiting for a database default/cache.
+      const request: BloodRequest = {
+        id: crypto.randomUUID(),
+        patient_name: parsed.data.patient_name,
+        blood_group: parsed.data.blood_group,
+        units_needed: parsed.data.units_needed,
+        hospital: parsed.data.hospital,
+        district: parsed.data.district,
+        upazila: parsed.data.upazila,
+        needed_date: parsed.data.needed_date,
+        contact_name: parsed.data.contact_name,
+        contact_phone: parsed.data.contact_phone,
+        message: parsed.data.message || null,
+        hemoglobin: parsed.data.hemoglobin,
         patient_age: parsed.data.patient_age ? Number(parsed.data.patient_age) : null,
         patient_gender: parsed.data.patient_gender || null,
         disease: parsed.data.disease || null,
         blood_component: parsed.data.blood_component || "whole_blood",
-      });
-      if (error) throw new Error("error");
-      setDone(true); scrollToPageTop();
-    } catch (e: any) { setServerError(e?.message ?? "error"); } finally { setSubmitting(false); }
+        request_type: "normal",
+        status: "pending",
+        requested_by: userId,
+        created_at: new Date().toISOString(),
+      };
+
+      const { error } = await supabase.from("blood_requests").insert(request);
+      if (error) throw error;
+
+      rememberRecentlyPostedRequest(request);
+      setDone(true);
+      scrollToPageTop();
+    } catch (e: any) {
+      setServerError(e?.message ?? (en ? "Could not post the request." : "অনুরোধ পোস্ট করা যায়নি।"));
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   if (done) {

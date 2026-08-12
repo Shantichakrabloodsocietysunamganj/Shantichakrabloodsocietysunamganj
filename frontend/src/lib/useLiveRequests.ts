@@ -12,6 +12,43 @@ import type { BloodRequest } from "@/lib/types";
 
 export const LIVE_STATUSES = ["pending", "approved"] as const;
 
+const RECENT_REQUEST_KEY = "shantichakra:recent-blood-request";
+const RECENT_REQUEST_MAX_AGE_MS = 60 * 60 * 1000;
+
+type StoredRequest = { request: BloodRequest; savedAt: number };
+
+/**
+ * Keep the request that was just submitted in this tab. This makes the
+ * post-submit list reliable even when Supabase Realtime is still connecting
+ * or PostgREST has a short replication/cache delay.
+ */
+export function rememberRecentlyPostedRequest(request: BloodRequest) {
+  if (typeof window === "undefined") return;
+  try {
+    const value: StoredRequest = { request, savedAt: Date.now() };
+    window.sessionStorage.setItem(RECENT_REQUEST_KEY, JSON.stringify(value));
+  } catch {
+    // Storage can be unavailable in private/restricted browsers. The database
+    // insert has already succeeded, so there is nothing else to do here.
+  }
+}
+
+function getRecentlyPostedRequest(): BloodRequest | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const raw = window.sessionStorage.getItem(RECENT_REQUEST_KEY);
+    if (!raw) return null;
+    const value = JSON.parse(raw) as StoredRequest;
+    if (!value?.request?.id || Date.now() - value.savedAt > RECENT_REQUEST_MAX_AGE_MS) {
+      window.sessionStorage.removeItem(RECENT_REQUEST_KEY);
+      return null;
+    }
+    return value.request;
+  } catch {
+    return null;
+  }
+}
+
 export type UseLiveRequestsOptions = {
   /** কত গুলো অনুরোধ দেখানো হবে */
   limit?: number;
@@ -98,19 +135,36 @@ export function useLiveRequests(options: UseLiveRequestsOptions = {}): LiveReque
 
   const load = useCallback(async () => {
     const o = optsRef.current;
+    const recent = getRecentlyPostedRequest();
+    const recentMatches = recent && matches(recent) ? recent : null;
+
     try {
-      let query = supabase
-        .from("blood_requests")
-        .select("*")
-        .is("deleted_at", null)
-        .order("needed_date", { ascending: true })
-        .order("created_at", { ascending: false });
-      if (!o.includeClosed) query = query.in("status", LIVE_STATUSES as unknown as string[]);
-      if (o.group) query = query.eq("blood_group", o.group);
-      if (o.upazila) query = query.eq("upazila", o.upazila);
-      const { data, error: err } = await query.limit(o.limit);
-      if (err) throw err;
-      setRequests(sortList((data as BloodRequest[]) ?? []));
+      const runQuery = (filterDeleted: boolean) => {
+        let query = supabase
+          .from("blood_requests")
+          .select("*")
+          .order("needed_date", { ascending: true })
+          .order("created_at", { ascending: false });
+        if (filterDeleted) query = query.is("deleted_at", null);
+        if (!o.includeClosed) query = query.in("status", LIVE_STATUSES as unknown as string[]);
+        if (o.group) query = query.eq("blood_group", o.group);
+        if (o.upazila) query = query.eq("upazila", o.upazila);
+        return query.limit(o.limit);
+      };
+
+      let result = await runQuery(true);
+      // Older deployments may not yet have the soft-delete column. Do not let
+      // that schema drift make the entire public request list appear empty.
+      if (result.error && /deleted_at/i.test(result.error.message ?? "")) {
+        result = await runQuery(false);
+      }
+      if (result.error) throw result.error;
+
+      const rows = (result.data as BloodRequest[]) ?? [];
+      const merged = recentMatches && !rows.some((r) => r.id === recentMatches.id)
+        ? [recentMatches, ...rows]
+        : rows;
+      setRequests(sortList(merged).slice(0, o.limit));
       setError(null);
       setLastUpdated(Date.now());
       // প্রথম লোড শেষে কাউন্টার শূন্য — তারপর realtime-এ যা আসবে তাই গোনা হবে
@@ -119,11 +173,14 @@ export function useLiveRequests(options: UseLiveRequestsOptions = {}): LiveReque
         setNewCount(0);
       }
     } catch (e: any) {
-      setError(e?.message ?? "error");
+      // The request submitted in this tab is still safe to show while the
+      // network/database list is temporarily unavailable.
+      if (recentMatches) setRequests([recentMatches]);
+      setError(recentMatches ? null : (e?.message ?? "error"));
     } finally {
       setLoading(false);
     }
-  }, [supabase]);
+  }, [supabase, matches]);
 
   // প্রথম লোড + ফিল্টার বদলালে রিলোড
   useEffect(() => {
