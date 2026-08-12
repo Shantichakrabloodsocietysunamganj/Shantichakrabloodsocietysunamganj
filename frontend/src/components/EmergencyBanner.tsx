@@ -2,9 +2,11 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { useTr } from "@/lib/useLang";
 
 // জরুরি রক্তের অনুরোধ থাকলে উপরে পালসিং ব্যানার দেখায় — এখন রিয়েল-টাইম
 export default function EmergencyBanner() {
+  const { t: tx } = useTr();
   const supabase = useMemo(() => createClient(), []);
   const [count, setCount] = useState(0);
   const [show, setShow] = useState(false);
@@ -55,7 +57,7 @@ export default function EmergencyBanner() {
         <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-white opacity-75" />
         <span className="relative inline-flex h-2 w-2 rounded-full bg-white" />
       </span>
-      🚨 {count.toLocaleString("bn-BD")} টি জরুরি রক্তের অনুরোধ অপেক্ষমাণ — দেখুন →
+      🚨 {count.toLocaleString("bn-BD")} {tx("টি জরুরি রক্তের অনুরোধ অপেক্ষমাণ — দেখুন →")}
     </a>
   );
 }

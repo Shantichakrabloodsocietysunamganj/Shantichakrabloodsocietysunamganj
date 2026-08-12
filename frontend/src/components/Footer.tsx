@@ -2,9 +2,10 @@ import Link from "next/link";
 import { Ambulance, Code, Mail, MapPin, Phone } from "lucide-react";
 import { site } from "@/data/site";
 import type { SiteSettings } from "@/lib/settings";
-import { t, type Lang } from "@/lib/i18n";
+import { t, tr, type Lang } from "@/lib/i18n";
 
 export default function Footer({ settings, lang }: { settings: SiteSettings; lang: Lang }) {
+  const tx = (s: string) => tr(s, lang);
   const phone = settings.phone || site.phone;
   const email = settings.email || site.email;
   const address = settings.address || site.address;
@@ -22,14 +23,14 @@ export default function Footer({ settings, lang }: { settings: SiteSettings; lan
           <div className="flex items-center gap-2.5">
             <span className="flex h-9 w-9 items-center justify-center overflow-hidden rounded-full bg-white text-white ring-1 ring-white/15">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={settings.logo_url || "/images/logo.png"} alt="শান্তিচক্র ব্লাড সোসাইটি লোগো, সুনামগঞ্জ" className="h-full w-full rounded-full object-cover" />
+              <img src={settings.logo_url || "/images/logo.png"} alt={tx("শান্তিচক্র ব্লাড সোসাইটি লোগো, সুনামগঞ্জ")} className="h-full w-full rounded-full object-cover" />
             </span>
             <div>
-              <div className="font-display font-bold text-white">{site.shortName}</div>
+              <div className="font-display font-bold text-white">{tx(site.shortName)}</div>
               <div className="text-xs text-slate-400">{site.taglineEn}</div>
             </div>
           </div>
-          <p className="mt-4 line-clamp-4 text-sm leading-relaxed text-slate-400">{site.mission}</p>
+          <p className="mt-4 line-clamp-4 text-sm leading-relaxed text-slate-400">{tx(site.mission)}</p>
           <div className="mt-5 flex gap-2">
             <a href={facebook} target="_blank" rel="noreferrer" aria-label="Facebook" className="flex h-9 w-9 items-center justify-center rounded-lg bg-white/5 text-slate-300 ring-1 ring-white/10 transition hover:bg-brand-600 hover:text-white">
               <svg viewBox="0 0 24 24" className="h-4 w-4" fill="currentColor"><path d="M22 12a10 10 0 1 0-11.56 9.88v-6.99H7.9V12h2.54V9.8c0-2.5 1.49-3.89 3.77-3.89 1.09 0 2.24.2 2.24.2v2.46h-1.26c-1.24 0-1.63.77-1.63 1.56V12h2.78l-.44 2.89h-2.34v6.99A10 10 0 0 0 22 12z" /></svg>
@@ -69,7 +70,7 @@ export default function Footer({ settings, lang }: { settings: SiteSettings; lan
         <div>
           <h4 className="text-sm font-semibold text-white">{t("footer.contact", lang)}</h4>
           <ul className="mt-4 space-y-2.5 text-sm text-slate-400">
-            <li className="flex items-start gap-2"><MapPin className="mt-0.5 h-4 w-4 shrink-0" /> <span>{address}</span></li>
+            <li className="flex items-start gap-2"><MapPin className="mt-0.5 h-4 w-4 shrink-0" /> <span>{tx(address)}</span></li>
             <li className="flex items-center gap-2"><Phone className="h-4 w-4 shrink-0" /> <span>{phone}</span></li>
             <li className="flex items-center gap-2"><Mail className="h-4 w-4 shrink-0" /> <span className="break-all">{email}</span></li>
           </ul>
@@ -81,7 +82,7 @@ export default function Footer({ settings, lang }: { settings: SiteSettings; lan
 
       <div className="border-t border-white/10">
         <div className="container-page flex flex-col items-center justify-between gap-3 py-5 text-xs text-slate-500 sm:flex-row">
-          <p>© {new Date().getFullYear()} {site.name}। {t("footer.rights", lang)}</p>
+          <p>© {new Date().getFullYear()} {tx(site.name)}। {t("footer.rights", lang)}</p>
           <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1">
             <a href="https://www.rahatahmed.site/en" target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 font-semibold text-white hover:underline">
               <Code className="h-3.5 w-3.5" /> Developed by Rahat Ahmed

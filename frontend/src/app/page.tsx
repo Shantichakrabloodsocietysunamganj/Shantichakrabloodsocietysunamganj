@@ -20,10 +20,11 @@ import LiveSeekers from "@/components/home/LiveSeekers";
 import DonationSection from "@/components/home/DonationSection";
 import { createClient } from "@/lib/supabase/server";
 import { site } from "@/data/site";
-import { t } from "@/lib/i18n";
+import { t, tr, type Lang } from "@/lib/i18n";
 import { getLang } from "@/lib/i18n-server";
 import { getSettings } from "@/lib/settings";
 import type { Donor } from "@/lib/types";
+import { shortDate } from "@/lib/format";
 
 export const metadata: Metadata = {
   title: "শান্তিচক্র ব্লাড সোসাইটি, সুনামগঞ্জ | রক্তদান ও জরুরি রক্তসেবা",
@@ -67,6 +68,7 @@ async function getData() {
 export default async function Home() {
   const { donorCount, openRequestCount, featuredDonors, events, testimonials, faqs, partners, ok } = await getData();
   const lang = await getLang();
+  const tx = (v: string) => tr(v, lang);
   const settings = await getSettings();
   const livesSaved = site.stats.livesSaved || donorCount;
 
@@ -150,7 +152,7 @@ export default async function Home() {
                   <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand-50 text-brand-600">
                     <Icon name={h.icon} className="h-5 w-5" />
                   </span>
-                  <div><p className="font-semibold text-ink">{h.title}</p><p className="text-sm text-ink/60">{h.desc}</p></div>
+                  <div><p className="font-semibold text-ink">{tx(h.title)}</p><p className="text-sm text-ink/60">{tx(h.desc)}</p></div>
                 </div>
               ))}
             </div>
@@ -205,12 +207,12 @@ export default async function Home() {
               <Reveal key={s.id ?? i} delay={i * 100}>
                 <div className="h-full rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur">
                   <div className="mb-3 text-amber-300">{"★".repeat(s.rating ?? 5)}</div>
-                  <p className="text-sm leading-relaxed text-brand-100/90">“{s.message ?? s.text}”</p>
+                  <p className="text-sm leading-relaxed text-brand-100/90">“{tx(s.message ?? s.text)}”</p>
                   <div className="mt-4 flex items-center gap-3">
-                    <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-blood-500 text-sm font-bold text-white">{(s.name ?? "?").charAt(0)}</span>
+                    <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-blood-500 text-sm font-bold text-white">{(tx(s.name ?? "?")).charAt(0)}</span>
                     <div>
-                      <p className="font-semibold text-white">{s.name}</p>
-                      <p className="text-xs text-brand-100/70">{s.role}</p>
+                      <p className="font-semibold text-white">{tx(s.name)}</p>
+                      <p className="text-xs text-brand-100/70">{tx(s.role)}</p>
                     </div>
                   </div>
                 </div>
@@ -290,17 +292,18 @@ function Step({ n, title, desc, href, cta }: { n: string; title: string; desc: s
 }
 
 function EventCard({ event, lang }: { event: any; lang: string }) {
+  const tx = (v: string) => tr(v, lang as Lang);
   return (
     <div className="card-hover overflow-hidden">
       {event.cover_url && (
         // eslint-disable-next-line @next/next/no-img-element
-        <img src={event.cover_url} alt={`${event.title} - রক্তদান কর্মসূচি, সুনামগঞ্জ`} className="h-40 w-full object-cover" />
+        <img src={event.cover_url} alt={`${tx(event.title)} — ${tx("রক্তদান কর্মসূচি, সুনামগঞ্জ")}`} className="h-40 w-full object-cover" />
       )}
       <div className="p-5">
         <span className="inline-flex items-center gap-1.5 rounded-full bg-brand-50 px-2.5 py-1 text-xs font-semibold text-brand-600">
-          <CalendarDays className="h-3.5 w-3.5" /> {new Date(event.event_date).toLocaleDateString("bn-BD", { day: "numeric", month: "short", year: "numeric" })}
+          <CalendarDays className="h-3.5 w-3.5" /> {shortDate(event.event_date, lang as Lang)}
         </span>
-        <h3 className="mt-3 font-display text-lg font-bold text-ink">{event.title}</h3>
+        <h3 className="mt-3 font-display text-lg font-bold text-ink">{tx(event.title)}</h3>
         {event.location && <p className="mt-1 flex items-center gap-1 text-sm text-ink/50"><MapPin className="h-3.5 w-3.5" /> {event.location}</p>}
         {event.description && <p className="mt-2 line-clamp-2 text-sm text-ink/60">{event.description}</p>}
       </div>

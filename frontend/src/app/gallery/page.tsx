@@ -3,6 +3,8 @@ import { createClient } from "@/lib/supabase/server";
 import SectionHeading from "@/components/ui/SectionHeading";
 import GalleryGrid from "@/components/GalleryGrid";
 import BreadcrumbJsonLd from "@/components/seo/BreadcrumbJsonLd";
+import { tr } from "@/lib/i18n";
+import { getLang } from "@/lib/i18n-server";
 
 export const metadata: Metadata = {
   title: "রক্তদান কর্মসূচির ছবি | শান্তিচক্র ব্লাড সোসাইটি",
@@ -19,6 +21,8 @@ export const metadata: Metadata = {
 };
 
 export default async function GalleryPage() {
+  const lang = await getLang();
+  const tx = (s: string) => tr(s, lang);
   const supabase = createClient();
   let images: any[] = [];
   let ok = false;
@@ -31,16 +35,16 @@ export default async function GalleryPage() {
     <div className="container-page py-12">
       <BreadcrumbJsonLd
         items={[
-          { name: "হোম", url: "https://shanticakrabloodsocaiety.rahatahmed.site" },
-          { name: "গ্যালারি", url: "https://shanticakrabloodsocaiety.rahatahmed.site/gallery" },
+          { name: tx("হোম"), url: "https://shanticakrabloodsocaiety.rahatahmed.site" },
+          { name: tx("গ্যালারি"), url: "https://shanticakrabloodsocaiety.rahatahmed.site/gallery" },
         ]}
       />
-      <SectionHeading eyebrow="গ্যালারি" title="আমাদের মুহূর্তগুলো"
-        subtitle="রক্তদান শিবির, কর্মসূচি ও সমিতির কার্যক্রমের ছবি।" />
+      <SectionHeading eyebrow={tx("গ্যালারি")} title={tx("আমাদের মুহূর্তগুলো")}
+        subtitle={tx("রক্তদান শিবির, কর্মসূচি ও সমিতির কার্যক্রমের ছবি।")} />
 
       <div className="mt-10">
         {!ok ? (
-          <p className="text-center text-sm text-ink/50">গ্যালারি লোড করা যায়নি।</p>
+          <p className="text-center text-sm text-ink/50">{tx("গ্যালারি লোড করা যায়নি।")}</p>
         ) : images.length === 0 ? (
           <div className="card p-12 text-center">
             <p className="text-3xl">🖼️</p>

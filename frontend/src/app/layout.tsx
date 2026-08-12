@@ -12,6 +12,7 @@ import EmergencyBanner from "@/components/EmergencyBanner";
 import LiveRequestAlert from "@/components/LiveRequestAlert";
 import RequesterFollowUp from "@/components/RequesterFollowUp";
 import { ToastProvider } from "@/components/Toast";
+import LanguageProvider from "@/components/LanguageProvider";
 import { getSession } from "@/lib/auth";
 import { getSettings } from "@/lib/settings";
 import { getLang } from "@/lib/i18n-server";
@@ -129,6 +130,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }} />
       </head>
       <body className="font-sans bg-canvas text-ink antialiased">
+        <LanguageProvider lang={lang}>
         <ToastProvider>
           <a href="#main" className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[100] focus:rounded-lg focus:bg-brand-600 focus:px-4 focus:py-2 focus:text-white">
             {lang === "en" ? "Skip to content" : "মূল বিষয়বস্তুতে যান"}
@@ -145,6 +147,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
           <AIAssistant />
           <CookieBanner />
         </ToastProvider>
+        </LanguageProvider>
       </body>
     </html>
   );

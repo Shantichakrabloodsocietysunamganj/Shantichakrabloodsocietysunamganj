@@ -6,10 +6,10 @@ import Icon from "@/components/ui/Icon";
 import Reveal from "@/components/Reveal";
 import { createClient } from "@/lib/supabase/server";
 import { site } from "@/data/site";
-import { t } from "@/lib/i18n";
 import { getLang } from "@/lib/i18n-server";
 import BreadcrumbJsonLd from "@/components/seo/BreadcrumbJsonLd";
 import LocalBusinessJsonLd from "@/components/seo/LocalBusinessJsonLd";
+import { t, tr, type Lang } from "@/lib/i18n";
 
 export const metadata: Metadata = {
   title: "আমাদের সম্পর্কে | শান্তিচক্র ব্লাড সোসাইটি, সুনামগঞ্জ",
@@ -44,6 +44,7 @@ async function getCommittee() {
 export default async function AboutPage() {
   const { ok, list } = await getCommittee();
   const lang = await getLang();
+  const tx = (s: string) => tr(s, lang);
   const founders = ok ? list.filter((m) => m.category === "founder") : site.founders.map((f) => ({ ...f, id: f.name, photo_url: (f as any).photo_url ?? null }));
   const advisors = ok ? list.filter((m) => m.category === "advisor") : [];
   const members = ok ? list.filter((m) => m.category === "member") : site.volunteers.map((v) => ({ ...v, id: v.name, photo_url: null }));
@@ -52,8 +53,8 @@ export default async function AboutPage() {
     <div>
       <BreadcrumbJsonLd
         items={[
-          { name: "হোম", url: "https://shanticakrabloodsocaiety.rahatahmed.site" },
-          { name: "আমাদের সম্পর্কে", url: "https://shanticakrabloodsocaiety.rahatahmed.site/about" },
+          { name: tx("হোম"), url: "https://shanticakrabloodsocaiety.rahatahmed.site" },
+          { name: tx("আমাদের সম্পর্কে"), url: "https://shanticakrabloodsocaiety.rahatahmed.site/about" },
         ]}
       />
       <LocalBusinessJsonLd />
@@ -61,9 +62,9 @@ export default async function AboutPage() {
         <div className="pointer-events-none absolute -top-24 right-0 h-64 w-64 rounded-full bg-blood-200/40 blur-3xl" />
         <div className="container-page relative max-w-3xl text-center">
           <span className="eyebrow">{t("about.eyebrow", lang)}</span>
-          <h1 className="section-title mt-4 text-4xl sm:text-5xl">{site.name}</h1>
+          <h1 className="section-title mt-4 text-4xl sm:text-5xl">{tx(site.name)}</h1>
           <span className="mx-auto mt-4 block h-1 w-16 rounded-full bg-gradient-to-r from-brand-600 to-blood-500" />
-          <p className="mx-auto mt-5 max-w-2xl text-lg leading-relaxed text-ink/60">{site.mission}</p>
+          <p className="mx-auto mt-5 max-w-2xl text-lg leading-relaxed text-ink/60">{tx(site.mission)}</p>
           <div className="mt-7 flex flex-wrap justify-center gap-3">
             <Link href="/become-donor" className="btn-primary">{t("about.join", lang)}</Link>
             <Link href="/donors" className="btn-outline">{t("hero.findDonors", lang)}</Link>
@@ -76,12 +77,12 @@ export default async function AboutPage() {
           <Reveal><div className="card h-full p-8">
             <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-brand-50 text-brand-600"><Target className="h-6 w-6" strokeWidth={1.8} /></div>
             <h2 className="mt-4 text-xl font-bold text-zinc-900">{t("about.mission", lang)}</h2>
-            <p className="mt-2 leading-relaxed text-zinc-600">{site.mission}</p>
+            <p className="mt-2 leading-relaxed text-zinc-600">{tx(site.mission)}</p>
           </div></Reveal>
           <Reveal delay={120}><div className="card h-full p-8">
             <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-amber-50 text-amber-600"><Star className="h-6 w-6" strokeWidth={1.8} /></div>
             <h2 className="mt-4 text-xl font-bold text-zinc-900">{t("about.vision", lang)}</h2>
-            <p className="mt-2 leading-relaxed text-zinc-600">{site.vision}</p>
+            <p className="mt-2 leading-relaxed text-zinc-600">{tx(site.vision)}</p>
           </div></Reveal>
         </div>
       </section>
@@ -94,8 +95,8 @@ export default async function AboutPage() {
               <Reveal key={v.title} delay={i * 80}>
                 <div className="card h-full p-6">
                   <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-brand-50 text-brand-600"><Icon name={v.icon} className="h-6 w-6" strokeWidth={1.8} /></div>
-                  <h3 className="mt-3 font-semibold text-zinc-900">{v.title}</h3>
-                  <p className="mt-1.5 text-sm leading-relaxed text-zinc-600">{v.desc}</p>
+                  <h3 className="mt-3 font-semibold text-zinc-900">{tx(v.title)}</h3>
+                  <p className="mt-1.5 text-sm leading-relaxed text-zinc-600">{tx(v.desc)}</p>
                 </div>
               </Reveal>
             ))}
@@ -105,9 +106,9 @@ export default async function AboutPage() {
 
       <section className="container-page py-16">
         <Reveal><SectionHeading eyebrow={t("about.team.eyebrow", lang)} title={t("about.team.title", lang)} subtitle={t("about.team.sub", lang)} /></Reveal>
-        {founders.length > 0 && <PeopleGroup title={t("about.founders", lang)} people={founders} />}
-        {advisors.length > 0 && <PeopleGroup title={t("about.advisors", lang)} people={advisors} />}
-        {members.length > 0 && <PeopleGroup title={t("about.committee", lang)} people={members} />}
+        {founders.length > 0 && <PeopleGroup lang={lang} title={t("about.founders", lang)} people={founders} />}
+        {advisors.length > 0 && <PeopleGroup lang={lang} title={t("about.advisors", lang)} people={advisors} />}
+        {members.length > 0 && <PeopleGroup lang={lang} title={t("about.committee", lang)} people={members} />}
       </section>
 
       {/* খবরে আমরা / In the News */}
@@ -120,9 +121,9 @@ export default async function AboutPage() {
                 <a href={p.url} target="_blank" rel="noreferrer" className="card-hover flex h-full flex-col gap-2 p-5">
                   <div className="flex items-center justify-between">
                     <span className="inline-flex items-center gap-1.5 rounded-full bg-brand-50 px-2.5 py-1 text-xs font-bold text-brand-600"><Newspaper className="h-3.5 w-3.5" /> {p.source}</span>
-                    <span className="text-xs text-ink/40">{p.date}</span>
+                    <span className="text-xs text-ink/40">{tx(p.date)}</span>
                   </div>
-                  <p className="font-display text-sm font-bold leading-snug text-ink">{p.title}</p>
+                  <p className="font-display text-sm font-bold leading-snug text-ink">{tx(p.title)}</p>
                   <span className="mt-auto text-xs font-semibold text-brand-600">{lang === "en" ? "Read article →" : "পড়ুন →"}</span>
                 </a>
               </Reveal>
@@ -166,7 +167,7 @@ export default async function AboutPage() {
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src="https://res.cloudinary.com/kbc3dfnj/image/upload/v1786125213/rahatverse/profile/1786125213546.jpg"
-                      alt="Rahat Ahmed — ওয়েব ডেভেলপার"
+                      alt={tx("Rahat Ahmed — ওয়েব ডেভেলপার")}
                       className="relative h-32 w-32 rounded-full object-cover ring-4 ring-white/15"
                     />
                     <span className="absolute bottom-1 right-1 flex h-6 w-6 items-center justify-center rounded-full bg-success-500 ring-4 ring-brand-950" title={lang === "en" ? "Available for projects" : "প্রজেক্টের জন্য উপলব্ধ"}>
@@ -175,7 +176,7 @@ export default async function AboutPage() {
                   </div>
                   <div>
                     <h3 className="font-display text-xl font-extrabold text-white">Rahat Ahmed</h3>
-                    <p className="text-sm text-brand-200">রাহাত আহমেদ</p>
+                    <p className="text-sm text-brand-200">{tx("রাহাত আহমেদ")}</p>
                   </div>
                   <div className="flex flex-wrap justify-center gap-1.5">
                     {(lang === "en"
@@ -275,7 +276,8 @@ export default async function AboutPage() {
   );
 }
 
-function PeopleGroup({ title, people }: { title: string; people: { id: string; name: string; role: string; photo_url: string | null }[] }) {
+function PeopleGroup({ title, people, lang }: { title: string; people: { id: string; name: string; role: string; photo_url: string | null }[]; lang: Lang }) {
+  const tx = (v: string) => tr(v, lang);
   return (
     <div className="mt-12">
       <h3 className="mb-5 text-center text-lg font-bold text-zinc-900">{title}</h3>
@@ -285,13 +287,13 @@ function PeopleGroup({ title, people }: { title: string; people: { id: string; n
             <div className="card-hover flex items-center gap-4 p-5">
               {p.photo_url ? (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img src={p.photo_url} alt={p.name} className="h-14 w-14 rounded-2xl object-cover" />
+                <img src={p.photo_url} alt={tx(p.name)} className="h-14 w-14 rounded-2xl object-cover" />
               ) : (
-                <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-50 text-xl font-bold text-brand-600">{(p.name ?? "?").charAt(0)}</span>
+                <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-50 text-xl font-bold text-brand-600">{(tx(p.name ?? "?")).charAt(0)}</span>
               )}
               <div>
-                <h4 className="font-semibold text-zinc-900">{p.name}</h4>
-                <p className="text-sm text-brand-600">{p.role}</p>
+                <h4 className="font-semibold text-zinc-900">{tx(p.name)}</h4>
+                <p className="text-sm text-brand-600">{tx(p.role)}</p>
               </div>
             </div>
           </Reveal>

@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import SectionHeading from "@/components/ui/SectionHeading";
 import EligibilityChecker from "@/components/EligibilityChecker";
 import BreadcrumbJsonLd from "@/components/seo/BreadcrumbJsonLd";
+import { tr } from "@/lib/i18n";
+import { getLang } from "@/lib/i18n-server";
 
 export const metadata: Metadata = {
   title: "রক্তদানের যোগ্যতা যাচাই | শান্তিচক্র ব্লাড সোসাইটি",
@@ -17,19 +19,21 @@ export const metadata: Metadata = {
   },
 };
 
-export default function EligibilityPage() {
+export default async function EligibilityPage() {
+  const lang = await getLang();
+  const tx = (s: string) => tr(s, lang);
   return (
     <div className="container-page py-12">
       <BreadcrumbJsonLd
         items={[
-          { name: "হোম", url: "https://shanticakrabloodsocaiety.rahatahmed.site" },
-          { name: "যোগ্যতা যাচাই", url: "https://shanticakrabloodsocaiety.rahatahmed.site/eligibility" },
+          { name: tx("হোম"), url: "https://shanticakrabloodsocaiety.rahatahmed.site" },
+          { name: tx("যোগ্যতা যাচাই"), url: "https://shanticakrabloodsocaiety.rahatahmed.site/eligibility" },
         ]}
       />
       <SectionHeading
-        eyebrow="যোগ্যতা যাচাই"
-        title="আমি কি এখন রক্ত দিতে পারব?"
-        subtitle="কয়েকটি সহজ প্রশ্নের উত্তর দিয়ে মুহূর্তেই জেনে নিন — কোনো তথ্য সেভ হয় না।"
+        eyebrow={tx("যোগ্যতা যাচাই")}
+        title={tx("আমি কি এখন রক্ত দিতে পারব?")}
+        subtitle={tx("কয়েকটি সহজ প্রশ্নের উত্তর দিয়ে মুহূর্তেই জেনে নিন — কোনো তথ্য সেভ হয় না।")}
       />
       <div className="mt-10">
         <EligibilityChecker />

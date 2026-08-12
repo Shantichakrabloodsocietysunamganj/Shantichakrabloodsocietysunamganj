@@ -7,21 +7,24 @@ import { BLOOD_GROUPS, DISTRICTS, upazilasOf } from "@/data/constants";
 import type { Donor } from "@/lib/types";
 import DonorCard from "@/components/DonorCard";
 import Reveal from "@/components/Reveal";
-import { t, useLangClient } from "@/lib/i18n";
+import {t} from "@/lib/i18n";
+import { useLang, useTr } from "@/lib/useLang";
 
 export default function DonorsPage() {
+  const { t: tx } = useTr();
   return (
-    <Suspense fallback={<div className="container-page py-20 text-center text-zinc-500">লোড হচ্ছে…</div>}>
+    <Suspense fallback={<div className="container-page py-20 text-center text-zinc-500">{tx("লোড হচ্ছে…")}</div>}>
       <DonorsContent />
     </Suspense>
   );
 }
 
 function DonorsContent() {
+  const { t: tx } = useTr();
   const supabase = createClient();
   const router = useRouter();
   const params = useSearchParams();
-  const lang = useLangClient();
+  const lang = useLang();
 
   const [group, setGroup] = useState(params.get("group") ?? "");
   const [district, setDistrict] = useState(params.get("district") ?? "");
@@ -104,14 +107,14 @@ function DonorsContent() {
             <label className="label">{t("donors.district", lang)}</label>
             <select className="input" value={district} onChange={(e) => { setDistrict(e.target.value); setUpazila(""); }}>
               <option value="">{t("donors.allDistricts", lang)}</option>
-              {DISTRICTS.map((d) => (<option key={d} value={d}>{d}</option>))}
+              {DISTRICTS.map((d) => (<option key={d} value={d}>{tx(d)}</option>))}
             </select>
           </div>
           <div>
             <label className="label">{t("donors.upazila", lang)}</label>
             <select className="input" value={upazila} onChange={(e) => setUpazila(e.target.value)}>
               <option value="">{t("donors.allUpazilas", lang)}</option>
-              {(district ? upazilasOf(district) : []).map((u) => (<option key={u} value={u}>{u}</option>))}
+              {(district ? upazilasOf(district) : []).map((u) => (<option key={u} value={u}>{tx(u)}</option>))}
             </select>
           </div>
           <div>
@@ -132,7 +135,7 @@ function DonorsContent() {
             </label>
           </div>
           <div className="flex items-center gap-3">
-            <span className="text-sm text-zinc-500">{loading ? (lang === "en" ? "Searching..." : "খুঁছি...") : `${donors.length.toLocaleString("bn-BD")} ${lang === "en" ? "found" : "জন পাওয়া গেছে"}`}</span>
+            <span className="text-sm text-zinc-500">{loading ? (lang === "en" ? "Searching..." : "খুঁছি...") : `${donors.length.toLocaleString(lang === "en" ? "en-US" : "bn-BD")} ${lang === "en" ? "found" : "জন পাওয়া গেছে"}`}</span>
             {hasFilter && (<button onClick={clearFilters} className="text-sm font-medium text-brand-600 hover:underline">{t("donors.clearFilters", lang)}</button>)}
           </div>
         </div>

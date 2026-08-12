@@ -4,6 +4,7 @@ import SectionHeading from "@/components/ui/SectionHeading";
 import Reveal from "@/components/Reveal";
 import { getLang } from "@/lib/i18n-server";
 import BreadcrumbJsonLd from "@/components/seo/BreadcrumbJsonLd";
+import { tr } from "@/lib/i18n";
 
 export const metadata: Metadata = {
   title: "মিডিয়া কভারেজ ও খবর | শান্তিচক্র ব্লাড সোসাইটি",
@@ -29,14 +30,15 @@ const FALLBACK = [
 function fmt(d: string | null, en: boolean) {
   if (!d) return "";
   try {
-    return new Date(d).toLocaleDateString("bn-BD", { day: "numeric", month: "long", year: "numeric" });
+    return new Date(d).toLocaleDateString(en ? "en-GB" : "bn-BD", { day: "numeric", month: "long", year: "numeric" });
   } catch {
-    return en ? d : d;
+    return d;
   }
 }
 
 export default async function MediaPage() {
   const lang = await getLang();
+  const tx = (s: string) => tr(s, lang);
   const en = lang === "en";
   let items: any[] = [];
   try {
@@ -52,8 +54,8 @@ export default async function MediaPage() {
     <div className="container-page py-12">
       <BreadcrumbJsonLd
         items={[
-          { name: "হোম", url: "https://shanticakrabloodsocaiety.rahatahmed.site" },
-          { name: "মিডিয়া কভারেজ", url: "https://shanticakrabloodsocaiety.rahatahmed.site/media" },
+          { name: tx("হোম"), url: "https://shanticakrabloodsocaiety.rahatahmed.site" },
+          { name: tx("মিডিয়া কভারেজ"), url: "https://shanticakrabloodsocaiety.rahatahmed.site/media" },
         ]}
       />
       <SectionHeading eyebrow={en ? "Media" : "মিডিয়া"} title={en ? "Media Coverage" : "মিডিয়া কভারেজ"} subtitle={en ? "Where the press has covered our work." : "বিভিন্ন গণমাধ্যমে আমাদের কার্যক্রমের প্রতিবেদন।"} />
@@ -64,16 +66,16 @@ export default async function MediaPage() {
               <div className="relative h-40 overflow-hidden bg-gradient-to-br from-brand-100 to-brand-50 dark:from-white/5 dark:to-transparent">
                 {m.thumbnail ? (
                   // eslint-disable-next-line @next/next/no-img-element
-                  <img src={m.thumbnail} alt={m.title} className="h-full w-full object-cover" loading="lazy" />
+                  <img src={m.thumbnail} alt={tx(m.title)} className="h-full w-full object-cover" loading="lazy" />
                 ) : (
                   <div className="flex h-full items-center justify-center text-4xl">📰</div>
                 )}
-                <span className="absolute left-3 top-3 rounded-full bg-white/90 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-brand-700">{m.source}</span>
+                <span className="absolute left-3 top-3 rounded-full bg-white/90 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-brand-700">{tx(m.source)}</span>
               </div>
               <div className="flex flex-1 flex-col p-5">
                 <p className="text-xs text-ink/40">{fmt(m.published_date, en)}</p>
-                <h3 className="mt-1 font-display font-bold leading-snug text-ink">{m.title}</h3>
-                {m.summary && <p className="mt-2 line-clamp-2 text-sm text-ink/55">{m.summary}</p>}
+                <h3 className="mt-1 font-display font-bold leading-snug text-ink">{tx(m.title)}</h3>
+                {m.summary && <p className="mt-2 line-clamp-2 text-sm text-ink/55">{tx(m.summary)}</p>}
                 <span className="mt-auto pt-3 text-sm font-bold text-brand-600">{en ? "Read article →" : "পড়ুন →"}</span>
               </div>
             </a>

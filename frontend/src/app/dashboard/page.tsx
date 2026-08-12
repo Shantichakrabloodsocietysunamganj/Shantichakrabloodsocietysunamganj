@@ -8,19 +8,22 @@ import BloodGroupBadge from "@/components/BloodGroupBadge";
 import StatusBadge from "@/components/StatusBadge";
 import { GridSkeleton } from "@/components/ui/Skeleton";
 import { upazilasOf } from "@/data/constants";
-import { bn, bnDate } from "@/lib/format";
+import { bnDate, fmtDate, num } from "@/lib/format";
 import type { Donor, BloodRequest } from "@/lib/types";
+import { useTr } from "@/lib/useLang";
+import type { Lang } from "@/lib/i18n";
 
 // রক্তদানের সংখ্যা অনুযায়ী ব্যাজ
-function badgeOf(count: number): { icon: string; name: string; next: string | null } | null {
+function badgeOf(count: number, lang: Lang = "bn"): { icon: string; name: string; next: string | null } | null {
   if (count >= 10) return { icon: "💎", name: "জীবনরক্ষা যোদ্ধা", next: null };
-  if (count >= 6) return { icon: "🥇", name: "প্রবীণ রক্তযোদ্ধা", next: `💎 পরবর্তী ব্যাজে আর ${bn(10 - count)} বার` };
-  if (count >= 3) return { icon: "🥈", name: "নিয়মিত রক্তযোদ্ধা", next: `🥇 পরবর্তী ব্যাজে আর ${bn(6 - count)} বার` };
-  if (count >= 1) return { icon: "🥉", name: "নব্য রক্তযোদ্ধা", next: `🥈 পরবর্তী ব্যাজে আর ${bn(3 - count)} বার` };
+  if (count >= 6) return { icon: "🥇", name: "প্রবীণ রক্তযোদ্ধা", next: `💎 পরবর্তী ব্যাজে আর ${num(10 - count, lang)} বার` };
+  if (count >= 3) return { icon: "🥈", name: "নিয়মিত রক্তযোদ্ধা", next: `🥇 পরবর্তী ব্যাজে আর ${num(6 - count, lang)} বার` };
+  if (count >= 1) return { icon: "🥉", name: "নব্য রক্তযোদ্ধা", next: `🥈 পরবর্তী ব্যাজে আর ${num(3 - count, lang)} বার` };
   return null;
 }
 
 export default function DashboardPage() {
+  const { t: tx, lang } = useTr();
   const supabase = createClient();
   const router = useRouter();
   const [loading, setLoading] = useState(true);
@@ -62,12 +65,12 @@ export default function DashboardPage() {
     <div className="container-page py-10">
       <header className="mb-8 flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 className="font-display text-2xl font-extrabold tracking-tight text-ink">স্বাগতম, {profile?.full_name ?? "রক্তদাতা"} 👋</h1>
-          <p className="text-sm text-ink/60">আপনার ড্যাশবোর্ড থেকে প্রোফাইল, অনুরোধ ও রক্তদানের ইতিহাস দেখুন।</p>
+          <h1 className="font-display text-2xl font-extrabold tracking-tight text-ink">{tx("স্বাগতম,")} {profile?.full_name ?? tx("রক্তদাতা")} 👋</h1>
+          <p className="text-sm text-ink/60">{tx("আপনার ড্যাশবোর্ড থেকে প্রোফাইল, অনুরোধ ও রক্তদানের ইতিহাস দেখুন।")}</p>
         </div>
         <div className="flex gap-2">
-          {donor && <Link href="/certificate" className="btn-primary !py-2 text-sm">🏅 সার্টিফিকেট</Link>}
-          <Link href="/" className="btn-outline !py-2 text-sm">হোমে যান</Link>
+          {donor && <Link href="/certificate" className="btn-primary !py-2 text-sm">{tx("🏅 সার্টিফিকেট")}</Link>}
+          <Link href="/" className="btn-outline !py-2 text-sm">{tx("হোমে যান")}</Link>
         </div>
       </header>
 
@@ -80,12 +83,12 @@ export default function DashboardPage() {
               </span>
               <div>
                 <p className="font-semibold text-ink">{profile?.full_name}</p>
-                <p className="text-xs text-ink/50">{profile?.role === "admin" ? "🛡️ অ্যাডমিন" : "রক্তদাতা"}</p>
+                <p className="text-xs text-ink/50">{profile?.role === "admin" ? tx("🛡️ অ্যাডমিন") : tx("রক্তদাতা")}</p>
                 {(() => {
-                  const b = badgeOf(donations.length);
+                  const b = badgeOf(donations.length, lang);
                   return b ? (
                     <span className="mt-1.5 inline-flex items-center gap-1 rounded-full bg-amber-50 px-2 py-0.5 text-[11px] font-bold text-amber-700 ring-1 ring-amber-200">
-                      {b.icon} {b.name}
+                      {b.icon} {tx(b.name)}
                     </span>
                   ) : null;
                 })()}
@@ -94,23 +97,23 @@ export default function DashboardPage() {
             {donor && (
               <div className="mt-4 grid grid-cols-2 gap-2">
                 <div className="rounded-xl bg-canvas p-3">
-                  <p className="text-xs text-ink/50">গ্রুপ</p>
+                  <p className="text-xs text-ink/50">{tx("গ্রুপ")}</p>
                   <div className="mt-1 flex items-center justify-between"><p className="font-semibold text-ink">{donor.blood_group}</p><BloodGroupBadge group={donor.blood_group} size="sm" /></div>
                 </div>
                 <div className="rounded-xl bg-canvas p-3">
-                  <p className="text-xs text-ink/50">মোট রক্তদান</p>
-                  <p className="font-semibold text-ink">{totalUnits} ইউনিট</p>
+                  <p className="text-xs text-ink/50">{tx("মোট রক্তদান")}</p>
+                  <p className="font-semibold text-ink">{totalUnits} {tx("ইউনিট")}</p>
                 </div>
               </div>
             )}
           </div>
           <nav className="card overflow-hidden">
-            <TabBtn active={tab === "profile"} onClick={() => setTab("profile")}>👤 আমার প্রোফাইল</TabBtn>
+            <TabBtn active={tab === "profile"} onClick={() => setTab("profile")}>{tx("👤 আমার প্রোফাইল")}</TabBtn>
             <TabBtn active={tab === "donations"} onClick={() => setTab("donations")}>
-              🩸 আমার রক্তদান {donations.length > 0 && <span className="ml-1 rounded-full bg-brand-100 px-1.5 text-xs text-brand-700">{donations.length}</span>}
+              {tx("🩸 আমার রক্তদান")} {donations.length > 0 && <span className="ml-1 rounded-full bg-brand-100 px-1.5 text-xs text-brand-700">{donations.length}</span>}
             </TabBtn>
             <TabBtn active={tab === "requests"} onClick={() => setTab("requests")}>
-              📋 আমার অনুরোধ {requests.length > 0 && <span className="ml-1 rounded-full bg-brand-100 px-1.5 text-xs text-brand-700">{requests.length}</span>}
+              {tx("📋 আমার অনুরোধ")} {requests.length > 0 && <span className="ml-1 rounded-full bg-brand-100 px-1.5 text-xs text-brand-700">{requests.length}</span>}
             </TabBtn>
           </nav>
         </aside>
@@ -134,17 +137,19 @@ function TabBtn({ active, onClick, children }: { active: boolean; onClick: () =>
 }
 
 function NoDonor() {
+  const { t: tx } = useTr();
   return (
     <div className="card p-10 text-center">
       <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-brand-50 text-2xl">🩸</div>
-      <p className="font-medium text-ink">আপনি এখনো রক্তদাতা হিসেবে নিবন্ধন করেননি</p>
-      <p className="mt-1 text-sm text-ink/60">রক্তদাতা হিসেবে নিবন্ধন করে একটি জীবন বাঁচানোর অংশীদার হোন।</p>
-      <Link href="/become-donor" className="btn-primary mt-5">রক্তদাতা হিসেবে নিবন্ধন করুন</Link>
+      <p className="font-medium text-ink">{tx("আপনি এখনো রক্তদাতা হিসেবে নিবন্ধন করেননি")}</p>
+      <p className="mt-1 text-sm text-ink/60">{tx("রক্তদাতা হিসেবে নিবন্ধন করে একটি জীবন বাঁচানোর অংশীদার হোন।")}</p>
+      <Link href="/become-donor" className="btn-primary mt-5">{tx("রক্তদাতা হিসেবে নিবন্ধন করুন")}</Link>
     </div>
   );
 }
 
 function NextDonationCard({ donor, donations }: { donor: Donor; donations: any[] }) {
+  const { t: tx, lang } = useTr();
   // সর্বশেষ রক্তদান: ম্যানুয়াল তারিখ বা রেকর্ডকৃত donation — যেটা নতুন
   const dates: number[] = [];
   if (donor.last_donation_date) {
@@ -162,12 +167,12 @@ function NextDonationCard({ donor, donations }: { donor: Donor; donations: any[]
   if (dates.length === 0) {
     return (
       <div className="card border-l-4 border-l-success-500 p-5">
-        <p className="font-semibold text-ink">✅ আপনি রক্তদানের জন্য প্রস্তুত</p>
+        <p className="font-semibold text-ink">{tx("✅ আপনি রক্তদানের জন্য প্রস্তুত")}</p>
         <p className="mt-1 text-sm leading-relaxed text-ink/60">
-          এখনো কোনো পূর্বের রক্তদানের তারিখ নেই। রক্তদানের পর তারিখটি নিচের ফর্মে যুক্ত করুন — তাহলে এখানে পরবর্তী দিনের কাউন্টডাউন দেখাবে।
+          {tx("এখনো কোনো পূর্বের রক্তদানের তারিখ নেই। রক্তদানের পর তারিখটি নিচের ফর্মে যুক্ত করুন — তাহলে এখানে পরবর্তী দিনের কাউন্টডাউন দেখাবে।")}
         </p>
         <Link href="/eligibility" className="mt-3 inline-block text-sm font-semibold text-brand-600 hover:underline">
-          🩸 যোগ্যতা যাচাই করুন →
+          {tx("🩸 যোগ্যতা যাচাই করুন →")}
         </Link>
       </div>
     );
@@ -183,12 +188,12 @@ function NextDonationCard({ donor, donations }: { donor: Donor; donations: any[]
   if (daysLeft <= 0) {
     return (
       <div className="card border-l-4 border-l-success-500 p-5">
-        <p className="font-semibold text-ink">✅ আপনি আবার রক্ত দিতে প্রস্তুত!</p>
+        <p className="font-semibold text-ink">{tx("✅ আপনি আবার রক্ত দিতে প্রস্তুত!")}</p>
         <p className="mt-1 text-sm leading-relaxed text-ink/60">
-          সর্বশেষ রক্তদান ({bnDate(new Date(last))})-এর নিরাপদ ব্যবধান ({genderName(donor.gender)} {bn(interval)} দিন) পূর্ণ হয়েছে।
+          {tx("সর্বশেষ রক্তদান (")}{bnDate(new Date(last), lang)}{tx(")-এর নিরাপদ ব্যবধান (")}{tx(genderName(donor.gender))} {num(interval, lang)} {tx("দিন) পূর্ণ হয়েছে।")}
         </p>
         <Link href="/requests" className="btn-primary mt-4 !py-2 text-sm">
-          🚨 জরুরি অনুরোধ দেখুন →
+          {tx("🚨 জরুরি অনুরোধ দেখুন →")}
         </Link>
       </div>
     );
@@ -197,9 +202,9 @@ function NextDonationCard({ donor, donations }: { donor: Donor; donations: any[]
   return (
     <div className="card border-l-4 border-l-amber-400 p-5">
       <div className="flex items-center justify-between gap-3">
-        <p className="font-semibold text-ink">⏳ পরবর্তী রক্তদানের কাউন্টডাউন</p>
+        <p className="font-semibold text-ink">{tx("⏳ পরবর্তী রক্তদানের কাউন্টডাউন")}</p>
         <span className="rounded-full bg-amber-50 px-2.5 py-1 text-xs font-bold text-amber-700 ring-1 ring-amber-200">
-          {bn(daysLeft)} দিন বাকি
+          {num(daysLeft, lang)} {tx("দিন বাকি")}
         </span>
       </div>
       <div className="mt-3 h-2.5 w-full overflow-hidden rounded-full bg-zinc-100 dark:bg-white/10">
@@ -209,22 +214,22 @@ function NextDonationCard({ donor, donations }: { donor: Donor; donations: any[]
         />
       </div>
       <p className="mt-2.5 text-sm leading-relaxed text-ink/60">
-        সর্বশেষ রক্তদান: <span className="font-semibold text-ink">{bnDate(new Date(last))}</span>
-        {" "}• আবার দিতে পারবেন: <span className="font-semibold text-brand-700">{bnDate(new Date(next))}</span>
+        {tx("সর্বশেষ রক্তদান:")} <span className="font-semibold text-ink">{bnDate(new Date(last), lang)}</span>
+        {" "}{tx("• আবার দিতে পারবেন:")} <span className="font-semibold text-brand-700">{bnDate(new Date(next), lang)}</span>
       </p>
       <p className="mt-1 text-xs text-ink/50">
-        {genderName(donor.gender)}দের জন্য নিরাপদ ব্যবধান {bn(interval)} দিন ({donor.gender === "নারী" ? "৪" : "৩"} মাস) ধরা হয়েছে।
+        {tx(genderName(donor.gender))}{tx("দের জন্য নিরাপদ ব্যবধান")} {num(interval, lang)} {tx("দিন (")}{donor.gender === "নারী" ? tx("৪") : tx("৩")} {tx("মাস) ধরা হয়েছে।")}
       </p>
     </div>
   );
 }
 
 function genderName(g: string | null): string {
-  if (g === "নারী") return "নারী";
-  return "পুরুষ";
+  return g === "নারী" ? "নারী" : "পুরুষ";
 }
 
 function DonorProfile({ donor, donations, onChanged }: { donor: Donor; donations: any[]; onChanged: () => void }) {
+  const { t: tx } = useTr();
   const supabase = createClient();
   const [saving, setSaving] = useState(false);
   const [available, setAvailable] = useState(donor.is_available);
@@ -255,67 +260,68 @@ function DonorProfile({ donor, donations, onChanged }: { donor: Donor; donations
       <NextDonationCard donor={donor} donations={donations} />
       <div className="card p-6">
         <div className="flex items-center justify-between">
-          <h2 className="font-semibold text-ink">রক্তদানের প্রস্তুততা</h2>
+          <h2 className="font-semibold text-ink">{tx("রক্তদানের প্রস্তুততা")}</h2>
           <button onClick={toggleAvailable} className={`relative h-7 w-12 rounded-full transition ${available ? "bg-success-500" : "bg-zinc-300"}`}>
             <span className={`absolute top-1 h-5 w-5 rounded-full bg-white transition-all ${available ? "left-6" : "left-1"}`} />
           </button>
         </div>
         <p className="mt-2 text-sm text-ink/60">
-          {available ? "🟢 আপনি বর্তমানে রক্তদানে প্রস্তুত। দাতা তালিকায় প্রাধান্য পাবেন।" : "⚪ আপনি এই মুহূর্তে অনুপস্থিত।"}
+          {available ? tx("🟢 আপনি বর্তমানে রক্তদানে প্রস্তুত। দাতা তালিকায় প্রাধান্য পাবেন।") : tx("⚪ আপনি এই মুহূর্তে অনুপস্থিত।")}
         </p>
       </div>
 
       <form onSubmit={save} className="card p-6">
-        <h2 className="mb-4 font-semibold text-ink">প্রোফাইল সম্পাদনা</h2>
+        <h2 className="mb-4 font-semibold text-ink">{tx("প্রোফাইল সম্পাদনা")}</h2>
         <div className="grid gap-4 sm:grid-cols-2">
           <div>
-            <label className="label">ফোন</label>
+            <label className="label">{tx("ফোন")}</label>
             <input className="input" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} />
           </div>
           <div>
-            <label className="label">উপজেলা ({donor.district})</label>
+            <label className="label">{tx("উপজেলা (")}{donor.district})</label>
             <select className="input" value={form.upazila} onChange={(e) => setForm({ ...form, upazila: e.target.value })}>
-              {upazilasOf(donor.district).map((u) => <option key={u} value={u}>{u}</option>)}
+              {upazilasOf(donor.district).map((u) => <option key={u} value={u}>{tx(u)}</option>)}
             </select>
           </div>
           <div>
-            <label className="label">এলাকা</label>
+            <label className="label">{tx("এলাকা")}</label>
             <input className="input" value={form.area} onChange={(e) => setForm({ ...form, area: e.target.value })} />
           </div>
           <div>
-            <label className="label">সর্বশেষ রক্তদান</label>
+            <label className="label">{tx("সর্বশেষ রক্তদান")}</label>
             <input type="date" className="input" value={form.last_donation_date} onChange={(e) => setForm({ ...form, last_donation_date: e.target.value })} />
           </div>
         </div>
-        <button disabled={saving} className="btn-primary mt-5">{saving ? "সংরক্ষণ হচ্ছে…" : "সংরক্ষণ করুন"}</button>
+        <button disabled={saving} className="btn-primary mt-5">{saving ? tx("সংরক্ষণ হচ্ছে…") : tx("সংরক্ষণ করুন")}</button>
       </form>
     </div>
   );
 }
 
 function MyDonations({ donations, hasDonor }: { donations: any[]; hasDonor: boolean }) {
+  const { t: tx, lang } = useTr();
   if (!hasDonor) return <NoDonor />;
   if (donations.length === 0)
     return (
       <div className="card p-10 text-center text-ink/60">
         <p className="text-3xl">🩸</p>
-        <p className="mt-2 font-medium text-ink">এখনো আপনার কোনো রক্তদানের রেকর্ড নেই</p>
-        <p className="mt-1 text-sm">রক্তদানের পর অ্যাডমিন এটি রেকর্ড করলে এখানে দেখা যাবে।</p>
+        <p className="mt-2 font-medium text-ink">{tx("এখনো আপনার কোনো রক্তদানের রেকর্ড নেই")}</p>
+        <p className="mt-1 text-sm">{tx("রক্তদানের পর অ্যাডমিন এটি রেকর্ড করলে এখানে দেখা যাবে।")}</p>
       </div>
     );
   const total = donations.reduce((s, x) => s + (x.units ?? 0), 0);
   return (
     <div>
       <div className="mb-4 card flex items-center justify-between p-5">
-        <div><p className="text-xs text-ink/50">মোট রক্তদান</p><p className="text-2xl font-extrabold text-brand-600">{total} ইউনিট</p></div>
-        <div className="text-right"><p className="text-xs text-ink/50">মোট বার</p><p className="text-2xl font-extrabold text-ink">{donations.length}</p></div>
+        <div><p className="text-xs text-ink/50">{tx("মোট রক্তদান")}</p><p className="text-2xl font-extrabold text-brand-600">{total} {tx("ইউনিট")}</p></div>
+        <div className="text-right"><p className="text-xs text-ink/50">{tx("মোট বার")}</p><p className="text-2xl font-extrabold text-ink">{donations.length}</p></div>
       </div>
       <div className="space-y-3">
         {donations.map((d) => (
           <div key={d.id} className="card flex items-center justify-between p-4">
             <div>
-              <p className="font-medium text-ink">{d.units} ইউনিট রক্তদান</p>
-              <p className="text-xs text-ink/50">{new Date(d.donated_at).toLocaleDateString("bn-BD", { day: "numeric", month: "long", year: "numeric" })}{d.note && ` • ${d.note}`}</p>
+              <p className="font-medium text-ink">{d.units} {tx("ইউনিট রক্তদান")}</p>
+              <p className="text-xs text-ink/50">{fmtDate(d.donated_at, lang)}{d.note && ` • ${d.note}`}</p>
             </div>
             <span className="text-2xl">❤️</span>
           </div>
@@ -326,13 +332,14 @@ function MyDonations({ donations, hasDonor }: { donations: any[]; hasDonor: bool
 }
 
 function MyRequests({ requests, onChanged }: { requests: BloodRequest[]; onChanged: () => void }) {
+  const { t: tx } = useTr();
   const supabase = createClient();
   const cancel = async (id: string) => {
     await supabase.from("blood_requests").update({ status: "cancelled" }).eq("id", id);
     onChanged();
   };
   if (requests.length === 0)
-    return <div className="card p-10 text-center text-ink/60">আপনার কোনো রক্তের অনুরোধ নেই। <Link href="/request-blood" className="font-semibold text-brand-600">অনুরোধ করুন →</Link></div>;
+    return <div className="card p-10 text-center text-ink/60">{tx("আপনার কোনো রক্তের অনুরোধ নেই।")} <Link href="/request-blood" className="font-semibold text-brand-600">{tx("অনুরোধ করুন →")}</Link></div>;
   return (
     <div className="space-y-3">
       {requests.map((r) => (
@@ -340,12 +347,12 @@ function MyRequests({ requests, onChanged }: { requests: BloodRequest[]; onChang
           <div className="flex items-start justify-between gap-3">
             <div>
               <p className="font-semibold text-ink">{r.patient_name} • {r.blood_group}</p>
-              <p className="text-sm text-ink/60">{r.hospital}, {r.upazila} • {r.units_needed} ইউনিট</p>
+              <p className="text-sm text-ink/60">{r.hospital}, {r.upazila} • {r.units_needed} {tx("ইউনিট")}</p>
             </div>
             <StatusBadge status={(r as any).status ?? "pending"} />
           </div>
           {["pending", "approved"].includes((r as any).status ?? "pending") && (
-            <button onClick={() => cancel(r.id)} className="btn-ghost mt-3 !px-3 !py-1.5 text-xs text-blood-600">✕ বাতিল করুন</button>
+            <button onClick={() => cancel(r.id)} className="btn-ghost mt-3 !px-3 !py-1.5 text-xs text-blood-600">{tx("✕ বাতিল করুন")}</button>
           )}
         </div>
       ))}

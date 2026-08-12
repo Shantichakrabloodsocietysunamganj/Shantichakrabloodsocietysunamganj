@@ -4,6 +4,8 @@ import { createClient } from "@/lib/supabase/server";
 import SectionHeading from "@/components/ui/SectionHeading";
 import { STATIC_BLOG_ARTICLES } from "@/data/blog-articles";
 import BreadcrumbJsonLd from "@/components/seo/BreadcrumbJsonLd";
+import { tr } from "@/lib/i18n";
+import { getLang } from "@/lib/i18n-server";
 
 export const metadata: Metadata = {
   title: "রক্তদান ও স্বাস্থ্য সচেতনতা ব্লগ | শান্তিচক্র ব্লাড সোসাইটি",
@@ -20,6 +22,8 @@ export const metadata: Metadata = {
 };
 
 export default async function BlogPage() {
+  const lang = await getLang();
+  const tx = (s: string) => tr(s, lang);
   const supabase = createClient();
   let dbPosts: any[] = [];
   try {
@@ -41,14 +45,14 @@ export default async function BlogPage() {
     <div className="container-page py-12">
       <BreadcrumbJsonLd
         items={[
-          { name: "হোম", url: "https://shanticakrabloodsocaiety.rahatahmed.site" },
-          { name: "ব্লগ ও খবর", url: "https://shanticakrabloodsocaiety.rahatahmed.site/blog" },
+          { name: tx("হোম"), url: "https://shanticakrabloodsocaiety.rahatahmed.site" },
+          { name: tx("ব্লগ ও খবর"), url: "https://shanticakrabloodsocaiety.rahatahmed.site/blog" },
         ]}
       />
       <SectionHeading
-        eyebrow="ব্লগ ও খবর"
-        title="রক্তদান ও স্বাস্থ্য সচেতনতা ব্লগ"
-        subtitle="রক্তদান, স্বাস্থ্য ও সমিতির কার্যক্রম সম্পর্কে প্রয়োজনীয় নিবন্ধ ও খবর।"
+        eyebrow={tx("ব্লগ ও খবর")}
+        title={tx("রক্তদান ও স্বাস্থ্য সচেতনতা ব্লগ")}
+        subtitle={tx("রক্তদান, স্বাস্থ্য ও সমিতির কার্যক্রম সম্পর্কে প্রয়োজনীয় নিবন্ধ ও খবর।")}
       />
 
       <div className="mt-10">
@@ -63,22 +67,22 @@ export default async function BlogPage() {
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
                   src={p.cover_url}
-                  alt={p.title}
+                  alt={tx(p.title)}
                   className="h-44 w-full object-cover"
                   loading="lazy"
                 />
               )}
               <div className="p-5">
                 <p className="text-xs text-ink/40">
-                  {new Date(p.created_at).toLocaleDateString("bn-BD", {
+                  {new Date(p.created_at).toLocaleDateString(lang === "en" ? "en-GB" : "bn-BD", {
                     day: "numeric",
                     month: "long",
                     year: "numeric",
                   })}
                 </p>
-                <h3 className="mt-1 font-bold text-ink">{p.title}</h3>
+                <h3 className="mt-1 font-bold text-ink">{tx(p.title)}</h3>
                 {p.excerpt && (
-                  <p className="mt-2 text-sm text-ink/60">{p.excerpt}</p>
+                  <p className="mt-2 text-sm text-ink/60">{tx(p.excerpt)}</p>
                 )}
               </div>
             </Link>

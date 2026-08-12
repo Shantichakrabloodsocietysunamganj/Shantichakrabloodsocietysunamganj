@@ -5,6 +5,7 @@ import type { Lang } from "@/lib/i18n";
 import { getDonorStatus } from "@/lib/donation";
 import BloodGroupBadge from "./BloodGroupBadge";
 import Link from "next/link";
+import { shortDate } from "@/lib/format";
 
 export default function DonorCard({ donor, lang = "bn" }: { donor: Donor; lang?: Lang }) {
   const en = lang === "en";
@@ -44,7 +45,7 @@ export default function DonorCard({ donor, lang = "bn" }: { donor: Donor; lang?:
         </div>
         <div className="col-span-2">
           <span className="block text-[11px] uppercase tracking-wide text-ink/35">{en ? "Last donation" : "সর্বশেষ রক্তদান"}</span>
-          <span className="font-medium text-ink/80">{donor.last_donation_date ? formatDate(donor.last_donation_date) : en ? "Never" : "এখনো নেই"}</span>
+          <span className="font-medium text-ink/80">{donor.last_donation_date ? formatDate(donor.last_donation_date, lang) : en ? "Never" : "এখনো নেই"}</span>
         </div>
       </div>
 
@@ -65,9 +66,9 @@ export default function DonorCard({ donor, lang = "bn" }: { donor: Donor; lang?:
   );
 }
 
-function formatDate(d: string) {
+function formatDate(d: string, lang: Lang) {
   try {
-    return new Date(d).toLocaleDateString("bn-BD", { year: "numeric", month: "short", day: "numeric" });
+    return shortDate(d, lang);
   } catch {
     return d;
   }

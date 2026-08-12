@@ -8,6 +8,7 @@ import DonutChart from "@/components/DonutChart";
 import { site } from "@/data/site";
 import { getLang } from "@/lib/i18n-server";
 import BreadcrumbJsonLd from "@/components/seo/BreadcrumbJsonLd";
+import { tr } from "@/lib/i18n";
 
 export const metadata: Metadata = {
   title: "আমাদের প্রভাব ও অর্জন | শান্তিচক্র ব্লাড সোসাইটি",
@@ -25,6 +26,7 @@ export const metadata: Metadata = {
 
 export default async function ImpactPage() {
   const lang = await getLang();
+  const tx = (s: string) => tr(s, lang);
   const en = lang === "en";
   const supabase = createClient();
 
@@ -58,8 +60,8 @@ export default async function ImpactPage() {
     <div className="container-page py-12">
       <BreadcrumbJsonLd
         items={[
-          { name: "হোম", url: "https://shanticakrabloodsocaiety.rahatahmed.site" },
-          { name: "আমাদের অর্জন", url: "https://shanticakrabloodsocaiety.rahatahmed.site/impact" },
+          { name: tx("হোম"), url: "https://shanticakrabloodsocaiety.rahatahmed.site" },
+          { name: tx("আমাদের অর্জন"), url: "https://shanticakrabloodsocaiety.rahatahmed.site/impact" },
         ]}
       />
       <SectionHeading eyebrow={en ? "Transparency" : "স্বচ্ছতা"} title={en ? "Our Impact" : "আমাদের অর্জন"} subtitle={en ? "Real numbers, real lives saved — fully transparent." : "প্রকৃত সংখ্যা, বাঁচানো জীবন — সম্পূর্ণ স্বচ্ছতায়।"} />
@@ -88,8 +90,8 @@ export default async function ImpactPage() {
         <Reveal delay={120}>
           <div className="card h-full p-6">
             <h3 className="font-display text-lg font-bold text-ink">{en ? "Our Mission & Vision" : "আমাদের লক্ষ্য ও স্বপ্ন"}</h3>
-            <p className="mt-3 text-sm leading-relaxed text-ink/60">{site.mission}</p>
-            <p className="mt-3 rounded-xl bg-brand-50 p-3 text-sm font-medium text-brand-700 dark:bg-white/5">{site.vision}</p>
+            <p className="mt-3 text-sm leading-relaxed text-ink/60">{tx(site.mission)}</p>
+            <p className="mt-3 rounded-xl bg-brand-50 p-3 text-sm font-medium text-brand-700 dark:bg-white/5">{tx(site.vision)}</p>
           </div>
         </Reveal>
       </div>

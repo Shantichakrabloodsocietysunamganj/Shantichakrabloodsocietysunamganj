@@ -11,13 +11,13 @@ import Link from "next/link";
 import { Droplets, X } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import type { BloodRequest } from "@/lib/types";
-import { useLangClient } from "@/lib/i18n";
+import { useLang } from "@/lib/useLang";
 
 const DISMISS_MS = 14000;
 
 export default function LiveRequestAlert() {
   const supabase = useMemo(() => createClient(), []);
-  const lang = useLangClient();
+  const lang = useLang();
   const en = lang === "en";
   const [item, setItem] = useState<BloodRequest | null>(null);
 

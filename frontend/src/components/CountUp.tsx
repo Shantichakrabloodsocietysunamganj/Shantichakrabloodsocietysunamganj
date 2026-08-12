@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { localeOf } from "@/lib/format";
+import { useLang } from "@/lib/useLang";
 
 // স্ক্রল হলে সংখ্যা ০ থেকে গণনা করে বাড়ে (count-up animation)
 export default function CountUp({
@@ -15,6 +17,8 @@ export default function CountUp({
   className?: string;
 }) {
   const ref = useRef<HTMLSpanElement>(null);
+  const lang = useLang();
+  const locale = localeOf(lang);
 
   useEffect(() => {
     const el = ref.current;
@@ -22,7 +26,7 @@ export default function CountUp({
 
     let frame = 0;
     let started = false;
-    const format = (value: number) => `${value.toLocaleString("bn-BD")}${suffix}`;
+    const format = (value: number) => `${value.toLocaleString(locale)}${suffix}`;
     const finish = () => { el.textContent = format(end); };
 
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
@@ -65,11 +69,11 @@ export default function CountUp({
       observer.disconnect();
       cancelAnimationFrame(frame);
     };
-  }, [end, duration, suffix]);
+  }, [end, duration, suffix, locale]);
 
   return (
     <span ref={ref} className={className}>
-      {Number(0).toLocaleString("bn-BD")}{suffix}
+      {Number(0).toLocaleString(locale)}{suffix}
     </span>
   );
 }

@@ -4,8 +4,10 @@ import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { useTr } from "@/lib/useLang";
 
 export default function AdminCommitteePage() {
+  const { t: tx } = useTr();
   const supabase = createClient();
   const router = useRouter();
   const [ready, setReady] = useState(false);
@@ -47,28 +49,28 @@ export default function AdminCommitteePage() {
   }
   async function remove(id: string) { await supabase.from("committee_members").delete().eq("id", id); load(); }
 
-  if (!ready) return <div className="container-page py-20 text-center text-ink/50">লোড হচ্ছে…</div>;
-  if (!authed) return <div className="container-page py-20 text-center"><p className="text-3xl">🛡️</p><p className="mt-2 font-medium text-ink">শুধু অ্যাডমিনদের জন্য।</p><Link href="/" className="btn-outline mt-4">হোমে ফিরুন</Link></div>;
+  if (!ready) return <div className="container-page py-20 text-center text-ink/50">{tx("লোড হচ্ছে…")}</div>;
+  if (!authed) return <div className="container-page py-20 text-center"><p className="text-3xl">🛡️</p><p className="mt-2 font-medium text-ink">{tx("শুধু অ্যাডমিনদের জন্য।")}</p><Link href="/" className="btn-outline mt-4">{tx("হোমে ফিরুন")}</Link></div>;
 
   const categories = ["founder", "advisor", "member"];
-  const labels: Record<string, string> = { founder: "প্রতিষ্ঠাতা", advisor: "উপদেষ্টা", member: "কার্যনির্বাহী সদস্য" };
+  const labels: Record<string, string> = { founder: tx("প্রতিষ্ঠাতা"), advisor: tx("উপদেষ্টা"), member: tx("কার্যনির্বাহী সদস্য") };
 
   return (
     <div className="container-page py-10">
       <header className="mb-8 flex items-center justify-between">
-        <h1 className="font-display text-2xl font-extrabold tracking-tight text-ink">👥 কমিটি ব্যবস্থাপনা</h1>
-        <Link href="/admin" className="btn-outline">← ড্যাশবোর্ড</Link>
+        <h1 className="font-display text-2xl font-extrabold tracking-tight text-ink">{tx("👥 কমিটি ব্যবস্থাপনা")}</h1>
+        <Link href="/admin" className="btn-outline">{tx("← ড্যাশবোর্ড")}</Link>
       </header>
 
       <form onSubmit={add} className="card mb-6 p-5">
-        <h2 className="mb-3 font-semibold text-ink">নতুন সদস্য যোগ করুন</h2>
+        <h2 className="mb-3 font-semibold text-ink">{tx("নতুন সদস্য যোগ করুন")}</h2>
         <div className="grid gap-3 sm:grid-cols-2">
-          <input className="input" placeholder="নাম *" required value={form.name} onChange={(e) => set("name", e.target.value)} />
-          <input className="input" placeholder="পদবি (যেমন: সভাপতি)" required value={form.role} onChange={(e) => set("role", e.target.value)} />
+          <input className="input" placeholder={tx("নাম *")} required value={form.name} onChange={(e) => set("name", e.target.value)} />
+          <input className="input" placeholder={tx("পদবি (যেমন: সভাপতি)")} required value={form.role} onChange={(e) => set("role", e.target.value)} />
           <select className="input" value={form.category} onChange={(e) => set("category", e.target.value)}>
             {categories.map((c) => <option key={c} value={c}>{labels[c]}</option>)}
           </select>
-          <input type="number" className="input" placeholder="ক্রম (কম = আগে)" value={form.order} onChange={(e) => set("order", Number(e.target.value))} />
+          <input type="number" className="input" placeholder={tx("ক্রম (কম = আগে)")} value={form.order} onChange={(e) => set("order", Number(e.target.value))} />
         </div>
         <div className="mt-3 flex flex-wrap items-center gap-3">
           {photoUrl && (
@@ -76,10 +78,10 @@ export default function AdminCommitteePage() {
             <img src={photoUrl} alt="preview" className="h-12 w-12 rounded-full object-cover" />
           )}
           <label className="btn-outline cursor-pointer">
-            {uploading ? "আপলোড…" : (photoUrl ? "✓ ছবি সেট" : "+ ছবি")}
+            {uploading ? tx("আপলোড…") : (photoUrl ? tx("✓ ছবি সেট") : tx("+ ছবি"))}
             <input type="file" accept="image/*" className="hidden" onChange={(e) => e.target.files?.[0] && uploadPhoto(e.target.files[0])} />
           </label>
-          <button className="btn-primary">যোগ করুন</button>
+          <button className="btn-primary">{tx("যোগ করুন")}</button>
         </div>
       </form>
 
@@ -109,7 +111,7 @@ export default function AdminCommitteePage() {
           </div>
         );
       })}
-      {items.length === 0 && <p className="text-center text-sm text-ink/50">কোনো সদস্য যোগ করা হয়নি।</p>}
+      {items.length === 0 && <p className="text-center text-sm text-ink/50">{tx("কোনো সদস্য যোগ করা হয়নি।")}</p>}
     </div>
   );
 }

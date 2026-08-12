@@ -1,10 +1,12 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { useTr } from "@/lib/useLang";
 
 type Img = { id: string; image_url: string; title?: string | null };
 
 export default function GalleryGrid({ images }: { images: Img[] }) {
+  const { t: tx } = useTr();
   const [open, setOpen] = useState<number | null>(null);
 
   const close = useCallback(() => setOpen(null), []);
@@ -42,7 +44,7 @@ export default function GalleryGrid({ images }: { images: Img[] }) {
             />
             {img.title && <figcaption className="p-3 text-sm font-medium text-ink">{img.title}</figcaption>}
             <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-black/0 opacity-0 transition-all duration-300 group-hover:bg-black/20 group-hover:opacity-100">
-              <span className="rounded-full bg-white/90 px-3 py-1.5 text-xs font-bold text-ink">🔍 দেখুন</span>
+              <span className="rounded-full bg-white/90 px-3 py-1.5 text-xs font-bold text-ink">{tx("🔍 দেখুন")}</span>
             </div>
           </figure>
         ))}
@@ -57,7 +59,7 @@ export default function GalleryGrid({ images }: { images: Img[] }) {
           {/* Close */}
           <button
             onClick={close}
-            aria-label="বন্ধ করুন"
+            aria-label={tx("বন্ধ করুন")}
             className="absolute right-5 top-5 z-10 flex h-11 w-11 items-center justify-center rounded-full bg-white/10 text-white backdrop-blur-md transition hover:bg-white/20"
           >
             <svg className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" d="M6 6l12 12M18 6L6 18" /></svg>
@@ -66,7 +68,7 @@ export default function GalleryGrid({ images }: { images: Img[] }) {
           {images.length > 1 && (
             <button
               onClick={(e) => { e.stopPropagation(); prev(); }}
-              aria-label="আগের"
+              aria-label={tx("আগের")}
               className="absolute left-3 top-1/2 z-10 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-white/10 text-white backdrop-blur-md transition hover:bg-white/20 sm:left-6"
             >
               <svg className="h-7 w-7" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" d="M15 19l-7-7 7-7" /></svg>
@@ -89,7 +91,7 @@ export default function GalleryGrid({ images }: { images: Img[] }) {
           {images.length > 1 && (
             <button
               onClick={(e) => { e.stopPropagation(); next(); }}
-              aria-label="পরের"
+              aria-label={tx("পরের")}
               className="absolute right-3 top-1/2 z-10 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-white/10 text-white backdrop-blur-md transition hover:bg-white/20 sm:right-6"
             >
               <svg className="h-7 w-7" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" d="M9 5l7 7-7 7" /></svg>

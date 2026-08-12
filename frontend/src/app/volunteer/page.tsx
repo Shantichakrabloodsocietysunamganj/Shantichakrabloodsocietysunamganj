@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import VolunteerClient from "./VolunteerClient";
 import BreadcrumbJsonLd from "@/components/seo/BreadcrumbJsonLd";
+import { tr } from "@/lib/i18n";
+import { getLang } from "@/lib/i18n-server";
 
 export const metadata: Metadata = {
   title: "স্বেচ্ছাসেবী হিসেবে যুক্ত হন | শান্তিচক্র ব্লাড সোসাইটি",
@@ -16,13 +18,15 @@ export const metadata: Metadata = {
   },
 };
 
-export default function VolunteerPage() {
+export default async function VolunteerPage() {
+  const lang = await getLang();
+  const tx = (s: string) => tr(s, lang);
   return (
     <>
       <BreadcrumbJsonLd
         items={[
-          { name: "হোম", url: "https://shanticakrabloodsocaiety.rahatahmed.site" },
-          { name: "স্বেচ্ছাসেবী নিবন্ধন", url: "https://shanticakrabloodsocaiety.rahatahmed.site/volunteer" },
+          { name: tx("হোম"), url: "https://shanticakrabloodsocaiety.rahatahmed.site" },
+          { name: tx("স্বেচ্ছাসেবী নিবন্ধন"), url: "https://shanticakrabloodsocaiety.rahatahmed.site/volunteer" },
         ]}
       />
       <VolunteerClient />

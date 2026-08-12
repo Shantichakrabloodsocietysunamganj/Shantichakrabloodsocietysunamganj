@@ -3,6 +3,8 @@
 //  Client-safe (no next/headers). Server-only getLang lives in i18n-server.ts
 // =============================================================
 
+import { toEnglish } from "./i18n-dict";
+
 export type Lang = "bn" | "en";
 
 export const DICT: Record<string, { bn: string; en: string }> = {
@@ -145,4 +147,27 @@ export function useLangClient(): Lang {
     return m && m[1] === "en" ? "en" : "bn";
   }
   return "bn";
+}
+
+// -------------------------------------------------------------
+//  tr() — translate hard-coded Bangla copy by value
+//  -----------------------------------------------------------
+//  Most of the site was written with Bangla strings inline in the
+//  components, so the language toggle left them untranslated. The
+//  BN_EN registry maps those exact Bangla strings to English, and
+//  tr() swaps them when the visitor picks English.
+//
+//    tr("কোনো পোস্ট নেই।", lang)   // → "No posts yet." when en
+//
+//  Unknown strings fall back to the original text, so the UI never
+//  breaks if a phrase is missing from the dictionary.
+// -------------------------------------------------------------
+export function tr(text: string, lang: Lang): string {
+  if (lang !== "en") return text;
+  return toEnglish(text) ?? text;
+}
+
+/** Pick between a Bangla and an English value. */
+export function pick<T>(lang: Lang, bnValue: T, enValue: T): T {
+  return lang === "en" ? enValue : bnValue;
 }

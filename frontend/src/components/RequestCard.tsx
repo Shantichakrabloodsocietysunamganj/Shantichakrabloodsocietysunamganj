@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { BloodRequest } from "@/lib/types";
 import type { Lang } from "@/lib/i18n";
+import { shortDate } from "@/lib/format";
 import BloodGroupBadge from "./BloodGroupBadge";
 import WhatsAppShare from "./WhatsAppShare";
 
@@ -53,7 +54,7 @@ export default function RequestCard({ req, lang = "bn" }: { req: BloodRequest; l
           <div>
             <span className="block text-[11px] uppercase tracking-wide text-ink/35">{en ? "Needed" : "লাগবে তারিখ"}</span>
             <span className="font-medium text-ink/80">
-              {new Date(req.needed_date).toLocaleDateString("bn-BD", { day: "numeric", month: "short", year: "numeric" })}
+              {shortDate(req.needed_date, lang)}
             </span>
           </div>
           {req.hemoglobin && (

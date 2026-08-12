@@ -2,9 +2,12 @@
 
 import { useState } from "react";
 import { Check, Copy } from "lucide-react";
+import { useTr } from "@/lib/useLang";
 
-export default function CopyButton({ text, label = "কপি করুন" }: { text: string; label?: string }) {
+export default function CopyButton({ text, label }: { text: string; label?: string }) {
+  const { t: tx } = useTr();
   const [copied, setCopied] = useState(false);
+  const buttonLabel = label ?? tx("কপি করুন");
 
   const copy = async () => {
     try {
@@ -32,7 +35,7 @@ export default function CopyButton({ text, label = "কপি করুন" }: {
           : "bg-brand-600 text-white hover:bg-brand-700"
       }`}
     >
-      {copied ? <><Check className="h-3.5 w-3.5" /> কপি হয়েছে</> : <><Copy className="h-3.5 w-3.5" /> {label}</>}
+      {copied ? <><Check className="h-3.5 w-3.5" /> {tx("কপি হয়েছে")}</> : <><Copy className="h-3.5 w-3.5" /> {buttonLabel}</>}
     </button>
   );
 }

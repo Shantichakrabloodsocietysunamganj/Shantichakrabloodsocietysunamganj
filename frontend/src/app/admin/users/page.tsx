@@ -4,8 +4,11 @@ import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { useTr } from "@/lib/useLang";
+import { fmtDate } from "@/lib/format";
 
 export default function AdminUsersPage() {
+  const { t: tx, lang } = useTr();
   const supabase = createClient();
   const router = useRouter();
   const [ready, setReady] = useState(false);
@@ -47,17 +50,17 @@ export default function AdminUsersPage() {
     { value: "admin", label: "Admin", icon: "🛡️" },
   ];
 
-  if (!ready) return <div className="container-page py-20 text-center text-ink/50">লোড হচ্ছে…</div>;
-  if (!authed) return <div className="container-page py-20 text-center"><p className="text-3xl">🛡️</p><p className="mt-2 font-medium text-ink">শুধু অ্যাডমিনদের জন্য।</p><Link href="/" className="btn-outline mt-4">হোমে ফিরুন</Link></div>;
+  if (!ready) return <div className="container-page py-20 text-center text-ink/50">{tx("লোড হচ্ছে…")}</div>;
+  if (!authed) return <div className="container-page py-20 text-center"><p className="text-3xl">🛡️</p><p className="mt-2 font-medium text-ink">{tx("শুধু অ্যাডমিনদের জন্য।")}</p><Link href="/" className="btn-outline mt-4">{tx("হোমে ফিরুন")}</Link></div>;
 
   return (
     <div className="container-page py-10">
       <header className="mb-8 flex items-center justify-between">
         <div>
           <h1 className="font-display text-2xl font-extrabold tracking-tight text-ink">👥 User & Role Management</h1>
-          <p className="text-sm text-ink/60">সব নিবন্ধিত ইউজার ও তাদের role পরিচালনা করুন।</p>
+          <p className="text-sm text-ink/60">{tx("সব নিবন্ধিত ইউজার ও তাদের role পরিচালনা করুন।")}</p>
         </div>
-        <Link href="/admin" className="btn-outline">← ড্যাশবোর্ড</Link>
+        <Link href="/admin" className="btn-outline">{tx("← ড্যাশবোর্ড")}</Link>
       </header>
 
       <div className="grid gap-3 sm:grid-cols-3 mb-6">
@@ -75,7 +78,7 @@ export default function AdminUsersPage() {
               </span>
               <div>
                 <p className="font-medium text-ink">{u.full_name ?? "Unknown"} {u.is_verified && <span className="text-success-600">✓</span>}</p>
-                <p className="text-xs text-ink/40">{u.phone ?? "no phone"} • joined {new Date(u.created_at).toLocaleDateString("bn-BD")}</p>
+                <p className="text-xs text-ink/40">{u.phone ?? "no phone"} • joined {fmtDate(u.created_at, lang)}</p>
               </div>
             </div>
             <div className="flex items-center gap-2">
@@ -99,7 +102,7 @@ export default function AdminUsersPage() {
             </div>
           </div>
         ))}
-        {users.length === 0 && <p className="py-10 text-center text-sm text-ink/50">কোনো নিবন্ধিত ইউজার নেই।</p>}
+        {users.length === 0 && <p className="py-10 text-center text-sm text-ink/50">{tx("কোনো নিবন্ধিত ইউজার নেই।")}</p>}
       </div>
     </div>
   );

@@ -4,8 +4,10 @@ import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { useTr } from "@/lib/useLang";
 
 export default function AdminTestimonialsPage() {
+  const { t: tx } = useTr();
   const supabase = createClient();
   const router = useRouter();
   const [ready, setReady] = useState(false);
@@ -41,29 +43,29 @@ export default function AdminTestimonialsPage() {
     load();
   }
 
-  if (!ready) return <div className="container-page py-20 text-center text-ink/50">লোড হচ্ছে…</div>;
-  if (!authed) return <div className="container-page py-20 text-center"><p className="text-3xl">🛡️</p><p className="mt-2 font-medium text-ink">শুধু অ্যাডমিনদের জন্য।</p><Link href="/" className="btn-outline mt-4">হোমে ফিরুন</Link></div>;
+  if (!ready) return <div className="container-page py-20 text-center text-ink/50">{tx("লোড হচ্ছে…")}</div>;
+  if (!authed) return <div className="container-page py-20 text-center"><p className="text-3xl">🛡️</p><p className="mt-2 font-medium text-ink">{tx("শুধু অ্যাডমিনদের জন্য।")}</p><Link href="/" className="btn-outline mt-4">{tx("হোমে ফিরুন")}</Link></div>;
 
   return (
     <div className="container-page py-10">
       <header className="mb-8 flex items-center justify-between">
         <h1 className="font-display text-2xl font-extrabold tracking-tight text-ink">💬 Testimonials</h1>
-        <Link href="/admin" className="btn-outline">← ড্যাশবোর্ড</Link>
+        <Link href="/admin" className="btn-outline">{tx("← ড্যাশবোর্ড")}</Link>
       </header>
 
       <form onSubmit={add} className="card mb-6 p-5">
-        <h2 className="mb-3 font-semibold text-ink">নতুন testimonial যোগ করুন</h2>
+        <h2 className="mb-3 font-semibold text-ink">{tx("নতুন testimonial যোগ করুন")}</h2>
         <div className="grid gap-3 sm:grid-cols-2">
-          <input className="input" placeholder="নাম" required value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
-          <input className="input" placeholder="ভূমিকা (যেমন: রোগীর স্বজন)" value={form.role} onChange={(e) => setForm({ ...form, role: e.target.value })} />
+          <input className="input" placeholder={tx("নাম")} required value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
+          <input className="input" placeholder={tx("ভূমিকা (যেমন: রোগীর স্বজন)")} value={form.role} onChange={(e) => setForm({ ...form, role: e.target.value })} />
         </div>
-        <textarea className="input mt-3" placeholder="মন্তব্য" required value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })} />
+        <textarea className="input mt-3" placeholder={tx("মন্তব্য")} required value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })} />
         <div className="mt-3 flex items-center gap-3">
-          <label className="text-sm text-ink/60">রেটিং:</label>
+          <label className="text-sm text-ink/60">{tx("রেটিং:")}</label>
           <select className="input !w-auto" value={form.rating} onChange={(e) => setForm({ ...form, rating: Number(e.target.value) })}>
             {[5, 4, 3, 2, 1].map((n) => <option key={n} value={n}>{n} ★</option>)}
           </select>
-          <button className="btn-primary">যোগ করুন</button>
+          <button className="btn-primary">{tx("যোগ করুন")}</button>
         </div>
       </form>
 
@@ -77,14 +79,14 @@ export default function AdminTestimonialsPage() {
               </div>
               <div className="flex shrink-0 gap-2">
                 <button onClick={() => toggle(t.id, !t.approved)} className={`btn-ghost !px-2 !py-1 text-xs ${t.approved ? "text-success-700" : "text-ink/40"}`}>
-                  {t.approved ? "✓ প্রকাশিত" : "অপ্রকাশিত"}
+                  {t.approved ? tx("✓ প্রকাশিত") : tx("অপ্রকাশিত")}
                 </button>
                 <button onClick={() => remove(t.id)} className="btn-ghost !px-2 !py-1 text-xs text-blood-600">✕</button>
               </div>
             </div>
           </div>
         ))}
-        {items.length === 0 && <p className="text-center text-sm text-ink/50">কোনো testimonial নেই।</p>}
+        {items.length === 0 && <p className="text-center text-sm text-ink/50">{tx("কোনো testimonial নেই।")}</p>}
       </div>
     </div>
   );
