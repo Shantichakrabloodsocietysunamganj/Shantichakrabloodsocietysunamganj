@@ -20,7 +20,7 @@ export const metadata: Metadata = {
     title: "আমাদের সম্পর্কে | শান্তিচক্র ব্লাড সোসাইটি, সুনামগঞ্জ",
     description:
       "শান্তিচক্র ব্লাড সোসাইটির প্রতিষ্ঠা, উদ্দেশ্য, স্বেচ্ছাসেবী কার্যক্রম ও সিলেট বিভাগে রক্তসেবা নেটওয়ার্ক সম্পর্কে জানুন।",
-    url: "https://shanticakrabloodsocaiety.rahatahmed.site/about",
+    url: "https://shantichakrabloodsociety.rahatahmed.site/about",
     type: "website",
   },
 };
@@ -53,8 +53,8 @@ export default async function AboutPage() {
     <div>
       <BreadcrumbJsonLd
         items={[
-          { name: tx("হোম"), url: "https://shanticakrabloodsocaiety.rahatahmed.site" },
-          { name: tx("আমাদের সম্পর্কে"), url: "https://shanticakrabloodsocaiety.rahatahmed.site/about" },
+          { name: tx("হোম"), url: "https://shantichakrabloodsociety.rahatahmed.site" },
+          { name: tx("আমাদের সম্পর্কে"), url: "https://shantichakrabloodsociety.rahatahmed.site/about" },
         ]}
       />
       <LocalBusinessJsonLd />

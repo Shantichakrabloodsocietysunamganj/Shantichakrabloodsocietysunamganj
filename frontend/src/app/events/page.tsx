@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     title: "রক্তদান কর্মসূচি ও ক্যাম্প | শান্তিচক্র ব্লাড সোসাইটি",
     description:
       "শান্তিচক্র ব্লাডসম্পৃক্ত শিবির, বিনামূল্যে রক্তের গ্রুপ নির্ধারণ ও স্বাস্থ্য সচেতনতামূলক বিভিন্ন কর্মসূচির বিবরণ।",
-    url: "https://shanticakrabloodsocaiety.rahatahmed.site/events",
+    url: "https://shantichakrabloodsociety.rahatahmed.site/events",
     type: "website",
   },
 };
@@ -44,8 +44,8 @@ export default async function EventsPage() {
     <div className="container-page py-12">
       <BreadcrumbJsonLd
         items={[
-          { name: tx("হোম"), url: "https://shanticakrabloodsocaiety.rahatahmed.site" },
-          { name: tx("রক্তদান কর্মসূচি ও ক্যাম্প"), url: "https://shanticakrabloodsocaiety.rahatahmed.site/events" },
+          { name: tx("হোম"), url: "https://shantichakrabloodsociety.rahatahmed.site" },
+          { name: tx("রক্তদান কর্মসূচি ও ক্যাম্প"), url: "https://shantichakrabloodsociety.rahatahmed.site/events" },
         ]}
       />
       <SectionHeading eyebrow={en ? "Events" : "কর্মসূচি"} title={en ? "Events & Programs" : "ইভেন্ট ও কর্মসূচি"} subtitle={en ? "Blood donation camps, awareness programs and community events." : "রক্তদান শিবির, সচেতনতামূলক ও সামাজিক কর্মসূচি।"} />

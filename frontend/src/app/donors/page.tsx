@@ -13,7 +13,7 @@ export const metadata: Metadata = {
     title: "রক্তদাতা খুঁজুন | শান্তিচক্র ব্লাড সোসাইটি",
     description:
       "রক্তের গ্রুপ ও এলাকা অনুযায়ী নিবন্ধিত রক্তদাতাদের খুঁজুন এবং জরুরি রক্তের প্রয়োজনে যোগাযোগ করুন।",
-    url: "https://shanticakrabloodsocaiety.rahatahmed.site/donors",
+    url: "https://shantichakrabloodsociety.rahatahmed.site/donors",
     type: "website",
   },
 };
@@ -25,8 +25,8 @@ export default async function DonorsPage() {
     <>
       <BreadcrumbJsonLd
         items={[
-          { name: tx("হোম"), url: "https://shanticakrabloodsocaiety.rahatahmed.site" },
-          { name: tx("রক্তদাতা খুঁজুন"), url: "https://shanticakrabloodsocaiety.rahatahmed.site/donors" },
+          { name: tx("হোম"), url: "https://shantichakrabloodsociety.rahatahmed.site" },
+          { name: tx("রক্তদাতা খুঁজুন"), url: "https://shantichakrabloodsociety.rahatahmed.site/donors" },
         ]}
       />
       <DonorsClient />

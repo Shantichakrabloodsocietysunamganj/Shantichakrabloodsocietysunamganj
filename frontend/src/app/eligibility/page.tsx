@@ -14,7 +14,7 @@ export const metadata: Metadata = {
     title: "রক্তদানের যোগ্যতা যাচাই | শান্তিচক্র ব্লাড সোসাইটি",
     description:
       "আপনি কি রক্তদানের যোগ্য? বয়স, ওজন, শেষ রক্তদান ও স্বাস্থ্য সংক্রান্ত প্রশ্নের মাধ্যমে তাৎক্ষণিকভাবে রক্তদানের যোগ্যতা যাচাই করুন।",
-    url: "https://shanticakrabloodsocaiety.rahatahmed.site/eligibility",
+    url: "https://shantichakrabloodsociety.rahatahmed.site/eligibility",
     type: "website",
   },
 };
@@ -26,8 +26,8 @@ export default async function EligibilityPage() {
     <div className="container-page py-12">
       <BreadcrumbJsonLd
         items={[
-          { name: tx("হোম"), url: "https://shanticakrabloodsocaiety.rahatahmed.site" },
-          { name: tx("যোগ্যতা যাচাই"), url: "https://shanticakrabloodsocaiety.rahatahmed.site/eligibility" },
+          { name: tx("হোম"), url: "https://shantichakrabloodsociety.rahatahmed.site" },
+          { name: tx("যোগ্যতা যাচাই"), url: "https://shantichakrabloodsociety.rahatahmed.site/eligibility" },
         ]}
       />
       <SectionHeading

@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next";
 import { STATIC_BLOG_ARTICLES } from "@/data/blog-articles";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const base = "https://shanticakrabloodsocaiety.rahatahmed.site";
+  const base = "https://shantichakrabloodsociety.rahatahmed.site";
   const routes = [
     "",
     "/donors",

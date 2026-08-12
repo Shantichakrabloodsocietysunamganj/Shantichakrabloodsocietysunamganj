@@ -14,7 +14,7 @@ export const metadata: Metadata = {
     title: "যোগাযোগ | শান্তিচক্র ব্লাড সোসাইটি, সুনামগঞ্জ",
     description:
       "শান্তিচক্র ব্লাড সোসাইটির সঙ্গে যোগাযোগ করুন। রক্তদান সংক্রান্ত যেকোনো জিজ্ঞাসা বা সহযোগিতার জন্য আমাদের সাথে যুক্ত হন।",
-    url: "https://shanticakrabloodsocaiety.rahatahmed.site/contact",
+    url: "https://shantichakrabloodsociety.rahatahmed.site/contact",
     type: "website",
   },
 };
@@ -26,8 +26,8 @@ export default async function ContactPage() {
     <>
       <BreadcrumbJsonLd
         items={[
-          { name: tx("হোম"), url: "https://shanticakrabloodsocaiety.rahatahmed.site" },
-          { name: tx("যোগাযোগ"), url: "https://shanticakrabloodsocaiety.rahatahmed.site/contact" },
+          { name: tx("হোম"), url: "https://shantichakrabloodsociety.rahatahmed.site" },
+          { name: tx("যোগাযোগ"), url: "https://shantichakrabloodsociety.rahatahmed.site/contact" },
         ]}
       />
       <LocalBusinessJsonLd />

@@ -23,7 +23,7 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
     openGraph: {
       title,
       description,
-      url: `https://shanticakrabloodsocaiety.rahatahmed.site/requests/${params.id}`,
+      url: `https://shantichakrabloodsociety.rahatahmed.site/requests/${params.id}`,
       type: "article",
     },
   };

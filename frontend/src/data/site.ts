@@ -9,7 +9,7 @@ export const site = {
   district: "সিলেট বিভাগ",
   tagline: "রক্ত দিন, জীবন বাঁচান",
   taglineEn: "Donate Blood, Save Lives",
-  url: "https://shanticakrabloodsocaiety.rahatahmed.site",
+  url: "https://shantichakrabloodsociety.rahatahmed.site",
   foundingYear: "2024",
 
   // 🔴 আসল তথ্য

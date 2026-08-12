@@ -7,12 +7,10 @@ import BackToTop from "@/components/BackToTop";
 import ScrollProgress from "@/components/ScrollProgress";
 import FloatingActions from "@/components/FloatingActions";
 import CookieBanner from "@/components/CookieBanner";
-import AIAssistant from "@/components/AIAssistant";
 import EmergencyBanner from "@/components/EmergencyBanner";
-import LiveRequestAlert from "@/components/LiveRequestAlert";
-import RequesterFollowUp from "@/components/RequesterFollowUp";
 import { ToastProvider } from "@/components/Toast";
 import LanguageProvider from "@/components/LanguageProvider";
+import DeferredGlobalTools from "@/components/DeferredGlobalTools";
 import { getSession } from "@/lib/auth";
 import { getSettings } from "@/lib/settings";
 import { getLang } from "@/lib/i18n-server";
@@ -49,14 +47,14 @@ export async function generateMetadata(): Promise<Metadata> {
     title: { default: title, template: `%s | ${site.name}` },
     description: desc,
     keywords,
-    metadataBase: new URL("https://shanticakrabloodsocaiety.rahatahmed.site"),
+    metadataBase: new URL("https://shantichakrabloodsociety.rahatahmed.site"),
     openGraph: {
       title,
       description: desc,
       type: "website",
       locale: "bn_BD",
       siteName: site.name,
-      url: "https://shanticakrabloodsocaiety.rahatahmed.site",
+      url: "https://shantichakrabloodsociety.rahatahmed.site",
       ...(settings.og_image ? { images: [{ url: settings.og_image }] } : {}),
     },
     twitter: { card: "summary_large_image", title, description: desc, ...(settings.og_image ? { images: [settings.og_image] } : {}) },
@@ -73,7 +71,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
   const settings = await getSettings();
   const lang = await getLang();
 
-  const SITE_URL = "https://shanticakrabloodsocaiety.rahatahmed.site";
+  const SITE_URL = "https://shantichakrabloodsociety.rahatahmed.site";
   const orgJsonLd = {
     "@context": "https://schema.org",
     "@type": "Organization",
@@ -116,9 +114,6 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
   return (
     <html lang={lang} data-scroll-behavior="smooth">
       <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
         <script dangerouslySetInnerHTML={{ __html: `try{var t=localStorage.getItem('theme');if(t==='dark'||(!t&&matchMedia('(prefers-color-scheme: dark)').matches)){document.documentElement.classList.add('dark');}}catch(e){}` }} />
         {settings.ga_id && (
           <>
@@ -142,9 +137,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
           <Footer settings={settings} lang={lang} />
           <BackToTop />
           <FloatingActions />
-          <LiveRequestAlert />
-          <RequesterFollowUp />
-          <AIAssistant />
+          <DeferredGlobalTools />
           <CookieBanner />
         </ToastProvider>
         </LanguageProvider>
