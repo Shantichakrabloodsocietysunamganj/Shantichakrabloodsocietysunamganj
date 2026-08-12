@@ -45,6 +45,7 @@ export default function Footer({ settings, lang }: { settings: SiteSettings; lan
           <ul className="mt-4 space-y-2.5 text-sm text-slate-400">
             <li><Link className="transition hover:text-white" href="/donors">{t("nav.donors", lang)}</Link></li>
             <li><Link className="transition hover:text-white" href="/request-blood">{t("nav.needBlood", lang)}</Link></li>
+            <li><Link className="transition hover:text-white" href="/blood-seekers">{t("nav.seekers", lang)}</Link></li>
             <li><Link className="transition hover:text-white" href="/become-donor">{t("nav.becomeDonor", lang)}</Link></li>
             <li><Link className="transition hover:text-white" href="/eligibility">{t("nav.eligibility", lang)}</Link></li>
             <li><Link className="inline-flex items-center gap-2 transition hover:text-white" href="/emergency"><Ambulance className="h-4 w-4" /> {t("nav.emergency", lang)}</Link></li>

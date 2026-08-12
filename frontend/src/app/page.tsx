@@ -16,6 +16,7 @@ import Newsletter from "@/components/Newsletter";
 import DonorCard from "@/components/DonorCard";
 import TrustBand from "@/components/home/TrustBand";
 import ActivityFeed from "@/components/home/ActivityFeed";
+import LiveSeekers from "@/components/home/LiveSeekers";
 import DonationSection from "@/components/home/DonationSection";
 import { createClient } from "@/lib/supabase/server";
 import { site } from "@/data/site";
@@ -184,6 +185,9 @@ export default async function Home() {
           )}
         </div>
       </section>
+
+      {/* এই মুহূর্তে যাঁরা রক্ত খুঁজছেন — লাইভ রক্তপ্রার্থী */}
+      <LiveSeekers lang={lang} />
 
       {/* Real-time Activity Feed */}
       <ActivityFeed lang={lang} />

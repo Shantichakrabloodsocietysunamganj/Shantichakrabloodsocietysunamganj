@@ -110,6 +110,25 @@ export const DICT: Record<string, { bn: string; en: string }> = {
   "requests.title": { bn: "জরুরি রক্তের অনুরোধ", en: "Emergency Blood Requests" },
   "requests.desc": { bn: "সিলেট বিভাগ জুড়ে সাহায্যের অপেক্ষায় থাকা রোগীদের তালিকা।", en: "Patients waiting for help across Sylhet." },
   "requests.new": { bn: "+ নতুন অনুরোধ", en: "+ New Request" },
+
+  // Blood seekers (রক্তপ্রার্থী) — live directory
+  "nav.seekers": { bn: "রক্তপ্রার্থী", en: "Blood Seekers" },
+  "seekers.title": { bn: "রক্তপ্রার্থী তালিকা", en: "Blood Seekers" },
+  "seekers.desc": {
+    bn: "যাঁরা এই মুহূর্তে রক্ত খুঁজছেন — তাঁদের লাইভ তালিকা। নতুন অনুরোধ এলে সাথে সাথেই এখানে যুক্ত হয়।",
+    en: "People searching for blood right now — the list updates live as new requests arrive.",
+  },
+  "seekers.new": { bn: "+ রক্তের অনুরোধ দিন", en: "+ Post a Request" },
+  "seekers.search": { bn: "রোগী / হাসপাতাল / ফোন", en: "Patient / Hospital / Phone" },
+  "seekers.onlyUrgent": { bn: "শুধু জরুরি অনুরোধ", en: "Urgent only" },
+  "seekers.includeClosed": { bn: "সম্পন্ন/বাতিলসহ দেখুন", en: "Include fulfilled/cancelled" },
+  "seekers.eyebrow": { bn: "লাইভ রক্তপ্রার্থী", en: "Live Blood Seekers" },
+  "seekers.homeTitle": { bn: "এই মুহূর্তে যাঁরা রক্ত খুঁজছেন", en: "Who needs blood right now" },
+  "seekers.homeSub": {
+    bn: "রক্তদাতাদের মতোই — অনুরোধকারীরাও এখানে লাইভ। নতুন অনুরোধ এলে সাথে সাথে দেখতে পাবেন।",
+    en: "Just like donors — requesters appear live here the moment they post.",
+  },
+  "seekers.viewAll": { bn: "সব রক্তপ্রার্থী দেখুন →", en: "View all seekers →" },
 };
 
 export function t(key: string, lang: Lang): string {
