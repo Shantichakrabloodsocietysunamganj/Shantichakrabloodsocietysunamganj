@@ -74,7 +74,8 @@ export default function RequestBloodPage() {
         disease: parsed.data.disease || null,
         blood_component: parsed.data.blood_component || "whole_blood",
         request_type: "normal",
-        status: "pending",
+        // Requests are public immediately; no admin approval step is required.
+        status: "approved",
         requested_by: userId,
         created_at: new Date().toISOString(),
       };

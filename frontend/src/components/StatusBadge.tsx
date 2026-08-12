@@ -1,6 +1,7 @@
 const MAP: Record<string, { label: string; cls: string }> = {
-  pending: { label: "অপেক্ষমাণ", cls: "bg-amber-100 text-amber-700" },
-  approved: { label: "অনুমোদিত", cls: "bg-brand-100 text-brand-700" },
+  // `pending` is kept only for older rows; requests no longer wait for approval.
+  pending: { label: "লাইভ", cls: "bg-brand-100 text-brand-700" },
+  approved: { label: "লাইভ", cls: "bg-brand-100 text-brand-700" },
   completed: { label: "সম্পন্ন", cls: "bg-success-100 text-success-700" },
   cancelled: { label: "বাতিল", cls: "bg-zinc-200 text-zinc-600" },
   open: { label: "চলমান", cls: "bg-brand-100 text-brand-700" },

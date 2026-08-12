@@ -88,10 +88,15 @@ create table if not exists public.blood_requests (
   contact_phone text not null,
   message text,
   request_type text not null default 'normal' check (request_type in ('emergency','normal')),
-  status text not null default 'pending' check (status in ('pending','approved','completed','cancelled')),
+  status text not null default 'approved' check (status in ('pending','approved','completed','cancelled')),
   requested_by uuid references public.profiles(id) on delete set null,
   created_at timestamptz not null default now()
 );
+
+-- Approval gate removed: every new blood request goes live immediately.
+-- These statements also update an existing deployment safely.
+alter table public.blood_requests alter column status set default 'approved';
+update public.blood_requests set status = 'approved' where status = 'pending';
 
 -- 4) donations
 create table if not exists public.donations (
