@@ -42,7 +42,7 @@ export default function Footer({ settings, lang }: { settings: SiteSettings; lan
         </div>
 
         <div>
-          <h4 className="text-sm font-semibold text-white">{t("footer.quickLinks", lang)}</h4>
+          <h2 className="text-sm font-semibold text-white">{t("footer.quickLinks", lang)}</h2>
           <ul className="mt-4 space-y-2.5 text-sm text-slate-400">
             <li><Link className="transition hover:text-white" href="/donors">{t("nav.donors", lang)}</Link></li>
             <li><Link className="transition hover:text-white" href="/request-blood">{t("nav.needBlood", lang)}</Link></li>
@@ -55,7 +55,7 @@ export default function Footer({ settings, lang }: { settings: SiteSettings; lan
         </div>
 
         <div>
-          <h4 className="text-sm font-semibold text-white">{t("footer.more", lang)}</h4>
+          <h2 className="text-sm font-semibold text-white">{t("footer.more", lang)}</h2>
           <ul className="mt-4 space-y-2.5 text-sm text-slate-400">
             <li><Link className="transition hover:text-white" href="/about">{t("nav.about", lang)}</Link></li>
             <li><Link className="transition hover:text-white" href="/impact">{t("nav.impact", lang)}</Link></li>
@@ -68,7 +68,7 @@ export default function Footer({ settings, lang }: { settings: SiteSettings; lan
         </div>
 
         <div>
-          <h4 className="text-sm font-semibold text-white">{t("footer.contact", lang)}</h4>
+          <h2 className="text-sm font-semibold text-white">{t("footer.contact", lang)}</h2>
           <ul className="mt-4 space-y-2.5 text-sm text-slate-400">
             <li className="flex items-start gap-2"><MapPin className="mt-0.5 h-4 w-4 shrink-0" /> <span>{tx(address)}</span></li>
             <li className="flex items-center gap-2"><Phone className="h-4 w-4 shrink-0" /> <span>{phone}</span></li>

@@ -1,7 +1,4 @@
-"use client";
-
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { Droplet, Search, UserPlus } from "lucide-react";
 import { BLOOD_GROUPS } from "@/data/constants";
 import { t, type Lang } from "@/lib/i18n";
@@ -23,7 +20,6 @@ export default function Hero({
   heroBadge?: string;
   heroDesc?: string;
 }) {
-  const router = useRouter();
   const en = lang === "en";
   const num = (n: number) => n.toLocaleString(en ? "en-US" : "bn-BD");
 
@@ -83,13 +79,14 @@ export default function Hero({
             </p>
             <div className="grid grid-cols-8 gap-1.5">
               {BLOOD_GROUPS.map((g) => (
-                <button
+                <Link
                   key={g}
-                  onClick={() => router.push(`/donors?group=${g}`)}
+                  href={`/donors?group=${encodeURIComponent(g)}`}
                   className="flex h-9 items-center justify-center rounded-lg bg-white/10 text-xs font-bold text-white transition-all hover:scale-105 hover:bg-blood-500"
                 >
                   {g}
-                </button>
+                  <span className="sr-only">{en ? ` Find ${g} blood donors in Sunamganj` : ` সুনামগঞ্জে ${g} রক্তদাতা খুঁজুন`}</span>
+                </Link>
               ))}
             </div>
           </div>
@@ -115,7 +112,7 @@ export default function Hero({
       </div>
 
       {/* Wave divider */}
-      <svg className="block w-full text-canvas" viewBox="0 0 1440 60" preserveAspectRatio="none" fill="currentColor">
+      <svg className="block w-full text-canvas" viewBox="0 0 1440 60" preserveAspectRatio="none" fill="currentColor" aria-hidden="true">
         <path d="M0,32 C240,60 480,60 720,40 C960,20 1200,20 1440,40 L1440,60 L0,60 Z" />
       </svg>
     </section>

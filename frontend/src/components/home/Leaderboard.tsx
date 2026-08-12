@@ -98,7 +98,7 @@ export default function Leaderboard({ lang }: { lang: Lang }) {
           </span>
           {d.photo_url ? (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={d.photo_url} alt={d.full_name} className="h-10 w-10 rounded-full object-cover ring-2 ring-white" />
+            <img src={d.photo_url} alt={`${d.full_name} — ${d.blood_group} রক্তদাতা`} className="h-10 w-10 rounded-full object-cover ring-2 ring-white" />
           ) : (
             <span className={`flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br ${gradientFor(d.full_name)} text-[11px] font-bold tracking-wide text-white ring-2 ring-white`}>{initials(d.full_name)}</span>
           )}

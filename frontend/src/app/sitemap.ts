@@ -27,7 +27,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   ];
 
   const pageEntries = routes.map((r) => ({
-    url: `${base}${r}`,
+    url: r === "" ? `${base}/` : `${base}${r}`,
     lastModified: new Date(),
     changeFrequency: (r === "" ? "daily" : "weekly") as "daily" | "weekly",
     priority: r === "" ? 1 : 0.8,

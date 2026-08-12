@@ -120,21 +120,21 @@ export default function RequesterCard({
 
         <div className="flex items-center gap-1.5">
           <Link href={`/requests/${req.id}`} className="btn-ghost !px-2 !py-2 text-xs" title={en ? "Details" : "বিস্তারিত"}>
-            {en ? "Info" : "বিস্তারিত"}
+            {en ? "Request details" : "অনুরোধের বিস্তারিত"}
           </Link>
           <a
             href={`https://wa.me/88${(req.contact_phone ?? "").replace(/[^0-9]/g, "").replace(/^0/, "")}`}
             target="_blank"
             rel="noreferrer"
             className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-[#25D366] text-white transition hover:scale-105"
-            title="WhatsApp"
+            aria-label={en ? `WhatsApp about ${req.patient_name}` : `${req.patient_name}-এর জন্য WhatsApp`}
           >
-            <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
+            <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
               <path d="M.057 24l1.687-6.163a11.867 11.867 0 0 1-1.587-5.945C.16 5.335 5.495 0 12.05 0a11.82 11.82 0 0 1 8.413 3.488 11.82 11.82 0 0 1 3.48 8.414c-.003 6.557-5.338 11.892-11.893 11.892a11.9 11.9 0 0 1-5.688-1.448L.057 24z" />
             </svg>
           </a>
-          <a href={`tel:${req.contact_phone}`} className="btn-blood !px-3 !py-2 text-xs">
-            <Phone className="h-4 w-4" strokeWidth={2} /> {en ? "Call" : "কল"}
+          <a href={`tel:${req.contact_phone}`} className="btn-blood !px-3 !py-2 text-xs" aria-label={en ? `Call about ${req.patient_name}` : `${req.patient_name}-এর জন্য কল`}>
+            <Phone className="h-4 w-4" strokeWidth={2} aria-hidden="true" /> {en ? "Call" : "কল"}
           </a>
         </div>
       </div>

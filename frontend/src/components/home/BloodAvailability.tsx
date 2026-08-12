@@ -1,14 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { BLOOD_GROUPS, BLOOD_GROUP_COLORS } from "@/data/constants";
 import type { Lang } from "@/lib/i18n";
 
 export default function BloodAvailability({ lang }: { lang: Lang }) {
   const supabase = createClient();
-  const router = useRouter();
   const [data, setData] = useState<Record<string, number>>({});
   const [loading, setLoading] = useState(true);
   const en = lang === "en";
@@ -45,14 +44,13 @@ export default function BloodAvailability({ lang }: { lang: Lang }) {
         const c = getColor(count);
         const pct = loading ? 0 : (count / max) * 100;
         return (
-          <button
+          <Link
             key={g}
-            onClick={() => router.push(`/donors?group=${encodeURIComponent(g)}`)}
-            className="group card relative p-4 text-left transition-all duration-300 hover:-translate-y-1 hover:shadow-glow"
+            href={`/donors?group=${encodeURIComponent(g)}`}
+            className="group card relative block p-4 text-left transition-all duration-300 hover:-translate-y-1 hover:shadow-glow"
           >
-            {/* Click hint */}
-            <span className="absolute right-2 top-2 text-[10px] font-medium text-brand-400 opacity-0 transition-opacity group-hover:opacity-100">
-              {en ? "View →" : "দেখুন →"}
+            <span className="absolute right-2 top-2 text-xs font-medium text-brand-400 opacity-0 transition-opacity group-hover:opacity-100">
+              {en ? `View ${g} donors` : `${g} দাতা দেখুন`}
             </span>
 
             <div className="flex items-center justify-between">
@@ -65,11 +63,10 @@ export default function BloodAvailability({ lang }: { lang: Lang }) {
               <span className="mb-0.5 text-xs text-ink/40">{en ? "donors" : "জন"}</span>
             </div>
 
-            {/* Availability bar */}
             <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-zinc-100 dark:bg-white/10">
               <div className={`h-full rounded-full transition-all duration-700 ${c.bg}`} style={{ width: `${loading ? 0 : Math.max(pct, count > 0 ? 8 : 0)}%` }} />
             </div>
-          </button>
+          </Link>
         );
       })}
     </div>

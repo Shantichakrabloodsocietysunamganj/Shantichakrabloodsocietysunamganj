@@ -62,7 +62,7 @@ export default async function MediaPage() {
       <div className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {items.map((m: any, i: number) => (
           <Reveal key={m.id ?? i} delay={i * 80}>
-            <a href={m.url ?? "#"} target="_blank" rel="noreferrer" className="card-hover flex h-full flex-col overflow-hidden">
+            <a href={m.url || "https://shantichakrabloodsociety.rahatahmed.site/media"} target="_blank" rel="noreferrer" className="card-hover flex h-full flex-col overflow-hidden">
               <div className="relative h-40 overflow-hidden bg-gradient-to-br from-brand-100 to-brand-50 dark:from-white/5 dark:to-transparent">
                 {m.thumbnail ? (
                   // eslint-disable-next-line @next/next/no-img-element
