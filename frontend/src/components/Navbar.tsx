@@ -80,7 +80,7 @@ export default function Navbar({
           <Logo logoUrl={logoUrl} />
           <div className="leading-tight">
             <div className="font-display text-[15px] font-extrabold tracking-tight text-ink">{tx(site.shortName)}</div>
-            <div className="text-[10px] font-semibold uppercase tracking-[0.12em] text-brand-600">
+            <div className="text-xs font-semibold uppercase tracking-[0.12em] text-brand-600">
               {t("nav.subtype", lang)}
             </div>
           </div>
@@ -128,7 +128,7 @@ export default function Navbar({
 
         <button
           aria-label={tx("মেনু")}
-          className="inline-flex h-10 w-10 items-center justify-center rounded-lg text-ink hover:bg-zinc-100 xl:hidden"
+          className="inline-flex h-12 w-12 items-center justify-center rounded-lg text-ink hover:bg-zinc-100 xl:hidden"
           onClick={() => setOpen((v) => !v)}
         >
           {open ? <CloseIcon /> : <MenuIcon />}

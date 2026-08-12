@@ -77,12 +77,12 @@ export default function Hero({
             <p className="mb-2.5 text-xs font-medium text-brand-200">
               {en ? "Quick search by blood group:" : "গ্রুপ অনুযায়ী দ্রুত খুঁজুন:"}
             </p>
-            <div className="grid grid-cols-8 gap-1.5">
+            <div className="grid grid-cols-4 gap-2 sm:grid-cols-8">
               {BLOOD_GROUPS.map((g) => (
                 <Link
                   key={g}
                   href={`/donors?group=${encodeURIComponent(g)}`}
-                  className="flex h-9 items-center justify-center rounded-lg bg-white/10 text-xs font-bold text-white transition-all hover:scale-105 hover:bg-blood-500"
+                  className="flex min-h-12 items-center justify-center rounded-lg bg-white/10 text-sm font-bold text-white transition-all hover:scale-105 hover:bg-blood-500"
                 >
                   {g}
                   <span className="sr-only">{en ? ` Find ${g} blood donors in Sunamganj` : ` সুনামগঞ্জে ${g} রক্তদাতা খুঁজুন`}</span>
@@ -123,7 +123,7 @@ function Stat({ value, label, accent = "text-white" }: { value: string; label: s
   return (
     <div className="rounded-xl border border-white/10 bg-white/5 p-3 backdrop-blur-sm">
       <p className={`font-display text-2xl font-extrabold ${accent}`}>{value}</p>
-      <p className="mt-0.5 text-[11px] font-medium text-brand-200/70">{label}</p>
+      <p className="mt-0.5 text-xs font-medium text-brand-200/70">{label}</p>
     </div>
   );
 }

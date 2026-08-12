@@ -49,7 +49,7 @@ export default function EmergencyBanner() {
   return (
     <a
       href="/blood-seekers"
-      className={`fixed inset-x-0 top-16 z-[50] flex items-center justify-center gap-2 px-4 py-1.5 text-center text-xs font-bold text-white shadow-md transition-all lg:top-16 ${
+      className={`fixed inset-x-0 top-16 z-[50] flex min-h-12 items-center justify-center gap-2 px-4 py-2 text-center text-sm font-bold text-white shadow-md transition-all lg:top-16 ${
         flash ? "bg-blood-700 animate-pulse" : "bg-blood-600 hover:bg-blood-700"
       }`}
     >

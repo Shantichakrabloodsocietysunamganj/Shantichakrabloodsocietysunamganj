@@ -20,13 +20,14 @@ export default function ThemeToggle() {
     try { localStorage.setItem("theme", next ? "dark" : "light"); } catch {}
   };
 
-  if (!mounted) return <span className="h-9 w-9" />;
+  if (!mounted) return <span className="h-12 w-12" />;
 
   return (
     <button
+      type="button"
       onClick={toggle}
       aria-label={dark ? "Light mode" : "Dark mode"}
-      className="inline-flex h-9 w-9 items-center justify-center rounded-lg text-ink/70 transition hover:bg-brand-50 hover:text-brand-700 dark:text-cbd dark:hover:bg-white/10"
+      className="inline-flex h-12 w-12 items-center justify-center rounded-lg text-ink/70 transition hover:bg-brand-50 hover:text-brand-700 dark:text-cbd dark:hover:bg-white/10"
     >
       {dark ? (
         <svg className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4" /><path strokeLinecap="round" d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M19.1 4.9l-1.4 1.4M6.3 17.7l-1.4 1.4" /></svg>
