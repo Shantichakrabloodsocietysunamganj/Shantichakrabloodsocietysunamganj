@@ -18,6 +18,7 @@ import TrustBand from "@/components/home/TrustBand";
 import ActivityFeed from "@/components/home/ActivityFeed";
 import LiveSeekers from "@/components/home/LiveSeekers";
 import DonationSection from "@/components/home/DonationSection";
+import ServicesPreview from "@/components/home/ServicesPreview";
 import { createClient } from "@/lib/supabase/server";
 import { site } from "@/data/site";
 import { t, tr, type Lang } from "@/lib/i18n";
@@ -136,6 +137,8 @@ export default async function Home() {
           <Reveal delay={240}><Step n="3" title={t("home.step3", lang)} desc={t("home.step3d", lang)} href="/donors" cta={t("home.find", lang)} /></Reveal>
         </div>
       </section>
+
+      <ServicesPreview lang={lang} />
 
       {/* আসন্ন কর্মসূচি / Events */}
       {events.length > 0 && (

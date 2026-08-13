@@ -126,6 +126,8 @@ export const UI: Record<string, string> = {
   "রক্তপ্রার্থী তালিকা": "Blood seekers",
   "যোগ্যতা যাচাই": "Eligibility check",
   "যোগ্যতা যাচাই করুন": "Check your eligibility",
+  "সেবা": "Services",
+  "সব সেবা": "All services",
   "মোট রক্তদাতা": "Total donors",
   "মোট দাতা": "Total donors",
   "মোট অনুরোধ": "Total requests",

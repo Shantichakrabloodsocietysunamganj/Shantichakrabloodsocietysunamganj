@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 const AIAssistant = dynamic(() => import("@/components/AIAssistant"), { ssr: false });
 const LiveRequestAlert = dynamic(() => import("@/components/LiveRequestAlert"), { ssr: false });
 const RequesterFollowUp = dynamic(() => import("@/components/RequesterFollowUp"), { ssr: false });
+const CommandPalette = dynamic(() => import("@/components/CommandPalette"), { ssr: false });
 
 export default function DeferredGlobalTools() {
   const [ready, setReady] = useState(false);
@@ -24,6 +25,10 @@ export default function DeferredGlobalTools() {
     };
   }, []);
 
-  if (!ready) return null;
-  return <><LiveRequestAlert /><RequesterFollowUp /><AIAssistant /></>;
+  return (
+    <>
+      <CommandPalette />
+      {ready ? <><LiveRequestAlert /><RequesterFollowUp /><AIAssistant /></> : null}
+    </>
+  );
 }

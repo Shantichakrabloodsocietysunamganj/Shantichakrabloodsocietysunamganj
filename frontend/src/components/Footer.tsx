@@ -48,7 +48,13 @@ export default function Footer({ settings, lang }: { settings: SiteSettings; lan
             <li><Link className="inline-flex min-h-11 items-center transition hover:text-white" href="/request-blood">{lang === "en" ? "Emergency Blood Request" : "জরুরি রক্তের অনুরোধ (Emergency Request)"}</Link></li>
             <li><Link className="inline-flex min-h-11 items-center transition hover:text-white" href="/blood-seekers">{t("nav.seekers", lang)}</Link></li>
             <li><Link className="inline-flex min-h-11 items-center transition hover:text-white" href="/become-donor">{lang === "en" ? "Become a Blood Donor" : "রক্তদাতা হিসেবে নিবন্ধন"}</Link></li>
+            <li><Link className="inline-flex min-h-11 items-center transition hover:text-white" href="/services">{lang === "en" ? "All services" : "সব সেবা"}</Link></li>
+            <li><Link className="inline-flex min-h-11 items-center transition hover:text-white" href="/match">{lang === "en" ? "Quick help wizard" : "দ্রুত সহায়তা উইজার্ড"}</Link></li>
             <li><Link className="inline-flex min-h-11 items-center transition hover:text-white" href="/eligibility">{lang === "en" ? "Blood Donation Eligibility" : "রক্তদানের যোগ্যতা (Eligibility)"}</Link></li>
+            <li><Link className="inline-flex min-h-11 items-center transition hover:text-white" href="/compatibility">{lang === "en" ? "Blood compatibility" : "রক্ত সামঞ্জস্যতা"}</Link></li>
+            <li><Link className="inline-flex min-h-11 items-center transition hover:text-white" href="/track">{lang === "en" ? "Track a request" : "অনুরোধ ট্র্যাক করুন"}</Link></li>
+            <li><Link className="inline-flex min-h-11 items-center transition hover:text-white" href="/sos">{lang === "en" ? "SOS share message" : "SOS শেয়ার মেসেজ"}</Link></li>
+            <li><Link className="inline-flex min-h-11 items-center transition hover:text-white" href="/guide">{lang === "en" ? "Donation guide" : "রক্তদান গাইড"}</Link></li>
             <li><Link className="inline-flex min-h-11 items-center gap-2 transition hover:text-white" href="/emergency"><Ambulance className="h-4 w-4" /> {t("nav.emergency", lang)}</Link></li>
             <li><Link className="inline-flex min-h-11 items-center transition hover:text-white" href="/donate">{lang === "en" ? "Donate to Shantichakra" : "আর্থিক সহযোগিতা"}</Link></li>
           </ul>

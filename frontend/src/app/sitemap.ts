@@ -22,6 +22,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/gallery",
     "/blog",
     "/volunteer",
+    "/services",
+    "/compatibility",
+    "/guide",
+    "/track",
+    "/sos",
+    "/match",
     "/privacy",
     "/terms",
   ];
