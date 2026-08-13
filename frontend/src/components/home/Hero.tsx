@@ -28,10 +28,12 @@ export default function Hero({
       {/* Background */}
       <div className="absolute inset-0 bg-gradient-to-br from-brand-900 via-brand-800 to-brand-700" />
       <div className="absolute inset-0 opacity-[0.18] [background-image:radial-gradient(circle_at_30%_20%,white_1px,transparent_1px)] [background-size:34px_34px]" />
-      <div className="motion-compositor pointer-events-none absolute -right-40 -top-40 h-[34rem] w-[34rem] animate-aurora rounded-full bg-blood-500/20 blur-[120px]" />
-      <div className="motion-compositor pointer-events-none absolute -bottom-48 -left-32 h-[30rem] w-[30rem] animate-aurora rounded-full bg-brand-400/20 blur-[110px] [animation-delay:-9s]" />
-      <BloodDrops />
-      <Particles />
+      <div className="hero-aurora motion-compositor pointer-events-none absolute -right-40 -top-40 h-[34rem] w-[34rem] animate-aurora rounded-full bg-blood-500/20 blur-[120px]" />
+      <div className="hero-aurora motion-compositor pointer-events-none absolute -bottom-48 -left-32 h-[30rem] w-[30rem] animate-aurora rounded-full bg-brand-400/20 blur-[110px] [animation-delay:-9s]" />
+      {/* Decorative motion is kept off compact screens to protect mobile battery,
+          scrolling, and first-render performance. */}
+      <div className="hidden sm:block"><BloodDrops /></div>
+      <div className="hidden sm:block"><Particles /></div>
 
       <div className="container-page relative grid items-center gap-10 py-12 lg:grid-cols-2 lg:py-16">
         {/* Left: Content */}
@@ -65,14 +67,14 @@ export default function Hero({
           </p>
 
           {/* CTA Buttons — প্রথমেই রক্তের অনুরোধ */}
-          <div className="mt-7 flex flex-wrap gap-3">
-            <Link href="/request-blood" className="btn-blood shadow-glow-red inline-flex items-center gap-2">
+          <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+            <Link href="/request-blood" className="btn-blood shadow-glow-red inline-flex w-full items-center gap-2 sm:w-auto">
               <Droplet className="h-4 w-4" /> {t("hero.needBlood", lang)}
             </Link>
-            <Link href="/donors" className="btn inline-flex items-center gap-2 border border-white/25 bg-white/5 text-white backdrop-blur-sm transition hover:bg-white/15">
+            <Link href="/donors" className="btn inline-flex w-full items-center gap-2 border border-white/25 bg-white/5 text-white backdrop-blur-sm transition hover:bg-white/15 sm:w-auto">
               <Search className="h-4 w-4" /> {t("hero.findDonors", lang)}
             </Link>
-            <Link href="/become-donor" className="btn inline-flex items-center gap-2 border border-white/25 bg-white/5 text-white backdrop-blur-sm transition hover:bg-white/15">
+            <Link href="/become-donor" className="btn inline-flex w-full items-center gap-2 border border-white/25 bg-white/5 text-white backdrop-blur-sm transition hover:bg-white/15 sm:w-auto">
               <UserPlus className="h-4 w-4" /> {en ? "Become a Donor" : t("nav.becomeDonor", lang)}
             </Link>
           </div>

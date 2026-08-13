@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -178,16 +179,22 @@ export default function Navbar({
 function Logo({ logoUrl }: { logoUrl?: string | null }) {
   return (
     <span className="relative flex h-9 w-9 items-center justify-center overflow-hidden rounded-full bg-white shadow-sm ring-1 ring-zinc-100">
-      {/* Tiny 36px mark — a plain img keeps a real alt attribute in the DOM
-          (next/image has produced extra img nodes without alt in PSI). */}
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src={logoUrl || "/images/logo.png"}
-        alt="Shantichakra Blood Society Sunamganj (শান্তিচক্র ব্লাড সোসাইটি সুনামগঞ্জ)"
-        width={36}
-        height={36}
-        className="h-full w-full rounded-full object-cover"
-      />
+      {logoUrl ? (
+        // Custom admin-supplied URLs remain a regular image so any valid hosted
+        // logo works without changing the image-domain allowlist.
+        // eslint-disable-next-line @next/next/no-img-element
+        <img src={logoUrl} alt="Shantichakra Blood Society Sunamganj (শান্তিচক্র ব্লাড সোসাইটি সুনামগঞ্জ)" width={36} height={36} className="h-full w-full rounded-full object-cover" />
+      ) : (
+        <Image
+          src="/images/logo.png"
+          alt="Shantichakra Blood Society Sunamganj (শান্তিচক্র ব্লাড সোসাইটি সুনামগঞ্জ)"
+          width={36}
+          height={36}
+          sizes="36px"
+          priority
+          className="h-full w-full rounded-full object-cover"
+        />
+      )}
     </span>
   );
 }

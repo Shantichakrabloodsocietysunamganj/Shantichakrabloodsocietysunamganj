@@ -12,19 +12,32 @@
   --ease-ui: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-* {
+/* A strict width boundary prevents a transformed, blurred, or fixed child from
+   widening the visual canvas on phones or when the browser is zoomed out. */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
   -webkit-tap-highlight-color: transparent;
 }
 
 html {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
   scroll-behavior: smooth;
   scroll-padding-top: 5.5rem;
-  scrollbar-gutter: stable;
+  -webkit-overflow-scrolling: touch;
 }
 
 body {
+  width: 100%;
+  max-width: 100%;
   min-height: 100%;
-  overflow-x: clip;
+  margin: 0;
+  overflow-x: hidden;
+  overscroll-behavior-x: none;
+  touch-action: pan-y;
   background: var(--background);
   color: var(--foreground);
   font-feature-settings: "rlig" 1, "calt" 1;
@@ -320,6 +333,25 @@ body::before {
 
 /* Respect the operating-system motion preference everywhere, including
    Tailwind utilities and component-local keyframes. */
+/* Smaller screens benefit more from responsiveness than expensive translucent
+   layers. The design stays the same while avoiding repeated GPU compositing. */
+@media (max-width: 640px) {
+  body::before { background-image: none; }
+  /* Giant animated blur layers force frequent GPU repaints while swiping. */
+  .hero-aurora { display: none; }
+  .glass,
+  .glass-dark,
+  .backdrop-blur,
+  .backdrop-blur-sm,
+  .backdrop-blur-md,
+  .backdrop-blur-xl {
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+  }
+
+  .container-page { padding-left: 1rem; padding-right: 1rem; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html:focus-within,
   html {
