@@ -1,9 +1,10 @@
 import Link from "next/link";
-import type { BloodRequest } from "@/lib/types";
+import type { PublicBloodRequest } from "@/lib/types";
 import type { Lang } from "@/lib/i18n";
 import { shortDate } from "@/lib/format";
 import BloodGroupBadge from "./BloodGroupBadge";
 import WhatsAppShare from "./WhatsAppShare";
+import { maskName } from "@/lib/sanitize";
 
 function relativeTime(iso: string, en: boolean) {
   const diff = Date.now() - new Date(iso).getTime();
@@ -15,9 +16,9 @@ function relativeTime(iso: string, en: boolean) {
   return en ? `${days}d ago` : `${days} দিন আগে`;
 }
 
-export default function RequestCard({ req, lang = "bn" }: { req: BloodRequest; lang?: Lang }) {
+export default function RequestCard({ req, lang = "bn" }: { req: PublicBloodRequest; lang?: Lang }) {
   const en = lang === "en";
-  const diffH = (new Date(req.needed_date).getTime() - Date.now()) / 3600000;
+  const diffH = (new Date(`${req.needed_date}T00:00:00+06:00`).getTime() - Date.now()) / 3600000;
   const urgent = diffH < 24 && diffH > -24;
 
   return (
@@ -39,7 +40,7 @@ export default function RequestCard({ req, lang = "bn" }: { req: BloodRequest; l
         <div className="flex items-start gap-4">
           <BloodGroupBadge group={req.blood_group} size="lg" />
           <div className="min-w-0 flex-1">
-            <h3 className="font-display text-base font-bold text-ink">{en ? `Blood needed for ${req.patient_name}` : `${req.patient_name}-এর জন্য রক্ত দরকার`}</h3>
+            <h3 className="font-display text-base font-bold text-ink">{en ? `Blood needed for ${maskName(req.patient_name)}` : `${maskName(req.patient_name)}-এর জন্য রক্ত দরকার`}</h3>
             <p className="mt-0.5 text-sm text-ink/50">
               {req.units_needed} {en ? "units" : "ইউনিট"} • {req.hospital}
             </p>
@@ -57,18 +58,6 @@ export default function RequestCard({ req, lang = "bn" }: { req: BloodRequest; l
               {shortDate(req.needed_date, lang)}
             </span>
           </div>
-          {req.hemoglobin && (
-            <div>
-              <span className="block text-[11px] uppercase tracking-wide text-ink/35">{en ? "Hemoglobin" : "হিমোগ্লোবিন"}</span>
-              <span className="font-bold text-blood-600">{req.hemoglobin} g/dL</span>
-            </div>
-          )}
-          {req.disease && (
-            <div>
-              <span className="block text-[11px] uppercase tracking-wide text-ink/35">{en ? "Condition" : "অবস্থা"}</span>
-              <span className="font-medium text-ink/80">{req.disease}</span>
-            </div>
-          )}
         </div>
 
         {req.message && (
@@ -76,7 +65,7 @@ export default function RequestCard({ req, lang = "bn" }: { req: BloodRequest; l
         )}
 
         <div className="mt-4 flex items-center justify-between border-t border-zinc-100 pt-4">
-          <span className="text-sm text-ink/50">{en ? "Contact:" : "যোগাযোগ:"} <span className="font-medium text-ink/80">{req.contact_name}</span></span>
+          <span className="text-sm text-ink/50">{en ? "Contact:" : "যোগাযোগ:"} <span className="font-medium text-ink/80">{maskName(req.contact_name)}</span></span>
           <div className="flex items-center gap-2">
             <WhatsAppShare req={req} />
             <a href={`/api/requests/${req.id}/contact?channel=call`} className="btn-primary !px-3 !py-2 text-xs">

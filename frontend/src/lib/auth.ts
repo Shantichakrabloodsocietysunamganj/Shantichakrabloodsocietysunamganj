@@ -1,6 +1,7 @@
 // সার্ভার কম্পোনেন্ট থেকে বর্তমান ইউজার ও প্রোফাইল আনার হেল্পার
 import { createClient } from "@/lib/supabase/server";
 import type { User } from "@supabase/supabase-js";
+import { isAdminRole, isStaffRole } from "@/lib/roles";
 
 export type SessionUser = {
   user: User | null;
@@ -24,7 +25,14 @@ export async function getSession(): Promise<SessionUser> {
   return { user, profile };
 }
 
+/** Require the strictly-admin role (settings, users, role management). */
 export async function requireAdmin() {
   const session = await getSession();
-  return session.profile?.role === "admin" ? session : null;
+  return isAdminRole(session.profile?.role) ? session : null;
+}
+
+/** Require staff (admin OR moderator) — blood-content management. */
+export async function requireStaff() {
+  const session = await getSession();
+  return isStaffRole(session.profile?.role) ? session : null;
 }

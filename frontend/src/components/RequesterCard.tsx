@@ -8,17 +8,18 @@
 
 import Link from "next/link";
 import { Clock, Droplets, MapPin, Phone, Hospital } from "lucide-react";
-import type { BloodRequest } from "@/lib/types";
+import type { PublicBloodRequest } from "@/lib/types";
 import type { Lang } from "@/lib/i18n";
 import BloodGroupBadge from "./BloodGroupBadge";
 import { componentLabel, formatDate, getRequestStatus, initialsOf, relativeTime } from "@/lib/request";
+import { maskName } from "@/lib/sanitize";
 
 export default function RequesterCard({
   req,
   lang = "bn",
   fresh = false,
 }: {
-  req: BloodRequest;
+  req: PublicBloodRequest;
   lang?: Lang;
   fresh?: boolean;
 }) {
@@ -47,7 +48,7 @@ export default function RequesterCard({
       <div className="flex items-start gap-4">
         <div className="relative">
           <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-blood-500 to-blood-700 font-display text-lg font-extrabold text-white shadow-glow-red">
-            {initialsOf(req.patient_name)}
+            {initialsOf(maskName(req.patient_name))}
           </div>
           <span className="absolute -bottom-1 -right-1 flex h-6 w-6 items-center justify-center rounded-lg bg-white text-blood-600 shadow-soft ring-1 ring-blood-100 dark:bg-slate-900">
             <Droplets className="h-3.5 w-3.5" strokeWidth={2.2} />
@@ -55,7 +56,7 @@ export default function RequesterCard({
         </div>
 
         <div className="min-w-0 flex-1">
-          <h3 className="truncate font-display text-base font-bold text-ink">{req.patient_name}</h3>
+          <h3 className="truncate font-display text-base font-bold text-ink">{maskName(req.patient_name)}</h3>
           <p className="mt-0.5 flex items-center gap-1 text-sm text-ink/50">
             <MapPin className="h-4 w-4 shrink-0 text-blood-500" strokeWidth={1.9} />
             <span className="truncate">
@@ -94,18 +95,6 @@ export default function RequesterCard({
           <span className="block text-[11px] uppercase tracking-wide text-ink/35">{en ? "Needed on" : "লাগবে যেদিন"}</span>
           <span className="font-medium text-ink/80">{formatDate(req.needed_date, en)}</span>
         </div>
-        {req.hemoglobin && (
-          <div>
-            <span className="block text-[11px] uppercase tracking-wide text-ink/35">{en ? "Hemoglobin" : "হিমোগ্লোবিন"}</span>
-            <span className="font-bold text-blood-600">{req.hemoglobin} g/dL</span>
-          </div>
-        )}
-        {req.disease && (
-          <div>
-            <span className="block text-[11px] uppercase tracking-wide text-ink/35">{en ? "Condition" : "অবস্থা"}</span>
-            <span className="truncate font-medium text-ink/80">{req.disease}</span>
-          </div>
-        )}
       </div>
 
       {/* লাইভ স্ট্যাটাস + অ্যাকশন (DonorCard-এর মতোই ফুটার) */}
@@ -127,13 +116,13 @@ export default function RequesterCard({
             target="_blank"
             rel="noreferrer"
             className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-[#25D366] text-white transition hover:scale-105"
-            aria-label={en ? `WhatsApp about ${req.patient_name}` : `${req.patient_name}-এর জন্য WhatsApp`}
+            aria-label={en ? `WhatsApp about ${maskName(req.patient_name)}` : `${maskName(req.patient_name)}-এর জন্য WhatsApp`}
           >
             <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
               <path d="M.057 24l1.687-6.163a11.867 11.867 0 0 1-1.587-5.945C.16 5.335 5.495 0 12.05 0a11.82 11.82 0 0 1 8.413 3.488 11.82 11.82 0 0 1 3.48 8.414c-.003 6.557-5.338 11.892-11.893 11.892a11.9 11.9 0 0 1-5.688-1.448L.057 24z" />
             </svg>
           </a>
-          <a href={`/api/requests/${req.id}/contact?channel=call`} className="btn-blood !px-3 !py-2 text-xs" aria-label={en ? `Call about ${req.patient_name}` : `${req.patient_name}-এর জন্য কল`}>
+          <a href={`/api/requests/${req.id}/contact?channel=call`} className="btn-blood !px-3 !py-2 text-xs" aria-label={en ? `Call about ${maskName(req.patient_name)}` : `${maskName(req.patient_name)}-এর জন্য কল`}>
             <Phone className="h-4 w-4" strokeWidth={2} aria-hidden="true" /> {en ? "Call" : "কল"}
           </a>
         </div>
@@ -142,7 +131,7 @@ export default function RequesterCard({
       {/* কে অনুরোধ করেছেন + কখন */}
       <p className="mt-2 flex items-center justify-between text-[11px] text-ink/40">
         <span className="truncate">
-          {en ? "Requested by" : "অনুরোধকারী"}: <span className="font-medium text-ink/60">{req.contact_name}</span>
+          {en ? "Requested by" : "অনুরোধকারী"}: <span className="font-medium text-ink/60">{maskName(req.contact_name)}</span>
         </span>
         <span className="inline-flex shrink-0 items-center gap-1">
           <Clock className="h-3 w-3" strokeWidth={1.9} />

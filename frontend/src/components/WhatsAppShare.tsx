@@ -1,20 +1,21 @@
 "use client";
 
-import type { BloodRequest } from "@/lib/types";
+import type { PublicBloodRequest } from "@/lib/types";
 import { site } from "@/data/site";
 import { useTr } from "@/lib/useLang";
+import { maskName } from "@/lib/sanitize";
 
-// WhatsApp-এ রক্তের অনুরোধ শেয়ার করার বাটন
-export default function WhatsAppShare({ req }: { req: BloodRequest }) {
+// WhatsApp-এ রক্তের অনুরোধ শেয়ার করার বাটন।
+// Share text contains only public-safe fields — never contact_phone or medical data.
+export default function WhatsAppShare({ req }: { req: PublicBloodRequest }) {
   const { t: tx, en } = useTr();
   const text = tx("🩸 *জরুরি রক্তের অনুরোধ*") + "\n\n" +
-    `${tx("রোগী")}: ${req.patient_name}\n` +
+    `${tx("রোগী")}: ${maskName(req.patient_name)}\n` +
     `${tx("গ্রুপ")}: ${req.blood_group}\n` +
     `${tx("ইউনিট")}: ${req.units_needed}\n` +
     `${tx("হাসপাতাল")}: ${req.hospital}\n` +
     `${tx("এলাকা")}: ${tx(req.upazila)}\n` +
-    `${tx("তারিখ")}: ${new Date(req.needed_date).toLocaleDateString(en ? "en-GB" : "bn-BD")}\n` +
-    `${tx("যোগাযোগ")}: ${req.contact_phone}\n\n` +
+    `${tx("তারিখ")}: ${req.needed_date}\n\n` +
     `— ${tx(site.name)}`;
 
   const url = `https://wa.me/?text=${encodeURIComponent(text)}`;

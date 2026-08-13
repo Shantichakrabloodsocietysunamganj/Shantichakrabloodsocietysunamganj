@@ -2,29 +2,28 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { z } from "zod";
 import { createClient } from "@/lib/supabase/client";
 import { BLOOD_GROUPS, DISTRICTS, upazilasOf, GENDERS } from "@/data/constants";
 import {t} from "@/lib/i18n";
 import { getEligibility } from "@/lib/donation";
 import { scrollToPageTop } from "@/lib/motion";
 import { useLang, useTr } from "@/lib/useLang";
+import { donorSchema, zodErrors } from "@/lib/validation";
+import { normalizeBdPhone } from "@/lib/phone";
 
-const schema = z.object({
-  full_name: z.string().min(2),
-  phone: z.string().min(6).regex(/^[+0-9\s-]+$/),
-  blood_group: z.enum(BLOOD_GROUPS as unknown as [string, ...string[]]),
-  gender: z.string().optional(),
-  age: z.coerce.number().int().min(18).max(60).optional().or(z.literal("").transform(() => undefined)),
-  district: z.string().min(1),
-  upazila: z.string().min(1),
-  area: z.string().optional(),
-  last_donation_date: z.string().optional(),
-  is_available: z.boolean().default(true),
-  notes: z.string().optional(),
-});
-
-type FormState = Record<string, any>;
+type FormState = {
+  full_name: string;
+  phone: string;
+  blood_group: string;
+  gender: string;
+  age: string;
+  district: string;
+  upazila: string;
+  area: string;
+  last_donation_date: string;
+  is_available: boolean;
+  notes: string;
+};
 
 export default function BecomeDonorPage() {
   const { t: tx } = useTr();
@@ -45,7 +44,7 @@ export default function BecomeDonorPage() {
   const [userId, setUserId] = useState<string | null>(null);
 
   useEffect(() => { supabase.auth.getUser().then(({ data }) => setUserId(data.user?.id ?? null)); }, [supabase]);
-  const set = (k: string, v: any) => setForm((f) => ({ ...f, [k]: v }));
+  const set = (k: keyof FormState, v: string | boolean) => setForm((f) => ({ ...f, [k]: v }));
   const onPhoto = (e: React.ChangeEvent<HTMLInputElement>) => {
     const f = e.target.files?.[0] ?? null;
     if (f && f.size > 200 * 1024) {
@@ -61,14 +60,14 @@ export default function BecomeDonorPage() {
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     setServerError(null); setErrors({});
-    const parsed = schema.safeParse(form);
-    if (!parsed.success) { const errs: Record<string, string> = {}; for (const issue of parsed.error.issues) errs[issue.path[0] as string] = issue.message; setErrors(errs); return; }
+    const parsed = donorSchema.safeParse(form);
+    if (!parsed.success) { setErrors(zodErrors(parsed.error)); return; }
     setSubmitting(true);
     try {
       let photo_url: string | null = null;
       if (photo) { const fd = new FormData(); fd.append("file", photo); const res = await fetch("/api/upload", { method: "POST", body: fd }); const json = await res.json(); if (!res.ok) throw new Error(json.error); photo_url = json.url; }
       const { error } = await supabase.from("donors").insert({
-        user_id: userId, full_name: parsed.data.full_name, phone: parsed.data.phone,
+        user_id: userId, full_name: parsed.data.full_name, phone: normalizeBdPhone(parsed.data.phone),
         blood_group: parsed.data.blood_group, gender: parsed.data.gender || null,
         age: parsed.data.age ?? null, district: parsed.data.district, upazila: parsed.data.upazila,
         area: parsed.data.area || null, photo_url,
@@ -77,7 +76,7 @@ export default function BecomeDonorPage() {
       });
       if (error) throw new Error("error");
       setDone(true); scrollToPageTop();
-    } catch (e: any) { setServerError(e?.message ?? "error"); } finally { setSubmitting(false); }
+    } catch (e: unknown) { setServerError(e instanceof Error ? e.message : "error"); } finally { setSubmitting(false); }
   };
 
   if (done) {
@@ -125,6 +124,11 @@ export default function BecomeDonorPage() {
         </div>
         <div className="mt-5"><Field label={en ? "Additional Info (optional)" : "অতিরিক্ত তথ্য (ঐচ্ছিক)"}><textarea className="input min-h-24" value={form.notes} onChange={(e) => set("notes", e.target.value)} /></Field></div>
         <label className="mt-4 flex items-start gap-3 rounded-xl bg-emerald-50 p-4"><input type="checkbox" checked={form.is_available} onChange={(e) => set("is_available", e.target.checked)} className="mt-0.5 h-4 w-4 rounded border-zinc-300 text-brand-600 focus:ring-brand-500" /><span className="text-sm font-medium text-emerald-800">{en ? "I am currently available to donate blood." : "আমি বর্তমানে রক্তদানে প্রস্তুত আছি।"}</span></label>
+        <p className="mt-4 rounded-xl bg-zinc-50 p-3 text-xs leading-relaxed text-ink/60">
+          {en
+            ? "By registering, you agree that your name, blood group and upazila may be shown in the public donor directory. Your phone number is never shown in page HTML — it is revealed only after someone taps Call/WhatsApp, and that click is logged (with a hashed IP) to prevent abuse. You can request to hide yourself from the directory or delete your data anytime."
+            : "নিবন্ধন করলে আপনি সম্মতি দিচ্ছেন যে আপনার নাম, রক্তের গ্রুপ ও উপজেলা প্রকাশ্য দাতা তালিকায় দেখানো হতে পারে। আপনার ফোন নম্বর পেজের HTML-এ কখনো থাকে না — কেউ 'কল/WhatsApp' চাপলেই তা দেখা যায় এবং অপব্যবহার রোধে সেই ক্লিক (হ্যাশ করা IP সহ) লগ হয়। চাইলে যেকোনো সময় তালিকা থেকে লুকানো বা তথ্য মুছে ফেলার অনুরোধ করতে পারেন।"}
+        </p>
         <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-end"><Link href="/" className="btn-ghost">{en ? "Cancel" : "বাতিল"}</Link><button type="submit" disabled={submitting} className="btn-primary">{submitting ? (en ? "Registering…" : "নিবন্ধন হচ্ছে…") : (en ? "Complete Registration" : "নিবন্ধন সম্পন্ন করুন")}</button></div>
       </form>
     </div></div>

@@ -1,5 +1,6 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import { isStaffRole } from "@/lib/roles";
 
 // প্রতিটা request-এ session refresh করে (Supabase Auth-এর জন্য জরুরি)
 export async function updateSession(request: NextRequest) {
@@ -29,7 +30,7 @@ export async function updateSession(request: NextRequest) {
   const path = request.nextUrl.pathname;
   if (user && (path === "/admin" || path.startsWith("/admin/"))) {
     const { data: profile } = await supabase.from("profiles").select("role").eq("id", user.id).maybeSingle();
-    if (!profile || !["admin", "staff"].includes(profile.role)) {
+    if (!profile || !isStaffRole(profile.role)) {
       return NextResponse.redirect(new URL("/login", request.url));
     }
   } else if (!user && (path === "/admin" || path.startsWith("/admin/"))) {

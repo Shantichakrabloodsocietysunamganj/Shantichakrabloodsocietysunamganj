@@ -16,7 +16,7 @@ export default function BloodAvailability({ lang }: { lang: Lang }) {
     (async () => {
       try {
         const { data: donors } = await supabase
-          .from("donors")
+          .from("public_donors")
           .select("blood_group,is_available")
           .eq("is_available", true);
         const map: Record<string, number> = {};

@@ -1,5 +1,8 @@
 // রক্তের অনুরোধ (requester) সম্পর্কিত হেল্পার — donor helper-এর মতোই স্ট্যাটাস/আরজেন্সি হিসাব
 import type { BloodRequest } from "@/lib/types";
+import { fmtDateOnly, parseDateOnly, DHAKA_TIME_ZONE } from "@/lib/date";
+
+const DHAKA_OFFSET_MS = 6 * 60 * 60 * 1000; // UTC+6, no DST
 
 export type RequestUrgency = "critical" | "urgent" | "soon" | "planned" | "closed";
 
@@ -12,8 +15,13 @@ export type RequestStatusInfo = {
 };
 
 // কত ঘণ্টা বাকি আছে (নেগেটিভ = তারিখ পার হয়ে গেছে)
-export function hoursUntilNeeded(neededDate: string): number {
-  return (new Date(neededDate).getTime() - Date.now()) / 3600000;
+// date-only "YYYY-MM-DD" কে Dhaka-local দিনের শুরু ধরে হিসাব করা হয়,
+// যাতে UTC-midnight parse-এ দিন শিফট না হয়।
+export function hoursUntilNeeded(neededDate: string, now: Date = new Date()): number {
+  const p = parseDateOnly(neededDate);
+  if (!p) return 0;
+  const neededStartUtc = Date.UTC(p.y, p.m - 1, p.d) - DHAKA_OFFSET_MS;
+  return (neededStartUtc - now.getTime()) / 3600000;
 }
 
 // দাতা কার্ডের status-dot এর মতোই — অনুরোধের লাইভ অবস্থা
@@ -84,8 +92,17 @@ export function relativeTime(iso: string, en = false): string {
 }
 
 export function formatDate(d: string, en = false): string {
+  // date-only হলে TZ-safe format; timestamp হলে Dhaka-তে দেখাও
+  if (/^\d{4}-\d{2}-\d{2}$/.test(d ?? "")) {
+    return fmtDateOnly(d, en ? "en-GB" : "bn-BD", { day: "numeric", month: "short", year: "numeric" });
+  }
   try {
-    return new Date(d).toLocaleDateString(en ? "en-GB" : "bn-BD", { day: "numeric", month: "short", year: "numeric" });
+    return new Intl.DateTimeFormat(en ? "en-GB" : "bn-BD", {
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+      timeZone: DHAKA_TIME_ZONE,
+    }).format(new Date(d));
   } catch {
     return d;
   }

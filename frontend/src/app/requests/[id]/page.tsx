@@ -7,10 +7,19 @@ import { site } from "@/data/site";
 import { tr, type Lang } from "@/lib/i18n";
 import { getLang } from "@/lib/i18n-server";
 import { fmtDate } from "@/lib/format";
+import { maskName } from "@/lib/sanitize";
+import type { PublicBloodRequest } from "@/lib/types";
+
+// Public detail is built only from the safe view — raw contact_phone and
+// medical fields (hemoglobin/disease/age/gender) are never selected.
 
 export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
   const supabase = createClient();
-  const { data: req } = await supabase.from("blood_requests").select("patient_name, blood_group, hospital, district").eq("id", params.id).maybeSingle();
+  const { data: req } = await supabase
+    .from("public_blood_requests")
+    .select("patient_name, blood_group, hospital, district")
+    .eq("id", params.id)
+    .maybeSingle();
   if (!req) return { title: "রক্তের অনুরোধ | শান্তিচক্র ব্লাড সোসাইটি" };
 
   const title = "রক্তের অনুরোধ | শান্তিচক্র ব্লাড সোসাইটি";
@@ -38,17 +47,21 @@ export default async function RequestDetailPage({ params }: { params: { id: stri
   const lang = await getLang();
   const tx = (s: string) => tr(s, lang);
   const supabase = createClient();
-  const { data: req } = await supabase.from("blood_requests").select("id, patient_name, blood_group, units_needed, hospital, district, upazila, needed_date, contact_name, message, hemoglobin, patient_age, patient_gender, disease, blood_component, status, created_at").eq("id", params.id).maybeSingle();
+  const { data: req } = await supabase
+    .from("public_blood_requests")
+    .select("id, patient_name, blood_group, units_needed, hospital, district, upazila, needed_date, contact_name, message, blood_component, status, created_at")
+    .eq("id", params.id)
+    .maybeSingle();
   if (!req) notFound();
 
-  const status = (req as any).status ?? "pending";
-  const diffH = (new Date((req as any).needed_date).getTime() - Date.now()) / 3600000;
+  const r = req as PublicBloodRequest;
+  const status = r.status ?? "pending";
+  const diffH = (new Date(`${r.needed_date}T00:00:00+06:00`).getTime() - Date.now()) / 3600000;
   const urgent = diffH < 24 && diffH > -24;
 
-  const shareText = `${tx("🩸 *জরুরি রক্তের অনুরোধ*")}\n\n${tx("রোগী")}: ${(req as any).patient_name}\n${tx("গ্রুপ")}: ${(req as any).blood_group}\n${tx("ইউনিট")}: ${(req as any).units_needed}\n${tx("হাসপাতাল")}: ${(req as any).hospital}\n${tx("এলাকা")}: ${tx((req as any).upazila)}\n${tx("তারিখ")}: ${fmt((req as any).needed_date, lang)}\n— ${tx(site.name)}`;
-  const pageUrl = `${site.name}`;
+  // Share text keeps only public-safe fields — never phone or medical details.
+  const shareText = `${tx("🩸 *জরুরি রক্তের অনুরোধ*")}\n\n${tx("গ্রুপ")}: ${r.blood_group}\n${tx("ইউনিট")}: ${r.units_needed}\n${tx("হাসপাতাল")}: ${r.hospital}\n${tx("এলাকা")}: ${tx(r.upazila)}\n${tx("তারিখ")}: ${fmt(r.needed_date, lang)}\n— ${tx(site.name)}`;
   const waUrl = `https://wa.me/?text=${encodeURIComponent(shareText)}`;
-  const fbUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(pageUrl)}`;
 
   const steps = [
     { key: "approved", label: tx("লাইভ") },
@@ -73,34 +86,29 @@ export default async function RequestDetailPage({ params }: { params: { id: stri
 
           <div className="p-6">
             <div className="flex items-start gap-4">
-              <BloodGroupBadge group={(req as any).blood_group} size="lg" />
+              <BloodGroupBadge group={r.blood_group} size="lg" />
               <div>
-                <h1 className="font-display text-2xl font-extrabold text-ink">{(req as any).patient_name}</h1>
-                <p className="mt-1 text-sm text-ink/50">{(req as any).units_needed} {tx("ইউনিট •")} {(req as any).hospital}</p>
+                <h1 className="font-display text-2xl font-extrabold text-ink">{maskName(r.patient_name)}</h1>
+                <p className="mt-1 text-sm text-ink/50">{r.units_needed} {tx("ইউনিট •")} {r.hospital}</p>
               </div>
             </div>
 
-            {/* details grid */}
+            {/* details grid — public-safe fields only */}
             <div className="mt-6 grid grid-cols-2 gap-4 text-sm">
-              <Detail label={tx("এলাকা")} value={`${(req as any).district}, ${(req as any).upazila}`} />
-              <Detail label={tx("লাগবে তারিখ")} value={fmt((req as any).needed_date, lang)} />
-              <Detail label={tx("যোগাযোগ")} value={(req as any).contact_name} />
-              <Detail label={tx("মোবাইল")} value={(req as any).contact_phone} />
-              {(req as any).hemoglobin && <Detail label={tx("হিমোগ্লোবিন")} value={`${(req as any).hemoglobin} g/dL`} />}
-              {(req as any).patient_age && <Detail label={tx("রোগীর বয়স")} value={`${(req as any).patient_age} বছর`} />}
-              {(req as any).patient_gender && <Detail label={tx("রোগীর লিঙ্গ")} value={(req as any).patient_gender} />}
-              {(req as any).disease && <Detail label={tx("রোগীর অবস্থা")} value={(req as any).disease} />}
-              {(req as any).blood_component && (
+              <Detail label={tx("এলাকা")} value={`${r.district}, ${r.upazila}`} />
+              <Detail label={tx("লাগবে তারিখ")} value={fmt(r.needed_date, lang)} />
+              <Detail label={tx("যোগাযোগ")} value={maskName(r.contact_name)} />
+              {r.blood_component && (
                 <Detail label={tx("কী দরকার")} value={
-                  (req as any).blood_component === "platelets" ? tx("প্লেটলেট") :
-                  (req as any).blood_component === "plasma" ? tx("প্লাজমা") : tx("সম্পূর্ণ রক্ত")
+                  r.blood_component === "platelets" ? tx("প্লেটলেট") :
+                  r.blood_component === "plasma" ? tx("প্লাজমা") : tx("সম্পূর্ণ রক্ত")
                 } />
               )}
             </div>
 
-            {(req as any).message && (
+            {r.message && (
               <div className="mt-5 rounded-xl bg-canvas p-4 text-sm leading-relaxed text-ink/70 dark:bg-white/5">
-                {(req as any).message}
+                {r.message}
               </div>
             )}
 
@@ -119,11 +127,11 @@ export default async function RequestDetailPage({ params }: { params: { id: stri
               {status === "cancelled" && <span className="ml-3 text-sm font-bold text-blood-600">{tx("✕ বাতিল")}</span>}
             </div>
 
-            {/* CTAs */}
+            {/* CTAs — contact always goes through the rate-limited endpoint */}
             <div className="mt-6 flex flex-wrap gap-3 border-t border-zinc-100 pt-5">
               <a href={`/api/requests/${params.id}/contact?channel=call`} className="btn-primary">{tx("📞 কল করুন")}</a>
-              <a href={waUrl} target="_blank" rel="noreferrer" className="btn bg-[#25D366] text-white hover:opacity-90">{tx("💬 WhatsApp শেয়ার")}</a>
-              <a href={fbUrl} target="_blank" rel="noreferrer" className="btn bg-[#0084FF] text-white hover:opacity-90">{tx("📘 Facebook শেয়ার")}</a>
+              <a href={`/api/requests/${params.id}/contact?channel=whatsapp`} target="_blank" rel="noreferrer" className="btn bg-[#25D366] text-white hover:opacity-90">{tx("💬 WhatsApp")}</a>
+              <a href={waUrl} target="_blank" rel="noreferrer" className="btn bg-[#0084FF] text-white hover:opacity-90">{tx("📘 Facebook শেয়ার")}</a>
             </div>
           </div>
         </div>

@@ -5,6 +5,7 @@ import { Droplets, Siren, Users, type LucideIcon } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import type { Lang } from "@/lib/i18n";
 import Reveal from "@/components/Reveal";
+import { maskName } from "@/lib/sanitize";
 
 type Item = { icon: LucideIcon; text: string; at: number; group: string };
 
@@ -28,18 +29,18 @@ export default function ActivityFeed({ lang }: { lang: Lang }) {
   const load = async () => {
     try {
       const [reqs, donors, vols] = await Promise.all([
-        supabase.from("blood_requests").select("patient_name,blood_group,upazila,created_at").in("status", ["pending", "approved"]).order("created_at", { ascending: false }).limit(5),
-        supabase.from("donors").select("full_name,blood_group,created_at").eq("approved", true).order("created_at", { ascending: false }).limit(5),
-        supabase.from("volunteers").select("full_name,upazila,created_at").order("created_at", { ascending: false }).limit(4),
+        supabase.from("public_blood_requests").select("patient_name,blood_group,upazila,created_at").in("status", ["pending", "approved"]).order("created_at", { ascending: false }).limit(5),
+        supabase.from("public_donors").select("full_name,blood_group,created_at").order("created_at", { ascending: false }).limit(5),
+        supabase.from("public_volunteers").select("full_name,upazila,created_at").order("created_at", { ascending: false }).limit(4),
       ]);
       const list: Item[] = [];
-      (reqs.data ?? []).forEach((r: any) =>
-        list.push({ icon: Siren, group: "request", at: new Date(r.created_at).getTime(), text: en ? `Blood request: ${r.patient_name} (${r.blood_group}) — ${r.upazila}` : `রক্তের অনুরোধ: ${r.patient_name} (${r.blood_group}) — ${r.upazila}` }),
+      (reqs.data ?? []).forEach((r: { patient_name: string; blood_group: string; upazila: string; created_at: string }) =>
+        list.push({ icon: Siren, group: "request", at: new Date(r.created_at).getTime(), text: en ? `Blood request: ${maskName(r.patient_name)} (${r.blood_group}) — ${r.upazila}` : `রক্তের অনুরোধ: ${maskName(r.patient_name)} (${r.blood_group}) — ${r.upazila}` }),
       );
-      (donors.data ?? []).forEach((d: any) =>
+      (donors.data ?? []).forEach((d: { full_name: string; blood_group: string; created_at: string }) =>
         list.push({ icon: Droplets, group: "donor", at: new Date(d.created_at).getTime(), text: en ? `New donor: ${d.full_name} (${d.blood_group})` : `নতুন দাতা: ${d.full_name} (${d.blood_group})` }),
       );
-      (vols.data ?? []).forEach((v: any) =>
+      (vols.data ?? []).forEach((v: { full_name: string; upazila: string | null; created_at: string }) =>
         list.push({ icon: Users, group: "volunteer", at: new Date(v.created_at).getTime(), text: en ? `Volunteer joined: ${v.full_name}${v.upazila ? " — " + v.upazila : ""}` : `স্বেচ্ছাসেবক যোগ দিয়েছেন: ${v.full_name}${v.upazila ? " — " + v.upazila : ""}` }),
       );
       list.sort((a, b) => b.at - a.at);

@@ -23,7 +23,7 @@ import { site } from "@/data/site";
 import { t, tr, type Lang } from "@/lib/i18n";
 import { getLang } from "@/lib/i18n-server";
 import { getSettings } from "@/lib/settings";
-import type { Donor } from "@/lib/types";
+import type { PublicDonor } from "@/lib/types";
 import { shortDate } from "@/lib/format";
 
 export const metadata: Metadata = {
@@ -46,9 +46,9 @@ async function getData() {
   const supabase = createClient();
   try {
     const [donors, openReqs, featured, events, testimonials, faqItems, partnersData] = await Promise.all([
-      supabase.from("donors").select("*", { count: "exact", head: true }),
-      supabase.from("blood_requests").select("*", { count: "exact", head: true }).in("status", ["pending", "approved"]),
-      supabase.from("donors").select("*").eq("approved", true).order("is_available", { ascending: false }).order("created_at", { ascending: false }).limit(3),
+      supabase.from("public_donors").select("id", { count: "exact", head: true }),
+      supabase.from("public_blood_requests").select("id", { count: "exact", head: true }).in("status", ["pending", "approved"]),
+      supabase.from("public_donors").select("id, full_name, blood_group, gender, age, district, upazila, photo_url, last_donation_date, is_available, is_verified, approved, created_at").order("is_available", { ascending: false }).order("created_at", { ascending: false }).limit(3),
       supabase.from("events").select("*").eq("status", "upcoming").order("event_date", { ascending: true }).limit(3),
       supabase.from("testimonials").select("*").eq("approved", true).order("created_at", { ascending: false }).limit(3),
       supabase.from("faqs").select("question, answer").order("order", { ascending: true }),
@@ -57,7 +57,7 @@ async function getData() {
     return {
       donorCount: donors.count ?? 0,
       openRequestCount: openReqs.count ?? 0,
-      featuredDonors: (featured.data as Donor[] | null) ?? [],
+      featuredDonors: (featured.data as PublicDonor[] | null) ?? [],
       events: (events.data as any[] | null) ?? [],
       testimonials: (testimonials.data as any[] | null) ?? [],
       faqs: (faqItems.data as any[] | null) ?? [],

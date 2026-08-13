@@ -3,16 +3,9 @@
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { site } from "@/data/site";
-import { z } from "zod";
 import {t, tr } from "@/lib/i18n";
 import { useLang } from "@/lib/useLang";
-
-const schema = z.object({
-  name: z.string().min(2, "min"),
-  email: z.string().email("invalid").optional().or(z.literal("")),
-  phone: z.string().optional(),
-  message: z.string().min(5, "min"),
-});
+import { contactSchema, zodErrors } from "@/lib/validation";
 
 export default function ContactPage() {
   const supabase = createClient();
@@ -31,11 +24,9 @@ export default function ContactPage() {
     e.preventDefault();
     setErrors({});
     setServerError(null);
-    const parsed = schema.safeParse(form);
+    const parsed = contactSchema.safeParse(form);
     if (!parsed.success) {
-      const errs: Record<string, string> = {};
-      for (const issue of parsed.error.issues) errs[issue.path[0] as string] = issue.message;
-      setErrors(errs);
+      setErrors(zodErrors(parsed.error));
       return;
     }
     setSubmitting(true);
@@ -48,8 +39,8 @@ export default function ContactPage() {
       });
       if (error) throw error;
       setDone(true);
-    } catch (e: any) {
-      setServerError(e?.message ?? "error");
+    } catch (e: unknown) {
+      setServerError(e instanceof Error ? e.message : "error");
     } finally {
       setSubmitting(false);
     }

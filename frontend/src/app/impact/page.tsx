@@ -35,7 +35,7 @@ export default async function ImpactPage() {
   try {
     const { data: rpc } = await supabase.rpc("impact_stats");
     if (rpc && rpc[0]) s = rpc[0] as any;
-    const { data: dons } = await supabase.from("donors").select("blood_group").eq("approved", true);
+    const { data: dons } = await supabase.from("public_donors").select("blood_group");
     if (dons && dons.length > s.donors) {
       s.donors = dons.length;
     }

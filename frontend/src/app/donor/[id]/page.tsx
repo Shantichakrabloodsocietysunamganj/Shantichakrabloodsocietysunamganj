@@ -6,11 +6,15 @@ import { notFound } from "next/navigation";
 import { tr, type Lang } from "@/lib/i18n";
 import { getLang } from "@/lib/i18n-server";
 import { shortDate } from "@/lib/format";
+import { fmtDateOnly } from "@/lib/date";
+import { getEligibility, isFutureDonationDate } from "@/lib/donation";
+
+// Public reads use the safe `public_donors` view — never the base table.
 
 export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
   const supabase = createClient();
   const { data: donor } = await supabase
-    .from("donors")
+    .from("public_donors")
     .select("full_name, blood_group, district, upazila")
     .eq("id", params.id)
     .maybeSingle();
@@ -35,29 +39,26 @@ export default async function DonorVerifyPage({ params }: { params: { id: string
   const tx = (s: string) => tr(s, lang);
   const supabase = createClient();
   const { data: donor } = await supabase
-    .from("donors")
+    .from("public_donors")
     .select("id, full_name, blood_group, district, upazila, last_donation_date, is_available, is_verified")
     .eq("id", params.id)
     .maybeSingle();
 
   if (!donor) notFound();
 
-  const { count: donationCount } = await supabase
-    .from("donations")
-    .select("*", { count: "exact", head: true })
-    .eq("donor_id", donor.id);
+  // Donations are owner/staff-only, so the public page reads the count
+  // through a security-definer RPC.
+  const { data: donationCount } = await supabase.rpc("get_donor_donation_count", {
+    p_donor_id: donor.id,
+  });
 
-  const isFutureDonationDate = donor.last_donation_date
-    ? new Date(donor.last_donation_date) > new Date()
-    : false;
+  const future = isFutureDonationDate(donor.last_donation_date);
+  const elig = getEligibility(future ? null : donor.last_donation_date);
 
-  const nextEligible = donor.last_donation_date && !isFutureDonationDate
-    ? new Date(new Date(donor.last_donation_date).getTime() + 90 * 24 * 3600 * 1000)
-    : null;
-  const nextEligibleText = isFutureDonationDate
+  const nextEligibleText = future
     ? tx("যাচাই প্রয়োজন")
-    : nextEligible && nextEligible.getTime() > Date.now()
-      ? shortDate(nextEligible, lang)
+    : elig.nextEligibleDate && elig.daysRemaining > 0
+      ? fmtDateOnly(elig.nextEligibleDate, lang === "en" ? "en-GB" : "bn-BD", { day: "numeric", month: "short", year: "numeric" })
       : "এখন প্রস্তুত";
 
   const pageUrl = `https://shantichakrabloodsociety.rahatahmed.site/donor/${donor.id}`;
@@ -92,7 +93,7 @@ export default async function DonorVerifyPage({ params }: { params: { id: string
                 </div>
                 <div className="grid grid-cols-2 gap-2 text-sm">
                   <Info label={tx("এলাকা")} value={`${donor.district}, ${donor.upazila}`} />
-                  <Info label={tx("সর্বশেষ দান")} value={isFutureDonationDate ? "যাচাই প্রয়োজন (ভবিষ্যৎ তারিখ)" : donor.last_donation_date ? shortDate(donor.last_donation_date, lang) : "—"} />
+                  <Info label={tx("সর্বশেষ দান")} value={future ? "যাচাই প্রয়োজন (ভবিষ্যৎ তারিখ)" : donor.last_donation_date ? shortDate(donor.last_donation_date, lang) : "—"} />
                   <Info label={tx("মোট রক্তদান")} value={`${donationCount ?? 0} বার`} />
                   <Info label={tx("পরবর্তী উপযুক্ত")} value={nextEligibleText} />
                   <Info label={tx("প্রস্তুততা")} value={donor.is_available ? tx("প্রস্তুত") : tx("অনুপস্থিত")} />

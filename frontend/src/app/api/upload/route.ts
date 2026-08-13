@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { tr, type Lang } from "@/lib/i18n";
 import { v2 as cloudinary } from "cloudinary";
 import { getSession } from "@/lib/auth";
+import { isStaffRole } from "@/lib/roles";
+import { getClientIp } from "@/lib/ip";
 
 // সার্ভার-সাইড Cloudinary কনফিগ (secret ব্রাউজারে যায় না)
 cloudinary.config({
@@ -13,7 +15,8 @@ cloudinary.config({
 
 const MAX_SIZE = 200 * 1024; // ২০০ কিলোবাইট
 
-// চিত্রের আসল magic bytes — যাতে ভুয়া content-type দিয়ে অন্য ফাইল আপলোড না হয়
+// চিত্রের আসল magic bytes — যাতে ভুয়া content-type দিয়ে অন্য ফাইল আপলোড না হয়।
+// SVG ইচ্ছাকৃতভাবে বাদ — SVG-তে script payload থাকতে পারে।
 const MAGIC: { type: string; bytes: number[] }[] = [
   { type: "image/jpeg", bytes: [0xff, 0xd8, 0xff] },
   { type: "image/png", bytes: [0x89, 0x50, 0x4e, 0x47] },
@@ -51,7 +54,7 @@ function rateLimited(ip: string): boolean {
 
 export async function POST(req: NextRequest) {
   const session = await getSession();
-  if (!session.user || !["admin", "staff"].includes(session.profile?.role ?? "")) {
+  if (!session.user || !isStaffRole(session.profile?.role)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -60,7 +63,7 @@ export async function POST(req: NextRequest) {
   const lang: Lang = req.cookies.get("lang")?.value === "en" ? "en" : "bn";
   const msg = (s: string) => tr(s, lang);
   try {
-    const ip = (req.headers.get("x-forwarded-for")?.split(",")[0] ?? "local").trim();
+    const ip = getClientIp(req);
     if (rateLimited(ip)) {
       return NextResponse.json({ error: msg("খুব বেশি আপলোড। একটু পরে আবার চেষ্টা করুন।") }, { status: 429 });
     }
@@ -74,7 +77,7 @@ export async function POST(req: NextRequest) {
     if (file.size > MAX_SIZE) {
       return NextResponse.json({ error: msg("ছবি ২০০ কিলোবাইটের মধ্যে হতে হবে (১০০KB-এর কাছাকাছি রাখুন)") }, { status: 400 });
     }
-    if (!file.type.startsWith("image/")) {
+    if (!file.type.startsWith("image/") || file.type === "image/svg+xml") {
       return NextResponse.json({ error: msg("শুধুমাত্র ছবি আপলোড করুন") }, { status: 400 });
     }
 
@@ -87,14 +90,23 @@ export async function POST(req: NextRequest) {
     const b64 = buffer.toString("base64");
     const dataURI = `data:${realType};base64,${b64}`;
 
+    // Force re-encode to JPEG (strips EXIF/GPS metadata + any embedded
+    // payload) and crop to a fixed square. Filename is never trusted.
     const result = await cloudinary.uploader.upload(dataURI, {
       folder: "shantichakra/donors",
-      transformation: [{ width: 400, height: 400, crop: "fill", gravity: "face" }],
+      allowed_formats: ["jpg", "png", "gif", "webp"],
+      format: "jpg",
+      use_filename: false,
+      unique_filename: true,
+      transformation: [
+        { width: 400, height: 400, crop: "fill", gravity: "face", flags: "strip_profile" },
+      ],
     });
 
     return NextResponse.json({ url: result.secure_url });
-  } catch (e: any) {
-    console.error("Upload error:", e);
+  } catch (e: unknown) {
+    // Generic error — never leak Cloudinary/stack details to the client.
+    console.error("Upload error:", e instanceof Error ? e.message : e);
     return NextResponse.json({ error: msg("ছবি আপলোডে সমস্যা হয়েছে") }, { status: 500 });
   }
 }
