@@ -55,6 +55,11 @@ export default function BloodDrops() {
     const container = containerRef.current;
     if (!container) return;
 
+    // The hero intentionally hides this layer on compact screens. Avoid creating
+    // SVG nodes, observers, animation frames, and device-orientation listeners
+    // when it cannot be seen.
+    if (window.matchMedia("(max-width: 639px)").matches) return;
+
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     let width = container.clientWidth;
     let height = container.clientHeight;

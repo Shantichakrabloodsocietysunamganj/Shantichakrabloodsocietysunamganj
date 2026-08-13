@@ -147,7 +147,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
           <ScrollProgress />
           <Navbar profile={profile} logoUrl={settings.logo_url} lang={lang} />
           <EmergencyBanner />
-          <main id="main" className="min-h-[60vh]">{children}</main>
+          <main id="main" className="min-h-[60vh] min-w-0 overflow-x-clip">{children}</main>
           <Footer settings={settings} lang={lang} />
           <BackToTop />
           <FloatingActions />
