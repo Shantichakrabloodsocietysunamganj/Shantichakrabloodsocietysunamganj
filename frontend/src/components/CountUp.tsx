@@ -4,7 +4,8 @@ import { useEffect, useRef } from "react";
 import { localeOf } from "@/lib/format";
 import { useLang } from "@/lib/useLang";
 
-// স্ক্রল হলে সংখ্যা ০ থেকে গণনা করে বাড়ে (count-up animation)
+// SSR/প্রথম রেন্ডারে আসল সংখ্যাই দেখায় (JS ব্যর্থ হলেও মান ঠিক থাকে);
+// স্ক্রলে দৃশ্যমান হলে ০ থেকে গুনে চূড়ান্ত মানে পৌঁছায় (count-up animation)।
 export default function CountUp({
   end,
   duration = 1600,
@@ -73,7 +74,7 @@ export default function CountUp({
 
   return (
     <span ref={ref} className={className}>
-      {Number(0).toLocaleString(locale)}{suffix}
+      {end.toLocaleString(locale)}{suffix}
     </span>
   );
 }

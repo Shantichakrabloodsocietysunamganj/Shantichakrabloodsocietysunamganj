@@ -15,7 +15,7 @@ export const PAGES: Record<string, string> = {
   "দাতা ও গ্রহীতার তথ্য সুরক্ষিত ও দায়িত্বশীলভাবে ব্যবহৃত হয়।":
     "Donor and recipient information is kept secure and used responsibly.",
   "স্বেচ্ছাসেবা": "Volunteering",
-  "কোনো আর্থিক লেনদেশন নেই — পুরোপুরি স্বেচ্ছাসেবী নেটওয়ার্ক।":
+  "কোনো আর্থিক লেনদেন নেই — পুরোপুরি স্বেচ্ছাসেবী নেটওয়ার্ক।":
     "No money changes hands — this is an entirely voluntary network.",
   "স্থানীয়তা": "Local roots",
   "সিলেট বিভাগের মানুষের জন্য, সিলেটের মানুষের দ্বারা।":
@@ -137,7 +137,7 @@ export const PAGES: Record<string, string> = {
   "হ্যাঁ। শুধু রক্তদান সমন্বয়ের জন্য আপনার তথ্য ব্যবহৃত হয়। কেউ আপনার তথ্য মুছতে বা পরিবর্তন করতে পারবে না।":
     "Yes. Your information is used only to coordinate blood donation, and nobody else can edit or delete it.",
   "এই পরিষেবা কি ফ্রি?": "Is this service free?",
-  "সম্পূর্ণ ফ্রি ও স্বেচ্ছাসেবী। কোনো আর্থিক লেনদেশ এই প্ল্যাটফর্মে নেই।":
+  "সম্পূর্ণ ফ্রি ও স্বেচ্ছাসেবী। কোনো আর্থিক লেনদেন এই প্ল্যাটফর্মে নেই।":
     "Completely free and voluntary. No money changes hands on this platform.",
 
   // ---- Gallery / blog / events landing ----
