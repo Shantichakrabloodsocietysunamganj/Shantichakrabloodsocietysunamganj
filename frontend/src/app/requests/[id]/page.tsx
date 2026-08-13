@@ -13,12 +13,13 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
   const { data: req } = await supabase.from("blood_requests").select("patient_name, blood_group, hospital, district").eq("id", params.id).maybeSingle();
   if (!req) return { title: "রক্তের অনুরোধ | শান্তিচক্র ব্লাড সোসাইটি" };
 
-  const title = `জরুরি ${req.blood_group} রক্তের প্রয়োজন - ${req.hospital} | শান্তিচক্র ব্লাড সোসাইটি`;
-  const description = `${req.district} এলাকায় ${req.hospital} হাসপাতালে রোগীর জন্য জরুরি ${req.blood_group} রক্ত প্রয়োজন। সাহায্য করতে যোগাযোগ করুন।`;
+  const title = "রক্তের অনুরোধ | শান্তিচক্র ব্লাড সোসাইটি";
+  const description = "শান্তিচক্র ব্লাড সোসাইটির মাধ্যমে রক্তের অনুরোধ যাচাই করুন।";
 
   return {
     title,
     description,
+    robots: { index: false, follow: false, googleBot: { index: false, follow: false } },
     alternates: { canonical: `/requests/${params.id}` },
     openGraph: {
       title,
@@ -37,14 +38,14 @@ export default async function RequestDetailPage({ params }: { params: { id: stri
   const lang = await getLang();
   const tx = (s: string) => tr(s, lang);
   const supabase = createClient();
-  const { data: req } = await supabase.from("blood_requests").select("*").eq("id", params.id).maybeSingle();
+  const { data: req } = await supabase.from("blood_requests").select("id, patient_name, blood_group, units_needed, hospital, district, upazila, needed_date, contact_name, message, hemoglobin, patient_age, patient_gender, disease, blood_component, status, created_at").eq("id", params.id).maybeSingle();
   if (!req) notFound();
 
   const status = (req as any).status ?? "pending";
   const diffH = (new Date((req as any).needed_date).getTime() - Date.now()) / 3600000;
   const urgent = diffH < 24 && diffH > -24;
 
-  const shareText = `${tx("🩸 *জরুরি রক্তের অনুরোধ*")}\n\n${tx("রোগী")}: ${(req as any).patient_name}\n${tx("গ্রুপ")}: ${(req as any).blood_group}\n${tx("ইউনিট")}: ${(req as any).units_needed}\n${tx("হাসপাতাল")}: ${(req as any).hospital}\n${tx("এলাকা")}: ${tx((req as any).upazila)}\n${tx("তারিখ")}: ${fmt((req as any).needed_date, lang)}\n${tx("যোগাযোগ")}: ${(req as any).contact_phone}\n\n— ${tx(site.name)}`;
+  const shareText = `${tx("🩸 *জরুরি রক্তের অনুরোধ*")}\n\n${tx("রোগী")}: ${(req as any).patient_name}\n${tx("গ্রুপ")}: ${(req as any).blood_group}\n${tx("ইউনিট")}: ${(req as any).units_needed}\n${tx("হাসপাতাল")}: ${(req as any).hospital}\n${tx("এলাকা")}: ${tx((req as any).upazila)}\n${tx("তারিখ")}: ${fmt((req as any).needed_date, lang)}\n— ${tx(site.name)}`;
   const pageUrl = `${site.name}`;
   const waUrl = `https://wa.me/?text=${encodeURIComponent(shareText)}`;
   const fbUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(pageUrl)}`;
@@ -120,7 +121,7 @@ export default async function RequestDetailPage({ params }: { params: { id: stri
 
             {/* CTAs */}
             <div className="mt-6 flex flex-wrap gap-3 border-t border-zinc-100 pt-5">
-              <a href={`tel:${(req as any).contact_phone}`} className="btn-primary">{tx("📞 কল করুন")}</a>
+              <a href={`/api/requests/${params.id}/contact?channel=call`} className="btn-primary">{tx("📞 কল করুন")}</a>
               <a href={waUrl} target="_blank" rel="noreferrer" className="btn bg-[#25D366] text-white hover:opacity-90">{tx("💬 WhatsApp শেয়ার")}</a>
               <a href={fbUrl} target="_blank" rel="noreferrer" className="btn bg-[#0084FF] text-white hover:opacity-90">{tx("📘 Facebook শেয়ার")}</a>
             </div>

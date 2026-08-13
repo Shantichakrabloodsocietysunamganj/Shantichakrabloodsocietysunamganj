@@ -79,8 +79,8 @@ export default function RequestCard({ req, lang = "bn" }: { req: BloodRequest; l
           <span className="text-sm text-ink/50">{en ? "Contact:" : "যোগাযোগ:"} <span className="font-medium text-ink/80">{req.contact_name}</span></span>
           <div className="flex items-center gap-2">
             <WhatsAppShare req={req} />
-            <a href={`tel:${req.contact_phone}`} className="btn-primary !px-3 !py-2 text-xs">
-              📞 {req.contact_phone}
+            <a href={`/api/requests/${req.id}/contact?channel=call`} className="btn-primary !px-3 !py-2 text-xs">
+              📞 {en ? "Call" : "কল করুন"}
             </a>
           </div>
         </div>

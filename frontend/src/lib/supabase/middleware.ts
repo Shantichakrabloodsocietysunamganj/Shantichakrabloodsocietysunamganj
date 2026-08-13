@@ -25,7 +25,16 @@ export async function updateSession(request: NextRequest) {
   );
 
   // getUser কল করা হচ্ছে যাতে session রিফ্রেশ হয়
-  await supabase.auth.getUser();
+  const { data: { user } } = await supabase.auth.getUser();
+  const path = request.nextUrl.pathname;
+  if (user && (path === "/admin" || path.startsWith("/admin/"))) {
+    const { data: profile } = await supabase.from("profiles").select("role").eq("id", user.id).maybeSingle();
+    if (!profile || !["admin", "staff"].includes(profile.role)) {
+      return NextResponse.redirect(new URL("/login", request.url));
+    }
+  } else if (!user && (path === "/admin" || path.startsWith("/admin/"))) {
+    return NextResponse.redirect(new URL("/login", request.url));
+  }
 
   return supabaseResponse;
 }

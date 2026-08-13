@@ -25,7 +25,8 @@ type StoredRequest = { request: BloodRequest; savedAt: number };
 export function rememberRecentlyPostedRequest(request: BloodRequest) {
   if (typeof window === "undefined") return;
   try {
-    const value: StoredRequest = { request, savedAt: Date.now() };
+    const { contact_phone: _phone, ...publicRequest } = request;
+    const value: StoredRequest = { request: publicRequest as BloodRequest, savedAt: Date.now() };
     window.sessionStorage.setItem(RECENT_REQUEST_KEY, JSON.stringify(value));
   } catch {
     // Storage can be unavailable in private/restricted browsers. The database
@@ -141,8 +142,8 @@ export function useLiveRequests(options: UseLiveRequestsOptions = {}): LiveReque
     try {
       const runQuery = (filterDeleted: boolean) => {
         let query = supabase
-          .from("blood_requests")
-          .select("*")
+          .from("public_blood_requests")
+          .select("id, patient_name, blood_group, units_needed, hospital, district, upazila, needed_date, contact_name, message, patient_age, patient_gender, blood_component, request_type, status, created_at")
           .order("needed_date", { ascending: true })
           .order("created_at", { ascending: false });
         if (filterDeleted) query = query.is("deleted_at", null);
@@ -188,45 +189,9 @@ export function useLiveRequests(options: UseLiveRequestsOptions = {}): LiveReque
     load();
   }, [load, group, upazila, includeClosed, limit]);
 
-  // ---- Realtime subscription ----
-  useEffect(() => {
-    const channel = supabase
-      .channel("live-blood-requests")
-      .on("postgres_changes", { event: "INSERT", schema: "public", table: "blood_requests" }, (payload) => {
-        const row = payload.new as BloodRequest;
-        if (!matches(row)) return;
-        setRequests((prev) => {
-          if (prev.some((r) => r.id === row.id)) return prev;
-          return sortList([row, ...prev]).slice(0, optsRef.current.limit);
-        });
-        markFresh(row.id);
-        setNewCount((c) => c + 1);
-        setLastUpdated(Date.now());
-      })
-      .on("postgres_changes", { event: "UPDATE", schema: "public", table: "blood_requests" }, (payload) => {
-        const row = payload.new as BloodRequest;
-        setRequests((prev) => {
-          const exists = prev.some((r) => r.id === row.id);
-          if (!matches(row)) return exists ? prev.filter((r) => r.id !== row.id) : prev;
-          if (!exists) return sortList([row, ...prev]).slice(0, optsRef.current.limit);
-          return sortList(prev.map((r) => (r.id === row.id ? row : r)));
-        });
-        setLastUpdated(Date.now());
-      })
-      .on("postgres_changes", { event: "DELETE", schema: "public", table: "blood_requests" }, (payload) => {
-        const old = payload.old as { id?: string };
-        if (!old?.id) return;
-        setRequests((prev) => prev.filter((r) => r.id !== old.id));
-        setLastUpdated(Date.now());
-      })
-      .subscribe((status) => {
-        setLive(status === "SUBSCRIBED");
-      });
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [supabase, matches, markFresh]);
+  // Base-table realtime events are disabled: postgres_changes would expose
+  // sensitive request columns to anonymous clients. Safe-view polling below
+  // keeps the public feed fresh without sending contact data.
 
   // ---- Fallback polling (realtime না থাকলেও ডেটা তাজা থাকে) ----
   useEffect(() => {

@@ -1,13 +1,13 @@
 "use client";
 
-import type { Donor } from "@/lib/types";
+import type { PublicDonor } from "@/lib/types";
 import type { Lang } from "@/lib/i18n";
 import { getDonorStatus } from "@/lib/donation";
 import BloodGroupBadge from "./BloodGroupBadge";
 import Link from "next/link";
 import { shortDate } from "@/lib/format";
 
-export default function DonorCard({ donor, lang = "bn" }: { donor: Donor; lang?: Lang }) {
+export default function DonorCard({ donor, lang = "bn" }: { donor: PublicDonor; lang?: Lang }) {
   const en = lang === "en";
   const initials = donor.full_name.trim().charAt(0).toUpperCase();
   const status = getDonorStatus(donor.is_available, donor.last_donation_date, en);
@@ -28,7 +28,7 @@ export default function DonorCard({ donor, lang = "bn" }: { donor: Donor; lang?:
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 21s-7-5.2-7-11a7 7 0 1 1 14 0c0 5.8-7 11-7 11z" />
               <circle cx="12" cy="10" r="2.5" />
             </svg>
-            <span className="truncate">{donor.upazila}{donor.area ? `, ${donor.area}` : ""}</span>
+            <span className="truncate">{donor.upazila}</span>
           </p>
         </div>
         <BloodGroupBadge group={donor.blood_group} />
@@ -59,7 +59,7 @@ export default function DonorCard({ donor, lang = "bn" }: { donor: Donor; lang?:
             {en ? "QR card" : "QR কার্ড"}
           </Link>
           <a
-            href={`https://wa.me/88${donor.phone.replace(/^0/, "")}`}
+            href={`/api/donors/${donor.id}/contact?channel=whatsapp`}
             target="_blank"
             rel="noreferrer"
             className="inline-flex h-11 w-11 items-center justify-center rounded-lg bg-[#25D366] text-white transition hover:scale-105"
@@ -67,7 +67,7 @@ export default function DonorCard({ donor, lang = "bn" }: { donor: Donor; lang?:
           >
             <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M.057 24l1.687-6.163a11.867 11.867 0 0 1-1.587-5.945C.16 5.335 5.495 0 12.05 0a11.82 11.82 0 0 1 8.413 3.488 11.82 11.82 0 0 1 3.48 8.414c-.003 6.557-5.338 11.892-11.893 11.892a11.9 11.9 0 0 1-5.688-1.448L.057 24z" /></svg>
           </a>
-          <a href={`tel:${donor.phone}`} className="btn-primary !px-3 !py-2 text-xs" aria-label={en ? `Call ${donor.full_name}` : `${donor.full_name}-কে কল`}><PhoneIcon /> {en ? "Call" : "কল"}</a>
+          <a href={`/api/donors/${donor.id}/contact?channel=call`} className="btn-primary !px-3 !py-2 text-xs" aria-label={en ? `Call ${donor.full_name}` : `${donor.full_name}-কে কল`}><PhoneIcon /> {en ? "Call" : "কল"}</a>
         </div>
       </div>
     </div>

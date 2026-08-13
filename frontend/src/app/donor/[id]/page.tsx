@@ -17,19 +17,16 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
 
   if (!donor) return { title: "রক্তদাতা যাচাই | শান্তিচক্র ব্লাড সোসাইটি" };
 
-  const title = `${donor.full_name} (${donor.blood_group}) - রক্তদাতা যাচাই | শান্তিচক্র ব্লাড সোসাইটি`;
-  const description = `${donor.district}, ${donor.upazila} এলাকার নিবন্ধিত রক্তদাতা ${donor.full_name} (${donor.blood_group}) এর তথ্য যাচাই করুন।`;
+  const title = "রক্তদাতা যাচাই | শান্তিচক্র ব্লাড সোসাইটি";
+  const description = "QR কোডের মাধ্যমে শান্তিচক্র ব্লাড সোসাইটির রক্তদাতা যাচাই করুন।";
 
   return {
     title,
     description,
+    robots: { index: false, follow: false, googleBot: { index: false, follow: false } },
     alternates: { canonical: `/donor/${params.id}` },
-    openGraph: {
-      title,
-      description,
-      url: `https://shantichakrabloodsociety.rahatahmed.site/donor/${params.id}`,
-      type: "profile",
-    },
+    openGraph: { title, description, url: `https://shantichakrabloodsociety.rahatahmed.site/donor/${params.id}`, type: "profile" },
+    twitter: { card: "summary", title, description },
   };
 }
 
@@ -39,7 +36,7 @@ export default async function DonorVerifyPage({ params }: { params: { id: string
   const supabase = createClient();
   const { data: donor } = await supabase
     .from("donors")
-    .select("*")
+    .select("id, full_name, blood_group, district, upazila, last_donation_date, is_available, is_verified")
     .eq("id", params.id)
     .maybeSingle();
 
