@@ -4,7 +4,7 @@ import { Suspense, useCallback, useEffect, useMemo, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { BLOOD_GROUPS, DISTRICTS, upazilasOf } from "@/data/constants";
-import type { Donor } from "@/lib/types";
+import type { PublicDonor } from "@/lib/types";
 import DonorCard from "@/components/DonorCard";
 import Reveal from "@/components/Reveal";
 import {t} from "@/lib/i18n";
@@ -33,7 +33,7 @@ function DonorsContent() {
   const [onlyAvailable, setOnlyAvailable] = useState(false);
   const [onlyVerified, setOnlyVerified] = useState(false);
 
-  const [donors, setDonors] = useState<Donor[]>([]);
+  const [donors, setDonors] = useState<PublicDonor[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -41,7 +41,7 @@ function DonorsContent() {
     setLoading(true);
     setError(null);
     try {
-      let query = supabase.from("donors").select("*").order("is_available", { ascending: false }).order("created_at", { ascending: false });
+      let query = supabase.from("public_donors").select("id, full_name, blood_group, gender, age, district, upazila, photo_url, last_donation_date, is_available, is_verified, approved, created_at").order("is_available", { ascending: false }).order("created_at", { ascending: false });
       if (group) query = query.eq("blood_group", group);
       if (district) query = query.eq("district", district);
       if (upazila) query = query.eq("upazila", upazila);
@@ -50,10 +50,10 @@ function DonorsContent() {
       query = query.eq("approved", true);
       const { data, error } = await query.limit(100);
       if (error) throw error;
-      let list = (data as Donor[]) ?? [];
+      let list = (data as PublicDonor[]) ?? [];
       if (q.trim()) {
         const tq = q.trim().toLowerCase();
-        list = list.filter((d) => d.full_name.toLowerCase().includes(tq) || (d.area ?? "").toLowerCase().includes(tq) || (d.phone ?? "").includes(tq));
+        list = list.filter((d) => d.full_name.toLowerCase().includes(tq) || d.upazila.toLowerCase().includes(tq) || d.district.toLowerCase().includes(tq));
       }
       setDonors(list);
     } catch (e: any) {
@@ -77,7 +77,7 @@ function DonorsContent() {
   }, [group, district, upazila, onlyAvailable, onlyVerified, q]);
 
   const grouped = useMemo(() => {
-    const map = new Map<string, Donor[]>();
+    const map = new Map<string, PublicDonor[]>();
     for (const d of donors) { const arr = map.get(d.blood_group) ?? []; arr.push(d); map.set(d.blood_group, arr); }
     return Array.from(map.entries()).sort((a, b) => b[1].length - a[1].length);
   }, [donors]);

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { tr, type Lang } from "@/lib/i18n";
 import { v2 as cloudinary } from "cloudinary";
+import { getSession } from "@/lib/auth";
 
 // সার্ভার-সাইড Cloudinary কনফিগ (secret ব্রাউজারে যায় না)
 cloudinary.config({
@@ -49,6 +50,11 @@ function rateLimited(ip: string): boolean {
 }
 
 export async function POST(req: NextRequest) {
+  const session = await getSession();
+  if (!session.user || !["admin", "staff"].includes(session.profile?.role ?? "")) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   // Error strings are shown directly to the user, so honour the
   // language they picked (stored in the `lang` cookie).
   const lang: Lang = req.cookies.get("lang")?.value === "en" ? "en" : "bn";

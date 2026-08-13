@@ -123,7 +123,7 @@ export default function RequesterCard({
             {en ? "Request details" : "অনুরোধের বিস্তারিত"}
           </Link>
           <a
-            href={`https://wa.me/88${(req.contact_phone ?? "").replace(/[^0-9]/g, "").replace(/^0/, "")}`}
+            href={`/api/requests/${req.id}/contact?channel=whatsapp`}
             target="_blank"
             rel="noreferrer"
             className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-[#25D366] text-white transition hover:scale-105"
@@ -133,7 +133,7 @@ export default function RequesterCard({
               <path d="M.057 24l1.687-6.163a11.867 11.867 0 0 1-1.587-5.945C.16 5.335 5.495 0 12.05 0a11.82 11.82 0 0 1 8.413 3.488 11.82 11.82 0 0 1 3.48 8.414c-.003 6.557-5.338 11.892-11.893 11.892a11.9 11.9 0 0 1-5.688-1.448L.057 24z" />
             </svg>
           </a>
-          <a href={`tel:${req.contact_phone}`} className="btn-blood !px-3 !py-2 text-xs" aria-label={en ? `Call about ${req.patient_name}` : `${req.patient_name}-এর জন্য কল`}>
+          <a href={`/api/requests/${req.id}/contact?channel=call`} className="btn-blood !px-3 !py-2 text-xs" aria-label={en ? `Call about ${req.patient_name}` : `${req.patient_name}-এর জন্য কল`}>
             <Phone className="h-4 w-4" strokeWidth={2} aria-hidden="true" /> {en ? "Call" : "কল"}
           </a>
         </div>
