@@ -17,6 +17,12 @@ const SHORTCUTS: Record<string, string> = {
   "/about": "/about", "/media": "/media",
   "/events": "/events", "/blog": "/blog",
   "/volunteer": "/volunteer",
+  "/services": "/services", "/seba": "/services",
+  "/compat": "/compatibility", "/compatibility": "/compatibility",
+  "/guide": "/guide",
+  "/track": "/track",
+  "/sos": "/sos",
+  "/match": "/match", "/help": "/match",
 };
 
 const FOLLOWUPS: Record<string, string[]> = {
@@ -62,6 +68,26 @@ const KB: Entry[] = [
     en: "Check /impact — donors, patients helped, blood units, volunteers.", cta: { bn: "অর্জন →", en: "Impact →", href: "/impact" } },
   { keys: ["ফ্রি", "খরচ", "মূল্য", "price", "cost", "free"],
     bn: "সম্পূর্ণ ফ্রি ও স্বেচ্ছাসেবী। কোনো টাকা লাগে না।", en: "100% free and voluntary." },
+  { keys: ["সামঞ্জস্য", "compatibility", "কাকে দিতে", "কার কাছ", "মিল"],
+    bn: "আপনার গ্রুপ কাকে দিতে পারে আর কার কাছ থেকে নিতে পারে — /compatibility-এ মুহূর্তে দেখুন, তারপর মিলিয়ে দাতা খুঁজুন।",
+    en: "See who you can donate to or receive from on /compatibility, then jump to matching donors.",
+    cta: { bn: "সামঞ্জস্যতা →", en: "Compatibility →", href: "/compatibility" } },
+  { keys: ["ট্র্যাক", "track", "স্ট্যাটাস", "অনুরোধ কোথায়"],
+    bn: "রোগীর নাম, হাসপাতাল বা আইডি দিয়ে /track-এ অনুরোধের স্ট্যাটাস দেখুন। ফোন নম্বর দিয়ে খোঁজা যায় না।",
+    en: "Check a request’s status on /track by patient name, hospital or ID. Phone numbers are not searchable.",
+    cta: { bn: "ট্র্যাক করুন →", en: "Track →", href: "/track" } },
+  { keys: ["sos", "শেয়ার", "whatsapp মেসেজ", "বার্তা তৈরি"],
+    bn: "/sos-এ জরুরি বার্তা তৈরি করে WhatsApp, SMS বা Facebook-এ এক ক্লিকে পাঠান।",
+    en: "Build an emergency message on /sos and send it on WhatsApp, SMS or Facebook in one tap.",
+    cta: { bn: "SOS শেয়ার →", en: "SOS share →", href: "/sos" } },
+  { keys: ["গাইড", "কী খাব", "চেকলিস্ট", "আগে পরে", "guide"],
+    bn: "দানের আগে-পরে কী খাবেন, কী এড়াবেন — /guide-এ চেকলিস্ট ও পরবর্তী তারিখ ক্যালকুলেটর আছে।",
+    en: "What to eat and avoid, a checklist and next-date calculator — all on /guide.",
+    cta: { bn: "গাইড →", en: "Guide →", href: "/guide" } },
+  { keys: ["সেবা", "কী কী আছে", "services", "টুল"],
+    bn: "সব সেবা এক জায়গায়: /services। কী লাগবে জানি না? /match উইজার্ডে ৩টি প্রশ্ন দিয়ে শুরু করুন। Ctrl+K দিয়েও খুঁজতে পারবেন।",
+    en: "Every service is on /services. Not sure? Start the /match wizard. You can also press Ctrl+K to search.",
+    cta: { bn: "সব সেবা →", en: "All services →", href: "/services" } },
 ];
 
 function fmtTime(ts: number) {

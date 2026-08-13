@@ -17,6 +17,8 @@ export default async function NotFound() {
         <p className="mx-auto mt-2 max-w-md text-ink/60">{tx("আপনি যে পেজটি খুঁজছেন সেটি এখানে নেই। হয়তো সরে গেছে বা আর নেই।")}</p>
         <div className="mt-6 flex flex-wrap justify-center gap-3">
           <Link href="/" className="btn-primary">{tx("হোমে ফিরুন")}</Link>
+          <Link href="/services" className="btn-outline">{tx("সব সেবা")}</Link>
+          <Link href="/match" className="btn-outline">{tx("দ্রুত সহায়তা")}</Link>
           <Link href="/donors" className="btn-outline">{tx("রক্তদাতা খুঁজুন")}</Link>
         </div>
       </div>

@@ -35,6 +35,20 @@ export default function RequestBloodPage() {
   const [userId, setUserId] = useState<string | null>(null);
 
   useEffect(() => { supabase.auth.getUser().then(({ data }) => setUserId(data.user?.id ?? null)); }, [supabase]);
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const sp = new URLSearchParams(window.location.search);
+    const group = sp.get("group");
+    const district = sp.get("district");
+    const hospital = sp.get("hospital");
+    if (!group && !district && !hospital) return;
+    setForm((f) => ({
+      ...f,
+      ...(group ? { blood_group: group } : {}),
+      ...(district ? { district } : {}),
+      ...(hospital ? { hospital } : {}),
+    }));
+  }, []);
   const set = (k: string, v: any) => setForm((f) => ({ ...f, [k]: v }));
 
   const submit = async (e: React.FormEvent) => {

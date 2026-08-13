@@ -16,6 +16,7 @@ import { ADMIN } from "./admin";
 import { PAGES } from "./pages";
 import { ELIGIBILITY } from "./eligibility";
 import { BLOG } from "./blog";
+import { SERVICES_UI } from "./services";
 
 /**
  * Normalise a lookup key: collapse whitespace (JSX text nodes carry
@@ -26,7 +27,7 @@ function norm(s: string): string {
   return s.normalize("NFC").replace(/\s+/g, " ").trim();
 }
 
-const SOURCES = [UI, ADMIN, PAGES, ELIGIBILITY, BLOG, PLACES];
+const SOURCES = [UI, ADMIN, PAGES, ELIGIBILITY, BLOG, SERVICES_UI, PLACES];
 
 export const BN_EN: Record<string, string> = (() => {
   const out: Record<string, string> = {};
