@@ -137,7 +137,7 @@ export default function Navbar({
       </nav>
 
       {open && (
-        <div className="animate-panel-in origin-top border-t border-zinc-100 bg-white/95 backdrop-blur-xl xl:hidden dark:border-white/10 dark:bg-slate-950/90">
+        <div className="animate-panel-in origin-top max-h-[calc(100vh-4rem)] overflow-y-auto overscroll-contain border-t border-zinc-100 bg-white/95 backdrop-blur-xl supports-[height:100dvh]:max-h-[calc(100dvh-4rem)] xl:hidden dark:border-white/10 dark:bg-slate-950/90">
           <div className="container-page flex flex-col gap-1 py-3">
             <div className="mb-1 flex items-center justify-between px-1">
               <LanguageToggle lang={lang} />

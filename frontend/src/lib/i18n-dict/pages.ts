@@ -172,6 +172,25 @@ export const PAGES: Record<string, string> = {
   "গোপনীয়তা নীতি সম্পর্কে কোনো জিজ্ঞাসা থাকলে যোগাযোগ করুন:":
     "If you have any questions about this privacy policy, contact us at:",
   "অথবা ফোনে:": "or by phone:",
+  "ফোন নম্বরের গোপনীয়তা": "Phone number privacy",
+  "যোগাযোগের ক্লিক লগ ও IP হ্যাশিং": "Contact click logs & IP hashing",
+  "তথ্য সংরক্ষণের মেয়াদ (Retention)": "Data retention period",
+  "যোগাযোগের ক্লিক লগ: ৯০ দিন": "Contact click logs: 90 days",
+  "হ্যাশ করা IP লগ: ৯০ দিন": "Hashed IP logs: 90 days",
+  "অ্যাডমিন কার্যকলাপ লগ: ১৮০ দিন": "Admin activity logs: 180 days",
+  "মুছে ফেলা রক্তদাতা/অনুরোধ রেকর্ড: ১৮০ দিন পর স্থায়ীভাবে মুছে ফেলা হয়":
+    "Deleted donor/request records: permanently removed after 180 days",
+  "সম্পন্ন/বাতিল রক্তের অনুরোধ: ৩৬৫ দিন পর আর্কাইভ হয়":
+    "Completed/cancelled blood requests: archived after 365 days",
+  "দাতার opt-out (তালিকা থেকে লুকানো)": "Donor opt-out (hidden from directory)",
+  "রক্তদাতা বা অনুরোধকারীর ফোন নম্বর ওয়েবপেজের প্রাথমিক HTML-এ রাখা হয় না। 'কল' বা 'WhatsApp' বাটনে ক্লিক করলেই নম্বরটি একটি সুরক্ষিত প্রক্রিয়ায় দেখা যায়।":
+    "Donor and requester phone numbers are never placed in the initial page HTML. The number is revealed through a secure process only after you click the 'Call' or 'WhatsApp' button.",
+  "অপব্যবহার রোধে প্রতিটি 'কল' বা 'WhatsApp' ক্লিক লগ করা হয়। এই লগে আপনার IP ঠিকানা সরাসরি সংরক্ষিত হয় না — বরং একটি one-way hash (SHA-256) হিসেবে রাখা হয়, যা থেকে আসল IP উদ্ধার করা যায় না।":
+    "To prevent abuse, every 'Call' or 'WhatsApp' click is logged. Your IP address is not stored directly — it is kept as a one-way hash (SHA-256) from which the original IP cannot be recovered.",
+  "রক্তদাতা চাইলে তাঁর নাম/রক্তের গ্রুপ/উপজেলা প্রকাশ্য ডিরেক্টরি থেকে লুকিয়ে রাখতে পারেন। এর জন্য আমাদের ইমেইলে অনুরোধ করলেই তা কার্যকর করা হয়।":
+    "A donor may choose to hide their name, blood group and upazila from the public directory. Just email us and it will be done.",
+  "অনুগ্রহ করে সব প্রয়োজনীয় তথ্য সঠিকভাবে দিন।":
+    "Please fill in all required fields correctly.",
 
   // ---- Terms ----
   "শর্তাবলী": "Terms & conditions",

@@ -502,8 +502,9 @@ export default function AIAssistant() {
 
   return (
     <>
-      {/* Floating AI button */}
-      <div className="group fixed bottom-6 right-6 z-[55] flex items-center">
+      {/* Floating AI button — z-40 keeps it below the navbar/mobile menu (z-50)
+          so the opened menu panel is never covered by the button. */}
+      <div className="group fixed bottom-6 right-6 z-40 flex items-center">
         <span className="pointer-events-none mr-2 max-w-[15rem] whitespace-normal rounded-full bg-white px-3 py-1.5 text-xs font-bold text-violet-700 opacity-0 shadow-glow transition-opacity duration-200 group-hover:opacity-100 dark:bg-slate-800 dark:text-violet-300">{en ? "Shanti AI — ask about blood, donors & emergencies" : "শান্তি AI — রক্ত, দাতা ও জরুরি সেবা নিয়ে প্রশ্ন করুন"}</span>
         <button onClick={() => setOpen((v) => !v)} aria-label={en ? "Shanti" : "শান্তি"} className="relative flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-violet-600 via-fuchsia-600 to-brand-600 text-white shadow-[0_14px_34px_-8px_rgba(124,58,237,0.6)] transition-transform hover:scale-105">
           <span className="absolute -right-1 -top-1 flex h-3.5 w-3.5"><span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-fuchsia-300 opacity-70" /><span className="relative inline-flex h-3.5 w-3.5 rounded-full bg-fuchsia-400 ring-2 ring-violet-700" /></span>

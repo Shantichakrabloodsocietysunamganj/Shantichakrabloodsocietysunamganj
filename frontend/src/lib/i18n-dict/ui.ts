@@ -195,6 +195,7 @@ export const UI: Record<string, string> = {
   // Cookie / newsletter
   "এই সাইট আপনার অভিজ্ঞতা উন্নত করতে কুকি ব্যবহার করে। চালিয়ে যাওয়া মানে আপনি এতে সম্মত।":
     "This site uses cookies to improve your experience. By continuing you agree to their use.",
+  "গোপনীয়তা নীতি পড়ুন": "Read privacy policy",
   "ধন্যবাদ! আপনি নিউজলেটারে যুক্ত হয়েছেন।": "Thank you! You have joined the newsletter.",
   "আপডেট পেতে চান?": "Want updates?",
   "রক্তদান শিবির, জরুরি অনুরোধ ও সমিতির খবর সরাসরি আপনার ইনবক্সে পান।":
@@ -207,6 +208,14 @@ export const UI: Record<string, string> = {
   "WhatsApp-এ শেয়ার করুন": "Share on WhatsApp",
   "🩸 *জরুরি রক্তের অনুরোধ*": "🩸 *Emergency blood request*",
   "🔍 দেখুন": "🔍 View",
+
+  // Validation / empty states
+  "সঠিক ইমেইল ঠিকানা দিন।": "Please enter a valid email address.",
+  "কোনো দাতা নেই।": "No donors yet.",
+  "কোনো বার্তা নেই।": "No messages yet.",
+  "এখনো কোনো পার্টনার নেই।": "No partners yet.",
+  "+ QR কোড": "+ QR code",
+  "✓ QR": "✓ QR",
 
   // Alt text
   "শান্তিচক্র ব্লাড সোসাইটি লোগো, সুনামগঞ্জ":

@@ -71,7 +71,7 @@ export default function AdminDonationMethodsPage() {
           {form.logo_url && <img src={form.logo_url} alt="" className="h-10 w-10 rounded-lg object-cover" />}
           <label className="btn-outline cursor-pointer text-sm">{form.logo_url ? tx("✓ লোগো") : tx("+ লোগো")}<input type="file" accept="image/*" className="hidden" onChange={(e) => e.target.files?.[0] && uploadImg(e.target.files[0], "logo_url")} /></label>
           {form.qr_url && <img src={form.qr_url} alt="" className="h-12 w-12 rounded object-contain" />}
-          <label className="btn-outline cursor-pointer text-sm">{form.qr_url ? "✓ QR" : "+ QR কোড"}<input type="file" accept="image/*" className="hidden" onChange={(e) => e.target.files?.[0] && uploadImg(e.target.files[0], "qr_url")} /></label>
+          <label className="btn-outline cursor-pointer text-sm">{form.qr_url ? tx("✓ QR") : tx("+ QR কোড")}<input type="file" accept="image/*" className="hidden" onChange={(e) => e.target.files?.[0] && uploadImg(e.target.files[0], "qr_url")} /></label>
           <label className="flex items-center gap-2 text-sm font-medium text-ink"><input type="checkbox" checked={form.is_active} onChange={(e) => setForm({ ...form, is_active: e.target.checked })} />{tx("সক্রিয়")}</label>
           <button disabled={saving} className="btn-primary">{saving ? tx("যোগ হচ্ছে…") : tx("যোগ করুন")}</button>
         </div>

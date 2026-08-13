@@ -41,7 +41,11 @@ export default function EmergencyBanner() {
   return (
     <a
       href="/blood-seekers"
-      className={`fixed inset-x-0 top-16 z-[50] flex min-h-12 items-center justify-center gap-2 px-4 py-2 text-center text-sm font-bold text-white shadow-md transition-all lg:top-16 ${
+      // The banner lives in normal document flow (right under the sticky
+      // navbar), so it scrolls away with the page instead of staying pinned
+      // over the viewport. z-40 keeps it below the navbar/menu (z-50) so the
+      // mobile menu panel is never covered by the banner.
+      className={`relative z-40 flex min-h-12 items-center justify-center gap-2 px-4 py-2 text-center text-sm font-bold text-white shadow-md transition-all ${
         flash ? "bg-blood-700 animate-pulse" : "bg-blood-600 hover:bg-blood-700"
       }`}
     >

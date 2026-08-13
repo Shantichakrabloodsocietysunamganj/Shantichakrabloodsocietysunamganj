@@ -94,7 +94,7 @@ export default function LiveRequestAlert() {
   if (!item) return null;
 
   return (
-    <div className="fixed bottom-6 right-4 z-[60] w-[min(20rem,calc(100vw-2rem))] animate-panel-in sm:right-24">
+    <div className="fixed bottom-6 right-4 z-[48] w-[min(20rem,calc(100vw-2rem))] animate-panel-in sm:right-24">
       <div className="overflow-hidden rounded-2xl border border-blood-200 bg-white shadow-2xl dark:border-blood-500/30 dark:bg-slate-900">
         <div className="flex items-center justify-between bg-gradient-to-r from-blood-600 to-blood-500 px-4 py-2">
           <span className="inline-flex items-center gap-1.5 text-[11px] font-bold text-white">
