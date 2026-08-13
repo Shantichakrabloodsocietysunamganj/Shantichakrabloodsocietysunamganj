@@ -28,7 +28,9 @@ alter table public.donors
   add column if not exists public_visible boolean not null default true;
 
 -- Safe public view now respects the opt-out flag.
-create or replace view public.public_donors as
+-- (DROP first: CREATE OR REPLACE cannot drop/change columns on an existing view.)
+drop view if exists public.public_donors cascade;
+create view public.public_donors as
 select
   id, full_name, blood_group, gender, age, district, upazila,
   photo_url, last_donation_date, is_available, is_verified,
@@ -50,7 +52,10 @@ create policy "Own or staff request read" on public.blood_requests
   using (requested_by = auth.uid() or public.is_staff());
 
 -- Tighten the public request view (drop medical fields).
-create or replace view public.public_blood_requests as
+-- (DROP first: removing patient_age/patient_gender from the existing view
+--  needs a fresh CREATE, not CREATE OR REPLACE.)
+drop view if exists public.public_blood_requests cascade;
+create view public.public_blood_requests as
 select
   id, patient_name, blood_group, units_needed, hospital, district, upazila,
   needed_date, contact_name, message, blood_component, request_type, status,
@@ -82,7 +87,8 @@ create policy "Own or staff profile read" on public.profiles
 -- -------------------------------------------------------------------
 -- 5) VOLUNTEERS — hide phone/email from anonymous clients.
 -- -------------------------------------------------------------------
-create or replace view public.public_volunteers as
+drop view if exists public.public_volunteers cascade;
+create view public.public_volunteers as
 select id, full_name, upazila, role, status, created_at
 from public.volunteers
 where deleted_at is null;
