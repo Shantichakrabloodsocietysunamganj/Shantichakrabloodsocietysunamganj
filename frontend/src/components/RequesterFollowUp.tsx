@@ -26,13 +26,15 @@ export default function RequesterFollowUp() {
     const due = getOwnedBloodRequests().filter((item) => new Date(item.nextPromptAt).getTime() <= Date.now());
     if (!due.length) return;
 
+    // Read only from the safe public view — anon can no longer read the
+    // base table, and status is public info anyway.
     const { data, error } = await supabase
-      .from("blood_requests")
+      .from("public_blood_requests")
       .select("id,status")
       .in("id", due.map((item) => item.id));
     if (error) return;
 
-    const statuses = new Map((data ?? []).map((row: any) => [row.id, row.status]));
+    const statuses = new Map((data ?? []).map((row: { id: string; status: string }) => [row.id, row.status]));
     for (const item of due) {
       const status = statuses.get(item.id);
       if (!status || status === "completed" || status === "cancelled") {

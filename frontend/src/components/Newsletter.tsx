@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Mail } from "lucide-react";
 import { useToast } from "@/components/Toast";
 import { useTr } from "@/lib/useLang";
+import { newsletterSchema } from "@/lib/validation";
 
 export default function Newsletter() {
   const { t: tx } = useTr();
@@ -13,7 +14,11 @@ export default function Newsletter() {
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email) return;
+    const parsed = newsletterSchema.safeParse({ email });
+    if (!parsed.success) {
+      toast("error", tx("সঠিক ইমেইল ঠিকানা দিন।"));
+      return;
+    }
     setBusy(true);
     setTimeout(() => {
       setBusy(false);

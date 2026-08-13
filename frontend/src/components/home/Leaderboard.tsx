@@ -48,40 +48,25 @@ export default function Leaderboard({ lang }: { lang: Lang }) {
   useEffect(() => {
     (async () => {
       try {
-        // donation গুলো একত্রিত করে প্রতি দাতার মোট unit বের করি
-        const { data: dons } = await supabase.from("donations").select("donor_id, units").limit(500);
-        const totals = new Map<string, number>();
-        (dons ?? []).forEach((d: any) => {
-          if (d.donor_id) totals.set(d.donor_id, (totals.get(d.donor_id) ?? 0) + (d.units ?? 1));
-        });
-        const ranked = Array.from(totals.entries()).sort((a, b) => b[1] - a[1]).slice(0, 10);
-
-        let result: Row[] = [];
-        if (ranked.length) {
-          const { data: donors } = await supabase
-            .from("donors")
-            .select("id, full_name, blood_group, photo_url")
-            .in("id", ranked.map(([id]) => id));
-          const map = new Map((donors ?? []).map((d: any) => [d.id, d]));
-          result = ranked
-            .map(([id, units]) => {
-              const d = map.get(id);
-              return d ? { ...d, units } : null;
-            })
-            .filter((x): x is Row => x !== null);
-        }
+        // Aggregated leaderboard via a security-definer RPC (donations are
+        // owner/staff-only, so the public client must not read that table).
+        const { data: ranked } = await supabase.rpc("get_donor_leaderboard", { p_limit: 10 });
+        const rows = (ranked ?? []) as { id: string; full_name: string; blood_group: string; photo_url: string | null; units: number }[];
+        let result: Row[] = rows.map((d) => ({ ...d, units: Number(d.units) ?? 0 }));
 
         // fallback: কোনো donation রেকর্ড না থাকলে সাম্প্রতিক নিবন্ধিত দাতা
         if (!result.length) {
           const { data: recent } = await supabase
-            .from("donors")
+            .from("public_donors")
             .select("id, full_name, blood_group, photo_url")
             .order("created_at", { ascending: false })
             .limit(10);
-          result = (recent ?? []).map((d: any) => ({ ...d, units: 0 }));
+          result = ((recent ?? []) as { id: string; full_name: string; blood_group: string; photo_url: string | null }[]).map((d) => ({ ...d, units: 0 }));
         }
         setItems(result);
-      } catch {}
+      } catch {
+        /* ignore */
+      }
       setLoading(false);
     })();
   }, [supabase]);

@@ -57,8 +57,7 @@ function SeekersContent() {
           r.patient_name.toLowerCase().includes(tq) ||
           r.hospital.toLowerCase().includes(tq) ||
           (r.contact_name ?? "").toLowerCase().includes(tq) ||
-          (r.upazila ?? "").toLowerCase().includes(tq) ||
-          (r.contact_phone ?? "").includes(tq),
+          (r.upazila ?? "").toLowerCase().includes(tq),
       );
     }
     return list;
@@ -154,7 +153,7 @@ function SeekersContent() {
             <label className="label">{t("seekers.search", lang)}</label>
             <input
               className="input"
-              placeholder={en ? "Patient, hospital, phone…" : "রোগী, হাসপাতাল, ফোন…"}
+              placeholder={en ? "Patient, hospital, area…" : "রোগী, হাসপাতাল, এলাকা…"}
               value={q}
               onChange={(e) => setQ(e.target.value)}
             />

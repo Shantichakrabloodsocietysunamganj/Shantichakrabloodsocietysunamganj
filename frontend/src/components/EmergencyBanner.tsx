@@ -15,32 +15,24 @@ export default function EmergencyBanner() {
   useEffect(() => {
     const load = async () => {
       try {
+        // Safe-view count only — the base-table realtime subscription was
+        // removed because it delivered raw request rows to every client.
         const { count: c } = await supabase
-          .from("blood_requests")
-          .select("*", { count: "exact", head: true })
-          .is("deleted_at", null)
+          .from("public_blood_requests")
+          .select("id", { count: "exact", head: true })
           .in("status", ["pending", "approved"])
           .gte("needed_date", new Date().toISOString().slice(0, 10));
         setCount(c ?? 0);
         setShow(!!c && c > 0);
-      } catch {}
+      } catch {
+        /* ignore */
+      }
     };
     load();
-
-    // নতুন অনুরোধ এলে সাথে সাথে গণনা বাড়ে (realtime)
-    const channel = supabase
-      .channel("emergency-banner-requests")
-      .on("postgres_changes", { event: "*", schema: "public", table: "blood_requests" }, () => {
-        setFlash(true);
-        setTimeout(() => setFlash(false), 2500);
-        load();
-      })
-      .subscribe();
 
     const id = setInterval(load, 60000);
     return () => {
       clearInterval(id);
-      supabase.removeChannel(channel);
     };
   }, [supabase]);
 

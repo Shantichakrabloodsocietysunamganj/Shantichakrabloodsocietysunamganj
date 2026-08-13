@@ -6,6 +6,8 @@ import { createClient } from "@/lib/supabase/client";
 import { SYLHET_DISTRICTS } from "@/data/constants";
 import { useToast } from "@/components/Toast";
 import { useTr } from "@/lib/useLang";
+import { volunteerSchema, zodErrors } from "@/lib/validation";
+import { normalizeBdPhone } from "@/lib/phone";
 
 // সিলেট বিভাগের সব উপজেলা (শুধু সুনামগঞ্জ নয়)
 const ALL_UPAZILAS = SYLHET_DISTRICTS.flatMap((d) => [...d.upazilas]);
@@ -15,6 +17,7 @@ export default function VolunteerPage() {
   const supabase = createClient();
   const toast = useToast();
   const [form, setForm] = useState({ full_name: "", phone: "", email: "", upazila: "", role: "" });
+  const [errors, setErrors] = useState<Record<string, string>>({});
   const [done, setDone] = useState(false);
   const [saving, setSaving] = useState(false);
 
@@ -22,8 +25,20 @@ export default function VolunteerPage() {
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setErrors({});
+    const parsed = volunteerSchema.safeParse(form);
+    if (!parsed.success) {
+      setErrors(zodErrors(parsed.error));
+      return;
+    }
     setSaving(true);
-    const { error } = await supabase.from("volunteers").insert(form);
+    const { error } = await supabase.from("volunteers").insert({
+      full_name: parsed.data.full_name,
+      phone: normalizeBdPhone(parsed.data.phone),
+      email: parsed.data.email || null,
+      upazila: parsed.data.upazila,
+      role: parsed.data.role || null,
+    });
     setSaving(false);
     if (error) {
       toast("error", tx("নিবন্ধনে সমস্যা হয়েছে"));
@@ -56,6 +71,11 @@ export default function VolunteerPage() {
         </header>
 
         <form onSubmit={submit} className="mt-8 card p-6 sm:p-8 space-y-4">
+          {Object.keys(errors).length > 0 && (
+            <div className="rounded-xl bg-blood-50 p-3 text-sm font-medium text-blood-700">
+              ⚠️ {tx("অনুগ্রহ করে সব প্রয়োজনীয় তথ্য সঠিকভাবে দিন।")}
+            </div>
+          )}
           <div className="grid gap-4 sm:grid-cols-2">
             <div><label className="label">{tx("পুরো নাম *")}</label><input required className="input" value={form.full_name} onChange={(e) => set("full_name", e.target.value)} /></div>
             <div><label className="label">{tx("মোবাইল *")}</label><input required className="input" value={form.phone} onChange={(e) => set("phone", e.target.value)} placeholder="01XXXXXXXXX" /></div>

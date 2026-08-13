@@ -2,7 +2,6 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { z } from "zod";
 import { createClient } from "@/lib/supabase/client";
 import { BLOOD_GROUPS, DISTRICTS, upazilasOf } from "@/data/constants";
 import { scrollToPageTop } from "@/lib/motion";
@@ -14,24 +13,8 @@ import {
 } from "@/lib/requestOwnership";
 import type { BloodRequest } from "@/lib/types";
 import { useLang, useTr } from "@/lib/useLang";
-
-const schema = z.object({
-  patient_name: z.string().min(2),
-  blood_group: z.enum(BLOOD_GROUPS as unknown as [string, ...string[]]),
-  units_needed: z.coerce.number().int().min(1).max(10),
-  hospital: z.string().min(2),
-  district: z.string().min(1),
-  upazila: z.string().min(1),
-  needed_date: z.string().min(1),
-  contact_name: z.string().min(2),
-  contact_phone: z.string().min(6).regex(/^[+0-9\s-]+$/),
-  message: z.string().optional(),
-  hemoglobin: z.string().min(1),
-  patient_age: z.string().optional(),
-  patient_gender: z.string().optional(),
-  disease: z.string().optional(),
-  blood_component: z.string().optional(),
-});
+import { bloodRequestSchema, zodErrors } from "@/lib/validation";
+import { normalizeBdPhone } from "@/lib/phone";
 
 export default function RequestBloodPage() {
   const { t: tx } = useTr();
@@ -57,8 +40,8 @@ export default function RequestBloodPage() {
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     setServerError(null); setErrors({});
-    const parsed = schema.safeParse(form);
-    if (!parsed.success) { const errs: Record<string, string> = {}; for (const issue of parsed.error.issues) errs[issue.path[0] as string] = issue.message; setErrors(errs); return; }
+    const parsed = bloodRequestSchema.safeParse(form);
+    if (!parsed.success) { setErrors(zodErrors(parsed.error)); return; }
     setSubmitting(true);
     try {
       // Supplying the id and status ourselves lets us reliably carry this exact
@@ -75,7 +58,7 @@ export default function RequestBloodPage() {
         upazila: parsed.data.upazila,
         needed_date: parsed.data.needed_date,
         contact_name: parsed.data.contact_name,
-        contact_phone: parsed.data.contact_phone,
+        contact_phone: normalizeBdPhone(parsed.data.contact_phone) ?? parsed.data.contact_phone,
         message: parsed.data.message || null,
         hemoglobin: parsed.data.hemoglobin,
         patient_age: parsed.data.patient_age ? Number(parsed.data.patient_age) : null,
@@ -120,8 +103,8 @@ export default function RequestBloodPage() {
       }
       setDone(true);
       scrollToPageTop();
-    } catch (e: any) {
-      setServerError(e?.message ?? (en ? "Could not post the request." : "অনুরোধ পোস্ট করা যায়নি।"));
+    } catch (e: unknown) {
+      setServerError(e instanceof Error ? e.message : (en ? "Could not post the request." : "অনুরোধ পোস্ট করা যায়নি।"));
     } finally {
       setSubmitting(false);
     }

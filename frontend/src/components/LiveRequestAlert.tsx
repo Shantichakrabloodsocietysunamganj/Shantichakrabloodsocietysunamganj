@@ -3,41 +3,63 @@
 // =====================================================================
 //  LiveRequestAlert — সাইটের যেকোনো পেজে থাকা অবস্থায় কেউ নতুন রক্তের
 //  অনুরোধ পোস্ট করলে নিচে-ডানে একটি লাইভ পপ-আপ কার্ড দেখা যায়।
-//  ইউজার বুঝতে পারে — এটি সত্যিকারের লাইভ সিস্টেম।
+//
+//  Privacy (Phase 1+2): the base-table postgres_changes subscription was
+//  removed — it delivered raw contact_phone to every client. This component
+//  now polls the safe `public_blood_requests` view and only ever receives
+//  public columns. Contact always goes through the rate-limited endpoint.
 // =====================================================================
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { Droplets, X } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
-import type { BloodRequest } from "@/lib/types";
+import type { PublicBloodRequest } from "@/lib/types";
 import { useLang } from "@/lib/useLang";
+import { maskName } from "@/lib/sanitize";
 
 const DISMISS_MS = 14000;
+const POLL_MS = 30000;
+const FRESH_MS = 60 * 1000;
 
 export default function LiveRequestAlert() {
   const supabase = useMemo(() => createClient(), []);
   const lang = useLang();
   const en = lang === "en";
-  const [item, setItem] = useState<BloodRequest | null>(null);
+  const [item, setItem] = useState<PublicBloodRequest | null>(null);
 
   useEffect(() => {
-    let hideTimer: ReturnType<typeof setTimeout>;
+    let hideTimer: ReturnType<typeof setTimeout> | undefined;
+    const knownIds = new Set<string>();
+    let firstRun = true;
 
-    const channel = supabase
-      .channel("live-request-alert")
-      .on("postgres_changes", { event: "INSERT", schema: "public", table: "blood_requests" }, (payload) => {
-        const row = payload.new as BloodRequest;
-        if (!["pending", "approved"].includes(row.status)) return;
-        if ((row as any).deleted_at) return;
+    const check = async () => {
+      const { data } = await supabase
+        .from("public_blood_requests")
+        .select("id, patient_name, blood_group, units_needed, hospital, upazila, created_at")
+        .order("created_at", { ascending: false })
+        .limit(5);
+      if (!data) return;
+
+      if (firstRun) {
+        data.forEach((r) => knownIds.add(r.id));
+        firstRun = false;
+        return;
+      }
+
+      for (const row of data as PublicBloodRequest[]) {
+        if (knownIds.has(row.id)) continue;
+        knownIds.add(row.id);
+        // Only alert for genuinely new requests (posted within the last minute).
+        if (Date.now() - new Date(row.created_at).getTime() > FRESH_MS) continue;
         setItem(row);
         clearTimeout(hideTimer);
         hideTimer = setTimeout(() => setItem(null), DISMISS_MS);
-
         // মৃদু নোটিফিকেশন সাউন্ড (ব্রাউজার অনুমতি দিলে)
         try {
-          const Ctx = (window as any).AudioContext ?? (window as any).webkitAudioContext;
-          if (!Ctx) return;
+          const Ctx = (window as unknown as { AudioContext?: typeof AudioContext; webkitAudioContext?: typeof AudioContext }).AudioContext ??
+            (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+          if (!Ctx) continue;
           const ctx = new Ctx();
           const osc = ctx.createOscillator();
           const gain = ctx.createGain();
@@ -50,13 +72,22 @@ export default function LiveRequestAlert() {
           osc.connect(gain).connect(ctx.destination);
           osc.start();
           osc.stop(ctx.currentTime + 0.32);
-        } catch {}
-      })
-      .subscribe();
+        } catch {
+          /* ignore */
+        }
+        break;
+      }
+    };
+
+    check();
+    const interval = setInterval(() => {
+      if (typeof document !== "undefined" && document.hidden) return;
+      check();
+    }, POLL_MS);
 
     return () => {
+      clearInterval(interval);
       clearTimeout(hideTimer);
-      supabase.removeChannel(channel);
     };
   }, [supabase]);
 
@@ -84,7 +115,7 @@ export default function LiveRequestAlert() {
           </span>
           <div className="min-w-0 flex-1">
             <p className="truncate text-sm font-bold text-ink">
-              {en ? `${item.patient_name} needs blood` : `${item.patient_name}-এর রক্ত দরকার`}
+              {en ? `${maskName(item.patient_name)} needs blood` : `${maskName(item.patient_name)}-এর রক্ত দরকার`}
             </p>
             <p className="mt-0.5 truncate text-xs text-ink/55">
               {item.units_needed} {en ? "unit(s)" : "ব্যাগ"} • {item.hospital}
@@ -94,7 +125,7 @@ export default function LiveRequestAlert() {
         </div>
 
         <div className="flex gap-2 border-t border-zinc-100 p-3 dark:border-white/10">
-          <a href={`tel:${item.contact_phone}`} className="btn-blood flex-1 !py-2 text-xs">
+          <a href={`/api/requests/${item.id}/contact?channel=call`} className="btn-blood flex-1 !py-2 text-xs">
             <Droplets className="h-3.5 w-3.5" /> {en ? "Call now" : "এখনই কল"}
           </a>
           <Link href="/blood-seekers" onClick={() => setItem(null)} className="btn-ghost !py-2 text-xs">
