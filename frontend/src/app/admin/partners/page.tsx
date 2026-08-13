@@ -77,7 +77,7 @@ export default function AdminPartnersPage() {
       </form>
 
       {items.length === 0 ? (
-        <p className="py-10 text-center text-sm text-ink/50">এখনো কোনো পার্টনার নেই।</p>
+        <p className="py-10 text-center text-sm text-ink/50">{tx("এখনো কোনো পার্টনার নেই।")}</p>
       ) : (
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
           {items.map((p) => (

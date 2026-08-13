@@ -177,7 +177,7 @@ export default function AdminPage() {
               const m = new Map<string, number>();
               donors.forEach((d) => m.set(d.blood_group, (m.get(d.blood_group) ?? 0) + 1));
               const data = Array.from(m, ([label, value]) => ({ label, value })).sort((a, b) => b.value - a.value);
-              return data.length ? <DonutChart data={data} /> : <p className="text-sm text-ink/50">কোনো দাতা নেই।</p>;
+              return data.length ? <DonutChart data={data} /> : <p className="text-sm text-ink/50">{tx("কোনো দাতা নেই।")}</p>;
             })()}
           </div>
         </>
@@ -265,7 +265,7 @@ export default function AdminPage() {
 
       {tab === "contacts" && (
         <div className="space-y-3">
-          {contacts.length === 0 ? <Empty text="কোনো বার্তা নেই।" /> : contacts.map((c) => (
+          {contacts.length === 0 ? <Empty text={tx("কোনো বার্তা নেই।")} /> : contacts.map((c) => (
             <div key={c.id} className="card p-5">
               <div className="flex justify-between gap-3">
                 <div><p className="font-semibold text-ink">{c.name}</p><p className="text-xs text-ink/50">{c.email} • {c.phone}</p></div>
